@@ -55,6 +55,27 @@ export default function CreateBuild() {
     </form>
   )
 }
+    <form onSubmit={handleSubmit}>
+      <h2>Skapa ny Build</h2>
+      <input
+        type="text"
+        placeholder="Titel"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        required
+      />
+      <textarea
+        placeholder="Beskrivning"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        required
+      />
+      <button type="submit" disabled={loading}>
+        {loading ? 'Sparar...' : 'Spara Build'}
+      </button>
+    </form>
+  )
+}
 
   return (
     <form onSubmit={handleSubmit}>
@@ -77,9 +98,7 @@ export default function CreateBuild() {
       </button>
     </form>
   )
-}
-                                                                                                                                <textarea
-                                                                                                                                        placeholder="Beskrivning"
+}                                                                                                                                <textarea                                                                                                                                        placeholder="Beskrivning"
                                                                                                                                                 value={description}
                                                                                                                                                         onChange={(e) => setDescription(e.target.value)}
                                                                                                                                                                 required
