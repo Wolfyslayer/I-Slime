@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Build Planner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Roboto&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <h1>Build Planner</h1>
+
+  <div class="section" id="classSection">
+    <h2>Välj Klass</h2>
+    <div id="classChoices" class="choices"></div>
+  </div>
+
+  <div class="section" id="pathSection" style="display:none">
+    <h2>Välj Path</h2>
+    <div id="pathChoices" class="choices"></div>
+  </div>
+
+  <div class="section" id="evoInfo" style="display:none"></div>
+
+  <div class="section" id="petsSection" style="display:none">
+    <h2>Välj 5 Pets</h2>
+    <div id="petChoices" class="choices"></div>
+    <p>Valda: <span id="selectedPets"></span></p>
+  </div>
+
+  <div class="section" id="skillsSection" style="display:none">
+    <h2>Välj 5 Skills</h2>
+    <div id="skillChoices" class="choices"></div>
+    <p>Valda: <span id="selectedSkills"></span></p>
+  </div>
+
+  <div class="section" id="itemsSection" style="display:none">
+    <h2>Items</h2>
+    <div id="itemsContainer"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
