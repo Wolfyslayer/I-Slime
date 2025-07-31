@@ -1,0 +1,95 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #eef2f5;
+  margin: 0;
+  padding: 0;
+}
+
+.app-container {
+  max-width: 800px;
+  margin: 20px auto;
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+header {
+  margin-bottom: 20px;
+}
+
+header h1 {
+  margin: 0 0 10px;
+  color: #2c3e50;
+}
+
+nav a {
+  color: #2980b9;
+  text-decoration: none;
+  margin-right: 15px;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+.build-list {
+  list-style: none;
+  padding: 0;
+}
+
+.build-list li {
+  margin-bottom: 10px;
+}
+
+.build-list li a {
+  color: #34495e;
+  text-decoration: none;
+}
+
+.build-list li a:hover {
+  text-decoration: underline;
+}
+
+.build-detail ul {
+  list-style: none;
+  padding: 0;
+}
+
+.create-build-form label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.create-build-form input,
+.create-build-form select {
+  padding: 6px;
+  width: 100%;
+  max-width: 300px;
+  margin-top: 4px;
+  box-sizing: border-box;
+}
+
+.create-build-form fieldset {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+.create-build-form legend {
+  font-weight: bold;
+}
+
+.create-build-form button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #2980b9;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.create-build-form button:hover {
+  background-color: #1f6391;
+}
