@@ -12,12 +12,16 @@ export default function CreateBuild() {
     e.preventDefault()
     setLoading(true)
 
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-    if (userError || !user) {
+    // Hämta sessionen för att kolla om användaren är inloggad
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+
+    if (sessionError || !session) {
       alert('Du måste vara inloggad för att skapa en build.')
       setLoading(false)
       return
     }
+
+    const user = session.user
 
     const { error } = await supabase
       .from('builds')
