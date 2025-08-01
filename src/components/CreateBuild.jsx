@@ -10,25 +10,19 @@ export default function CreateBuild() {
 
   const handleCreate = async (e) => {
     e.preventDefault()
-
-    const { data } = await supabase.auth.getUser()
-    const user = data?.user
-
+    const user = supabase.auth.user()
     if (!user) {
-      setError(t('mustBeLoggedIn'))
+      setError(t('must_be_logged_in'))
       return
     }
-
     const { error } = await supabase
       .from('builds')
       .insert([{ title, description, user_id: user.id }])
-
     if (error) setError(error.message)
     else {
-      alert(t('buildCreated'))
+      alert(t('build_created'))
       setTitle('')
       setDescription('')
-      setError('')
     }
   }
 
@@ -47,8 +41,8 @@ export default function CreateBuild() {
         onChange={e => setDescription(e.target.value)}
         required
       />
-      <button type="submit">{t('createBuild')}</button>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <button type="submit">{t('create')}</button>
+      {error && <p style={{color:'red'}}>{error}</p>}
     </form>
   )
 }
