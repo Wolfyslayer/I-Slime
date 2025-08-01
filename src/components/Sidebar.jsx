@@ -1,24 +1,23 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
-import './Sidebar.css'  // vi gör en egen css för sidebar
+import './Sidebar.css'
 
 export default function Sidebar() {
-  const [isOpen, setIsOpen] = useState(true)
+  const [isOpen, setIsOpen] = React.useState(true)
 
   return (
     <>
-      <button className="toggle-btn" onClick={() => setIsOpen(!isOpen)}>
-        {isOpen ? '☰' : '→'}
+      <button onClick={() => setIsOpen(!isOpen)} style={{ position: 'fixed', top: 10, left: 10, zIndex: 999 }}>
+        ☰
       </button>
-
       <nav className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
         <h2>Build Planner</h2>
         <ul>
           <li><Link to="/">Build List</Link></li>
-          <li><Link to="/my-builds">My Builds</Link></li>
-          <li><Link to="/create-build">Create Build</Link></li>
-          <li><Link to="/login">Login</Link></li>
-          <li><Link to="/register">Register</Link></li>
+          <li><Link to="/create-build">Skapa Build</Link></li>
+          <li><Link to="/my-builds">Mina Builds</Link></li>
+          <li><Link to="/login">Logga In</Link></li>
+          <li><Link to="/register">Registrera</Link></li>
         </ul>
       </nav>
     </>
