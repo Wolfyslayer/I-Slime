@@ -9,14 +9,14 @@ import CreateBuild from './components/CreateBuild'
 import BuildList from './components/BuildList'
 import MyBuilds from './components/MyBuilds'
 import AdminPanel from './components/AdminPanel'
+import { useTranslation } from 'react-i18next'
 import './index.css'
-
-// Importera i18n för initiering
-import './i18n'
 
 export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen)
+
+  const { t } = useTranslation()
 
   return (
     <Router>
