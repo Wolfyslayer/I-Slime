@@ -13,7 +13,7 @@ export default function App() {
   return (
     <Router>
       <Sidebar />
-      <main style={{ marginLeft: '220px', padding: '20px' }}>
+      <main style={{ marginLeft: '200px', padding: '20px' }}>
         <Routes>
           <Route path="/" element={<BuildList />} />
           <Route path="/register" element={<Register />} />
