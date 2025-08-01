@@ -8,7 +8,7 @@ import CreateBuild from './components/CreateBuild'
 import BuildList from './components/BuildList'
 import MyBuilds from './components/MyBuilds'
 
-import { supabase } from './supabaseClient' // importera din Supabase-instans
+import { supabase } from 'src/lib/supabaseClient' // importera din Supabase-instans
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
