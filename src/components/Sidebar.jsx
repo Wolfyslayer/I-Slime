@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import './Sidebar.css'
+import '../Sidebar.css' // Eller behåll './Sidebar.css' om du använder det separat
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
   return (
@@ -8,7 +8,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
       <button className="sidebar-toggle" onClick={toggleSidebar}>
         ☰
       </button>
-      <div className={`sidebar ${isOpen ? '' : 'hidden'}`}>
+      <div className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
         <h2>Build Planner</h2>
         <ul>
           <li><Link to="/" onClick={toggleSidebar}>Alla Builds</Link></li>
