@@ -1,51 +1,31 @@
-/* Sidebar.css */
-body {
-  margin: 0;
-  font-family: 'Roboto', sans-serif;
-}
-
-.toggle-btn {
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  z-index: 1001;
-  background: #222;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  cursor: pointer;
-  border-radius: 4px;
-  font-size: 20px;
-}
-
 .sidebar {
   position: fixed;
   top: 0;
   left: 0;
-  height: 100vh;
-  width: 220px;
-  background-color: #222;
+  width: 200px;
+  height: 100%;
+  background-color: #1f1f1f;
   color: white;
   padding: 20px;
-  box-sizing: border-box;
   transition: transform 0.3s ease;
-  z-index: 1000;
-  overflow-y: auto;
+  z-index: 998;
 }
 
 .sidebar.closed {
   transform: translateX(-100%);
 }
 
+.sidebar.open {
+  transform: translateX(0);
+}
+
 .sidebar h2 {
-  margin-top: 0;
-  font-family: 'Orbitron', sans-serif;
+  font-family: Orbitron, sans-serif;
 }
 
 .sidebar ul {
   list-style: none;
-  padding-left: 0;
-  margin-top: 20px;
+  padding: 0;
 }
 
 .sidebar ul li {
@@ -55,8 +35,6 @@ body {
 .sidebar ul li a {
   color: white;
   text-decoration: none;
-  font-weight: 500;
-  font-size: 16px;
 }
 
 .sidebar ul li a:hover {
