@@ -49,8 +49,7 @@ export default function CreateBuild() {
 
       {/* 🔍 Visa session info för felsökning */}
       <div style={{ backgroundColor: '#eee', padding: '10px', marginBottom: '10px' }}>
-        <strong>Inloggad:</strong> {sessionInfo ? 'Ja ✅' : 'Nej ❌'}
-        <br />
+        <strong>Inloggad:</strong> {sessionInfo ? 'Ja ✅' : 'Nej ❌'}<br />
         <strong>User ID:</strong> {sessionInfo?.user?.id || 'Ingen'}
       </div>
 
@@ -62,8 +61,18 @@ export default function CreateBuild() {
           onChange={(e) => setTitle(e.target.value)}
           required
         />
+        <br />
         <textarea
           placeholder="Beskrivning"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          
+          required
+        />
+        <br />
+        <button type="submit" disabled={loading}>
+          {loading ? 'Sparar...' : 'Spara Build'}
+        </button>
+      </form>
+    </div>
+  )
+}
