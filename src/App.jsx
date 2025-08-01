@@ -11,6 +11,9 @@ import MyBuilds from './components/MyBuilds'
 import AdminPanel from './components/AdminPanel'
 import './index.css'
 
+// Importera i18n för initiering
+import './i18n'
+
 export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen)
