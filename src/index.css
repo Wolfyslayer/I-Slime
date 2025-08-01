@@ -14,40 +14,21 @@ body {
   overflow-x: hidden;
 }
 
-/* ===== Sidebar toggle knapp ===== */
-.sidebar-toggle {
-  position: fixed;
-  top: 15px;
-  left: 15px;
-  background-color: #0077ff;
-  border: none;
-  color: white;
-  font-size: 24px;
-  cursor: pointer;
-  z-index: 1100;
-  border-radius: 4px;
-  padding: 6px 12px;
-  transition: background-color 0.3s;
-}
+/* Sidebar och toggleknapp */
 
-.sidebar-toggle:hover {
-  background-color: #005bb5;
-}
-
-/* ===== Sidebar ===== */
 .sidebar {
   position: fixed;
   top: 0;
   left: 0;
-  width: 250px;
   height: 100vh;
-  background: #001f2f;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.7);
+  width: 250px;
+  background: #111;
   padding: 20px;
+  color: white;
   overflow-y: auto;
   transform: translateX(-260px);
   transition: transform 0.3s ease;
-  z-index: 1050;
+  z-index: 100;
 }
 
 .sidebar.open {
@@ -56,69 +37,49 @@ body {
 
 .sidebar h2 {
   margin-bottom: 1.5rem;
-  font-weight: 700;
   font-size: 1.8rem;
-  color: #00cfff;
 }
 
 .sidebar ul {
   list-style: none;
+  padding-left: 0;
 }
 
 .sidebar ul li {
-  margin-bottom: 1.2rem;
+  margin-bottom: 1rem;
 }
 
 .sidebar ul li a,
-.sidebar ul li button.logout-btn {
+.sidebar ul li button {
   color: white;
+  font-weight: 500;
   font-size: 1.1rem;
-  text-decoration: none;
-  display: block;
   cursor: pointer;
   background: none;
   border: none;
-  padding: 6px 0;
-  width: 100%;
-  text-align: left;
-  transition: color 0.3s;
-  font-family: inherit;
+  padding: 0;
 }
 
-.sidebar ul li a:hover,
-.sidebar ul li button.logout-btn:hover {
-  color: #00cfff;
+.sidebar-toggle {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 110;
+  background: #0ff;
+  border: none;
+  padding: 10px 15px;
+  font-size: 1.4rem;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-/* ===== Main content ===== */
 .main-content {
-  padding: 40px 20px;
-  margin-left: 0;
   transition: margin-left 0.3s ease;
+  padding: 2rem;
+  margin-left: 0;
 }
 
-/* När sidebar är öppen, flytta main content */
-.sidebar.open ~ .main-content {
+.main-content.sidebar-active {
   margin-left: 250px;
 }
 
-/* ===== Responsivitet ===== */
-@media (max-width: 768px) {
-  .sidebar {
-    width: 200px;
-    transform: translateX(-210px);
-  }
-
-  .sidebar.open {
-    transform: translateX(0);
-  }
-
-  .sidebar.open ~ .main-content {
-    margin-left: 200px;
-  }
-
-  .sidebar-toggle {
-    font-size: 20px;
-    padding: 5px 10px;
-  }
-}
