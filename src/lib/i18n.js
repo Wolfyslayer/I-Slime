@@ -1,69 +1,80 @@
-import React, { useEffect, useState } from 'react'
-import { supabase, ADMIN_USERS } from '../lib/supabaseClient'
-import { useTranslation } from 'react-i18next'
+import i18n from 'i18next'
+import { initReactI18next } from 'react-i18next'
 
-export default function AdminPanel() {
-  const [reports, setReports] = useState([])
-  const [loading, setLoading] = useState(true)
-  const user = supabase.auth.user()
-  const [error, setError] = useState(null)
-  const { t } = useTranslation()
-
-  useEffect(() => {
-    if (!user || !ADMIN_USERS.includes(user.id)) {
-      setError(t('No permission'))
-      setLoading(false)
-      return
+const resources = {
+  en: {
+    translation: {
+      "Build Planner": "Build Planner",
+      "All Builds": "All Builds",
+      "Create Build": "Create Build",
+      "My Builds": "My Builds",
+      "Log Out": "Log Out",
+      "Log In": "Log In",
+      "Register": "Register",
+      "Admin Panel": "Admin Panel",
+      "You must be logged in to create a build.": "You must be logged in to create a build.",
+      "Build created!": "Build created!",
+      "Title": "Title",
+      "Description": "Description",
+      "No permission": "No permission",
+      "Error fetching reports": "Error fetching reports",
+      "Delete this build permanently?": "Delete this build permanently?",
+      "Error deleting build": "Error deleting build",
+      "Do you want to ban this user?": "Do you want to ban this user?",
+      "Error banning user": "Error banning user",
+      "User banned": "User banned",
+      "Loading reports...": "Loading reports...",
+      "No reports at the moment.": "No reports at the moment.",
+      "Build": "Build",
+      "Build Owner": "Build Owner",
+      "Reported User": "Reported User",
+      "Reported By": "Reported By",
+      "Reason": "Reason",
+      "Date": "Date"
     }
-    async function fetchReports() {
-      const { data, error } = await supabase
-        .from('reports')
-        .select('id, reason, build_id, reported_user_id, reporting_user_id, created_at, builds (title, user_id)')
-        .order('created_at', { ascending: false })
-      if (error) setError(t('Error fetching reports'))
-      else setReports(data)
-      setLoading(false)
+  },
+  sv: {
+    translation: {
+      "Build Planner": "Byggplanerare",
+      "All Builds": "Alla Bygg",
+      "Create Build": "Skapa Bygg",
+      "My Builds": "Mina Bygg",
+      "Log Out": "Logga Ut",
+      "Log In": "Logga In",
+      "Register": "Registrera",
+      "Admin Panel": "Adminpanel",
+      "You must be logged in to create a build.": "Du måste vara inloggad för att skapa en byggnad.",
+      "Build created!": "Byggnad skapad!",
+      "Title": "Titel",
+      "Description": "Beskrivning",
+      "No permission": "Ingen behörighet",
+      "Error fetching reports": "Fel vid hämtning av rapporter",
+      "Delete this build permanently?": "Radera denna byggnad permanent?",
+      "Error deleting build": "Fel vid radering av byggnad",
+      "Do you want to ban this user?": "Vill du bannlysa denna användare?",
+      "Error banning user": "Fel vid bannlysning av användare",
+      "User banned": "Användare bannlyst",
+      "Loading reports...": "Laddar rapporter...",
+      "No reports at the moment.": "Inga rapporter just nu.",
+      "Build": "Byggnad",
+      "Build Owner": "Byggnadsägare",
+      "Reported User": "Rapporterad Användare",
+      "Reported By": "Rapporterad Av",
+      "Reason": "Orsak",
+      "Date": "Datum"
     }
-    fetchReports()
-  }, [user, t])
-
-  async function deleteBuild(buildId) {
-    if (!window.confirm(t('Delete this build permanently?'))) return
-    const { error } = await supabase.from('builds').delete().eq('id', buildId)
-    if (error) alert(t('Error deleting build'))
-    else setReports(reports.filter(r => r.build_id !== buildId))
   }
-
-  async function banUser(userId) {
-    if (!window.confirm(t('Do you want to ban this user?'))) return
-    const { error } = await supabase.from('banned_users').insert([{ user_id: userId }])
-    if (error) alert(t('Error banning user'))
-    else alert(t('User banned'))
-  }
-
-  if (error) return <p>{error}</p>
-  if (loading) return <p>{t('Loading reports...')}</p>
-  if (reports.length === 0) return <p>{t('No reports at the moment.')}</p>
-
-  return (
-    <div style={{ padding: '20px' }}>
-      <h1>{t('Admin Panel - Report Management')}</h1>
-      {reports.map(report => (
-        <div key={report.id} className="card" style={{ marginBottom: '1rem' }}>
-          <p><b>{t('Build')}:</b> {report.builds?.title || t('Unknown')}</p>
-          <p><b>{t('Build Owner')}:</b> {report.builds?.user_id}</p>
-          <p><b>{t('Reported User')}:</b> {report.reported_user_id}</p>
-          <p><b>{t('Reported By')}:</b> {report.reporting_user_id}</p>
-          <p><b>{t('Reason')}:</b> {report.reason}</p>
-          <p><b>{t('Date')}:</b> {new Date(report.created_at).toLocaleString()}</p>
-          <button onClick={() => deleteBuild(report.build_id)} style={{ marginRight: '10px' }}>
-            {t('Delete Build')}
-          </button>
-          <button onClick={() => banUser(report.reported_user_id)}>
-            {t('Ban User')}
-          </button>
-        </div>
-      ))}
-    </div>
-  )
 }
+
+i18n
+  .use(initReactI18next)
+  .init({
+    resources,
+    lng: navigator.language.split('-')[0] || 'en',
+    fallbackLng: 'en',
+    interpolation: {
+      escapeValue: false,
+    },
+  })
+
+export default i18n
