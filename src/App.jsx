@@ -10,7 +10,7 @@ import Sidebar from './components/Sidebar'
 import './index.css'
 
 export default function App() {
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen)
@@ -19,7 +19,7 @@ export default function App() {
   return (
     <Router>
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-      <div className={`main-content`}>
+      <div className={`main-content ${sidebarOpen ? 'sidebar-active' : ''}`}>
         <Routes>
           <Route path="/" element={<BuildList />} />
           <Route path="/register" element={<Register />} />
