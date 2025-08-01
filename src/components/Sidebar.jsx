@@ -20,15 +20,15 @@ const Sidebar = () => {
       <nav className={`sidebar ${isOpen ? "open" : ""}`}>
         <ul>
           <li><Link to="/" onClick={closeSidebar} className={isActive("/") ? "active" : ""}>Home</Link></li>
-          <li><Link to="/create" onClick={closeSidebar} className={isActive("/create") ? "active" : ""}>Create Build</Link></li>
+          <li><Link to="/create-build" onClick={closeSidebar} className={isActive("/create-build") ? "active" : ""}>Create Build</Link></li>
           <li><Link to="/my-builds" onClick={closeSidebar} className={isActive("/my-builds") ? "active" : ""}>My Builds</Link></li>
-          <li><Link to="/admin" onClick={closeSidebar} className={isActive("/admin") ? "active" : ""}>Admin</Link></li>
+          <li><Link to="/admin" onClick={closeSidebar} className={isActive("/admin") ? "active" : ""}>AdminPanel</Link></li>
           <li><Link to="/login" onClick={closeSidebar} className={isActive("/login") ? "active" : ""}>Login</Link></li>
           <li><Link to="/register" onClick={closeSidebar} className={isActive("/register") ? "active" : ""}>Sign Up</Link></li>
         </ul>
       </nav>
     </>
-  );
+  )
 };
 
 export default Sidebar;
