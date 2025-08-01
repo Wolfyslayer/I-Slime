@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import supabase from './lib/supabaseClient'
 import Sidebar from './components/Sidebar'
 import ProtectedRoute from './routes/ProtectedRoute'
 import Register from './components/Register'
