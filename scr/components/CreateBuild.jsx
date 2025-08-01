@@ -1,78 +1,63 @@
-import React, { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabaseClient'
-import { useNavigate } from 'react-router-dom'
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '../lib/supabaseClient';
 
 export default function CreateBuild() {
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [sessionInfo, setSessionInfo] = useState(null)
-  const navigate = useNavigate()
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const getSession = async () => {
-      const { data, error } = await supabase.auth.getSession()
-      setSessionInfo(data?.session || null)
-    }
-    getSession()
-  }, [])
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-  async function handleSubmit(e) {
-    e.preventDefault()
-    setLoading(true)
-
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-
-    if (userError || !user) {
-      alert('Du måste vara inloggad för att skapa en build.')
-      setLoading(false)
-      return
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (error || !user) {
+      alert("Du måste vara inloggad för att skapa en build.");
+      setLoading(false);
+      return;
     }
 
-    const { error } = await supabase
+    const { error: insertError } = await supabase
       .from('builds')
-      .insert([{ title, description, user_id: user.id }])
+      .insert({
+        title,
+        description,
+        user_id: user.id,
+        likes: 0,
+        reports: 0
+      });
 
-    setLoading(false)
+    setLoading(false);
 
-    if (error) {
-      alert('Fel vid skapande: ' + error.message)
+    if (insertError) {
+      alert("Fel vid skapande: " + insertError.message);
     } else {
-      alert('Build skapad!')
-      navigate('/')
+      alert("Build skapad!");
+      navigate('/');
     }
-  }
+  };
 
   return (
-    <div>
+    <form onSubmit={handleSubmit}>
       <h2>Skapa ny Build</h2>
-
-      {/* 🔍 Visa session info för felsökning */}
-      <div style={{ backgroundColor: '#eee', padding: '10px', marginBottom: '10px' }}>
-        <strong>Inloggad:</strong> {sessionInfo ? 'Ja ✅' : 'Nej ❌'}<br />
-        <strong>User ID:</strong> {sessionInfo?.user?.id || 'Ingen'}
-      </div>
-
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Titel"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
-        <br />
-        <textarea
-          placeholder="Beskrivning"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-        />
-        <br />
-        <button type="submit" disabled={loading}>
-          {loading ? 'Sparar...' : 'Spara Build'}
-        </button>
-      </form>
-    </div>
-  )
+      <input
+        type="text"
+        placeholder="Titel"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        required
+      />
+      <textarea
+        placeholder="Beskrivning"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        required
+      />
+      <button type="submit" disabled={loading}>
+        {loading ? 'Sparar...' : 'Spara Build'}
+      </button>
+    </form>
+  );
 }
