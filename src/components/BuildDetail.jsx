@@ -34,40 +34,72 @@ export default function BuildDetail() {
       <h3>{build.title}</h3>
       <p>{build.description}</p>
 
-      {/* Example: Display selected class, path, etc. from build JSON data */}
       <div>
         <strong>{t('Class')}:</strong> {classes.find(c => c.id === build.classId)?.name || t('Unknown')}
       </div>
+
       <div>
         <strong>{t('Path')}:</strong> {paths.find(p => p.id === build.pathId)?.name || t('Unknown')}
       </div>
+
       <div>
-        <strong>{t('Skills')}:</strong> 
-        <ul>
-          {build.skills?.map(skillId => (
-            <li key={skillId}>{skills.find(s => s.id === skillId)?.name || t('Unknown')}</li>
-          )) || t('None')}
-        </ul>
+        <strong>{t('Skills')}:</strong>
+        {build.skills && build.skills.length > 0 ? (
+          <ul>
+            {build.skills.map(skillId => {
+              const skill = skills.find(s => s.id === skillId)
+              return (
+                <li key={skillId}>
+                  {skill?.img && <img src={skill.img} alt={skill?.name} style={{ width: 30, marginRight: 8 }} />}
+                  {skill?.name || t('Unknown')}
+                </li>
+              )
+            })}
+          </ul>
+        ) : (
+          <p>{t('None')}</p>
+        )}
       </div>
+
       <div>
-        <strong>{t('Pets')}:</strong> 
-        <ul>
-          {build.pets?.map(petId => (
-            <li key={petId}>{pets.find(p => p.id === petId)?.name || t('Unknown')}</li>
-          )) || t('None')}
-        </ul>
+        <strong>{t('Pets')}:</strong>
+        {build.pets && build.pets.length > 0 ? (
+          <ul>
+            {build.pets.map(petId => {
+              const pet = pets.find(p => p.id === petId)
+              return (
+                <li key={petId}>
+                  {pet?.img && <img src={pet.img} alt={pet?.name} style={{ width: 30, marginRight: 8 }} />}
+                  {pet?.name || t('Unknown')}
+                </li>
+              )
+            })}
+          </ul>
+        ) : (
+          <p>{t('None')}</p>
+        )}
       </div>
+
       <div>
-        <strong>{t('Items')}:</strong> 
-        <ul>
-          {build.items?.map(itemId => (
-            <li key={itemId}>{items.find(i => i.id === itemId)?.name || t('Unknown')}</li>
-          )) || t('None')}
-        </ul>
+        <strong>{t('Items')}:</strong>
+        {build.items && build.items.length > 0 ? (
+          <ul>
+            {build.items.map(itemId => {
+              const item = items.find(i => i.id === itemId)
+              return (
+                <li key={itemId}>
+                  {item?.img && <img src={item.img} alt={item?.name} style={{ width: 30, marginRight: 8 }} />}
+                  {item?.name || t('Unknown')}
+                </li>
+              )
+            })}
+          </ul>
+        ) : (
+          <p>{t('None')}</p>
+        )}
       </div>
 
       <button onClick={() => navigate(`/edit/${id}`)}>{t('Edit Build')}</button>
     </div>
   )
 }
-// BuildDetail.jsx
