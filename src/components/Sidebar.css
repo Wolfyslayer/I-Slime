@@ -1,0 +1,49 @@
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -250px;
+  height: 100vh;
+  width: 250px;
+  background: #0b0b0b;
+  color: white;
+  padding: 30px 20px;
+  transition: 0.3s ease;
+  z-index: 1000;
+  box-shadow: 3px 0 20px rgba(0, 255, 255, 0.4);
+}
+
+.sidebar.active {
+  left: 0;
+}
+
+.sidebar h2 {
+  color: cyan;
+  margin-bottom: 20px;
+}
+
+.sidebar a {
+  display: block;
+  margin-bottom: 20px;
+  color: white;
+  text-decoration: none;
+  font-size: 1.1rem;
+  transition: 0.2s ease;
+}
+
+.sidebar a:hover {
+  color: cyan;
+}
+
+.menu-toggle {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: #111;
+  color: cyan;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 1100;
+  box-shadow: 0 0 12px cyan;
+}
