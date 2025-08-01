@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import '../Sidebar.css' // Eller behåll './Sidebar.css' om du använder det separat
+import '../index.css' // Eller behåll './Sidebar.css' om du använder det separat
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
   return (
