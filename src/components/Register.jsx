@@ -1,6 +1,6 @@
 // src/components/Register.jsx
 import React, { useState } from 'react'
-import { supabase } from '../supabaseClient'
+import { supabase } from '../lib/supabaseClient'
 
 export default function Register() {
   const [email, setEmail] = useState('')
