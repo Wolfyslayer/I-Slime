@@ -5,17 +5,14 @@ import '../index.css'
 import { useTranslation } from 'react-i18next'
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
-  const { t } = useTranslation()
   const [user, setUser] = useState(null)
+  const { t } = useTranslation()
 
   useEffect(() => {
     const getUser = async () => {
-      const { data, error } = await supabase.auth.getUser()
-      if (data?.user) {
-        setUser(data.user)
-      } else {
-        setUser(null)
-      }
+      const { data } = await supabase.auth.getUser()
+      if (data?.user) setUser(data.user)
+      else setUser(null)
     }
 
     getUser()
@@ -38,13 +35,13 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
         ☰
       </button>
       <div className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
-        <h2>{t('build_planner')}</h2>
+        <h2>{t('Build Planner')}</h2>
         <ul>
-          <li><Link to="/" onClick={toggleSidebar}>{t('all_builds')}</Link></li>
+          <li><Link to="/" onClick={toggleSidebar}>{t('All Builds')}</Link></li>
           {user && (
             <>
-              <li><Link to="/create-build" onClick={toggleSidebar}>{t('create_build')}</Link></li>
-              <li><Link to="/my-builds" onClick={toggleSidebar}>{t('my_builds')}</Link></li>
+              <li><Link to="/create-build" onClick={toggleSidebar}>{t('Create Build')}</Link></li>
+              <li><Link to="/my-builds" onClick={toggleSidebar}>{t('My Builds')}</Link></li>
               <li>
                 <button
                   onClick={async () => {
@@ -59,19 +56,19 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
                     padding: 0,
                   }}
                 >
-                  {t('logout')}
+                  {t('Log Out')}
                 </button>
               </li>
             </>
           )}
           {!user && (
             <>
-              <li><Link to="/login" onClick={toggleSidebar}>{t('login')}</Link></li>
-              <li><Link to="/register" onClick={toggleSidebar}>{t('register')}</Link></li>
+              <li><Link to="/login" onClick={toggleSidebar}>{t('Log In')}</Link></li>
+              <li><Link to="/register" onClick={toggleSidebar}>{t('Register')}</Link></li>
             </>
           )}
           {isAdmin && (
-            <li><Link to="/admin" onClick={toggleSidebar}>{t('admin_panel')}</Link></li>
+            <li><Link to="/admin" onClick={toggleSidebar}>{t('Admin Panel')}</Link></li>
           )}
         </ul>
       </div>
