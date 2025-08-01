@@ -7,6 +7,17 @@ import Login from './components/Login'
 import CreateBuild from './components/CreateBuild'
 import BuildList from './components/BuildList'
 import './index.css'
+import MyBuilds from './components/MyBuilds'
+
+<Route
+  path="/my-builds"
+  element={
+    <ProtectedRoute>
+      <MyBuilds />
+    </ProtectedRoute>
+  }
+/>
+
 
 export default function App() {
   return (
