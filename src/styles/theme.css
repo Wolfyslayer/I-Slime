@@ -1,4 +1,4 @@
-/* theme.css */
+/* theme.css – ditt nya tema över hela appen */
 body {
   margin: 0;
   padding: 0;
@@ -14,6 +14,17 @@ h1, h2 {
   text-align: center;
 }
 
+.app-container {
+  display: flex;
+}
+
+.main-content {
+  margin-left: 220px;
+  padding: 2rem;
+  flex: 1;
+}
+
+/* Flex för komponentsektioner */
 .section {
   margin: 2rem auto;
   max-width: 1000px;
@@ -23,6 +34,7 @@ h1, h2 {
   box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
 }
 
+/* Samma val-styling i hela appen */
 .choices {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
@@ -59,6 +71,7 @@ h1, h2 {
   font-size: 0.8rem;
 }
 
+/* Items-fönster */
 .item-container {
   background: rgba(0, 0, 0, 0.4);
   border: 1px solid #0ff;
@@ -66,47 +79,34 @@ h1, h2 {
   border-radius: 0.5rem;
   margin-bottom: 1rem;
 }
-
 .item-header {
   font-weight: bold;
   margin-bottom: 0.5rem;
   font-size: 1.1rem;
   color: #0ff;
 }
-
 .special-stats {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
 }
-
 .stat-select label {
   display: block;
   font-size: 0.9rem;
   margin-bottom: 0.2rem;
 }
-
-.stat-select select {
+.stat-select select, .stat-select input {
   padding: 0.2rem;
   border-radius: 0.3rem;
   border: none;
   background: #222;
   color: #fff;
 }
-
 .atk-speed {
   margin-top: 0.5rem;
 }
 
-/* Sidebar and global adjustments */
-.sidebar {
-  background: rgba(0,0,0,0.7);
-  box-shadow: 0 0 10px #00f9ff;
-  color: #00f9ff;
-  font-family: 'Orbitron', sans-serif;
-}
-
-/* Buttons */
+/* Buttons globalt */
 button {
   background-color: #00f9ff;
   border: none;
@@ -117,8 +117,90 @@ button {
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
-
 button:hover {
   background-color: #00d4ff;
 }
 
+/* Sidebar styling */
+.sidebar {
+  background: rgba(0, 0, 0, 0.8);
+  width: 220px;
+  height: 100vh;
+  padding: 1.5rem 1rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  box-shadow: 0 0 20px #00f9ff;
+  font-family: 'Orbitron', sans-serif;
+  color: #00f9ff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  user-select: none;
+  z-index: 1000;
+}
+.sidebar-title {
+  font-size: 1.8rem;
+  font-weight: 900;
+  margin-bottom: 2rem;
+  text-align: center;
+  text-shadow: 0 0 8px #00f9ff;
+}
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-grow: 1;
+}
+.sidebar-item {
+  padding: 0.75rem;
+  margin-bottom: 0.8rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-align: center;
+}
+.sidebar-item:hover {
+  background-color: rgba(0, 255, 255, 0.2);
+  box-shadow: 0 0 10px #00f9ff;
+}
+.sidebar-item.active {
+  background-color: #00f9ff;
+  color: #000;
+  box-shadow: 0 0 15px #00f9ff;
+}
+.sidebar-footer {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin-top: auto;
+}
+
+/* Mobilvy för sidebar */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 0.5rem;
+  }
+  .sidebar-menu {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-around;
+  }
+  .sidebar-item {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+  }
+  .main-content {
+    margin-left: 0;
+    padding-bottom: 60px;
+  }
+}
