@@ -6,6 +6,7 @@ import Register from './components/Register'
 import Login from './components/Login'
 import CreateBuild from './components/CreateBuild'
 import BuildList from './components/BuildList'
+import './index.css'
 
 export default function App() {
   return (
