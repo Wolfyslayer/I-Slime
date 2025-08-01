@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { supabase, ADMIN_USERS } from 'src/lib/supabaseClient'
+import { supabase, ADMIN_USERS } from '../lib/supabaseClient'
 
 export default function AdminPanel() {
   const [reports, setReports] = useState([])
