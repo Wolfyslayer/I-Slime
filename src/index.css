@@ -5,7 +5,7 @@
   box-sizing: border-box;
 }
 
-/* ===== Grundläggande stil ===== */
+/* ===== Body & font ===== */
 body {
   font-family: 'Orbitron', sans-serif;
   background: radial-gradient(circle at top, #0d0d0d 0%, #001f2f 100%);
@@ -14,56 +14,40 @@ body {
   overflow-x: hidden;
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
-}
-
-button {
-  font-family: inherit;
-  cursor: pointer;
+/* ===== Sidebar toggle knapp ===== */
+.sidebar-toggle {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  background-color: #0077ff;
   border: none;
-  background: none;
-  color: inherit;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 1100;
+  border-radius: 4px;
+  padding: 6px 12px;
+  transition: background-color 0.3s;
 }
 
-/* ===== Komponentkort ===== */
-.card {
-  background: #000;
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 0 15px cyan;
-  margin-bottom: 20px;
-  transition: transform 0.2s;
+.sidebar-toggle:hover {
+  background-color: #005bb5;
 }
 
-.card:hover {
-  transform: scale(1.02);
-}
-
-/* ===== Main Content ===== */
-.main-content {
-  padding: 40px 20px;
-  margin-left: 0;
-  transition: margin-left 0.3s ease;
-}
-
-.sidebar-active.main-content {
-  margin-left: 250px;
-}
-
-/* ===== Sidebar och Toggle-knapp ===== */
+/* ===== Sidebar ===== */
 .sidebar {
   position: fixed;
   top: 0;
   left: 0;
   width: 250px;
   height: 100vh;
-  background-color: #111;
+  background: #001f2f;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.7);
   padding: 20px;
-  transform: translateX(-100%);
+  overflow-y: auto;
+  transform: translateX(-260px);
   transition: transform 0.3s ease;
-  z-index: 1000;
+  z-index: 1050;
 }
 
 .sidebar.open {
@@ -71,53 +55,70 @@ button {
 }
 
 .sidebar h2 {
-  color: cyan;
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  font-size: 1.8rem;
+  color: #00cfff;
 }
 
 .sidebar ul {
   list-style: none;
-  padding: 0;
 }
 
 .sidebar ul li {
-  margin-bottom: 15px;
+  margin-bottom: 1.2rem;
 }
 
-.sidebar ul li a {
+.sidebar ul li a,
+.sidebar ul li button.logout-btn {
   color: white;
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 1.1rem;
+  text-decoration: none;
+  display: block;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 6px 0;
+  width: 100%;
+  text-align: left;
+  transition: color 0.3s;
+  font-family: inherit;
 }
 
-.sidebar-toggle {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  background-color: cyan;
-  color: #000;
-  padding: 10px 15px;
-  font-size: 20px;
-  z-index: 1100;
-  border-radius: 4px;
-  transition: background-color 0.2s;
+.sidebar ul li a:hover,
+.sidebar ul li button.logout-btn:hover {
+  color: #00cfff;
 }
 
-.sidebar-toggle:hover {
-  background-color: #00ffff;
+/* ===== Main content ===== */
+.main-content {
+  padding: 40px 20px;
+  margin-left: 0;
+  transition: margin-left 0.3s ease;
+}
+
+/* När sidebar är öppen, flytta main content */
+.sidebar.open ~ .main-content {
+  margin-left: 250px;
 }
 
 /* ===== Responsivitet ===== */
 @media (max-width: 768px) {
   .sidebar {
     width: 200px;
+    transform: translateX(-210px);
   }
 
-  .sidebar-active.main-content {
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar.open ~ .main-content {
     margin-left: 200px;
   }
 
-  .card {
-    padding: 15px;
+  .sidebar-toggle {
+    font-size: 20px;
+    padding: 5px 10px;
   }
 }
