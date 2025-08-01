@@ -1,54 +1,34 @@
-// src/components/Sidebar.jsx
-import React, { useState, useEffect } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { useUser } from '../context/UserContext'
-import './Sidebar.css'
+import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { FaBars, FaTimes } from "react-icons/fa";
+import "./Sidebar.css"; // Anpassa om du har stil här
 
-export default function Sidebar() {
-  const { user, logout } = useUser()
-  const navigate = useNavigate()
-  const location = useLocation()
-  const [isOpen, setIsOpen] = useState(false)
+const Sidebar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
 
-  const toggleSidebar = () => setIsOpen(!isOpen)
+  const toggleSidebar = () => setIsOpen(!isOpen);
+  const closeSidebar = () => setIsOpen(false);
 
-  const handleLogout = () => {
-    logout()
-    navigate('/')
-    setIsOpen(false)
-  }
-
-  // Close sidebar when navigating
-  useEffect(() => {
-    setIsOpen(false)
-  }, [location.pathname])
+  const isActive = (path) => location.pathname === path;
 
   return (
     <>
       <button className="sidebar-toggle" onClick={toggleSidebar}>
-        ☰
+        {isOpen ? <FaTimes /> : <FaBars />}
       </button>
-      <div className={`sidebar ${isOpen ? 'open' : ''}`}>
-        <h2>I-Slime</h2>
-        <nav>
-          <ul>
-            <li><Link to="/">{'Home'}</Link></li>
-            {user ? (
-              <>
-                <li><Link to="/my-builds">{'My Builds'}</Link></li>
-                <li><Link to="/create-build">{'Create Build'}</Link></li>
-                <li><Link to="/admin">{'Admin Panel'}</Link></li>
-                <li><button onClick={handleLogout}>{'Logout'}</button></li>
-              </>
-            ) : (
-              <>
-                <li><Link to="/login">{'Login'}</Link></li>
-                <li><Link to="/register">{'Sign Up'}</Link></li>
-              </>
-            )}
-          </ul>
-        </nav>
-      </div>
+      <nav className={`sidebar ${isOpen ? "open" : ""}`}>
+        <ul>
+          <li><Link to="/" onClick={closeSidebar} className={isActive("/") ? "active" : ""}>Home</Link></li>
+          <li><Link to="/create" onClick={closeSidebar} className={isActive("/create") ? "active" : ""}>Create Build</Link></li>
+          <li><Link to="/my-builds" onClick={closeSidebar} className={isActive("/my-builds") ? "active" : ""}>My Builds</Link></li>
+          <li><Link to="/admin" onClick={closeSidebar} className={isActive("/admin") ? "active" : ""}>Admin</Link></li>
+          <li><Link to="/login" onClick={closeSidebar} className={isActive("/login") ? "active" : ""}>Login</Link></li>
+          <li><Link to="/register" onClick={closeSidebar} className={isActive("/register") ? "active" : ""}>Sign Up</Link></li>
+        </ul>
+      </nav>
     </>
-  )
-}
+  );
+};
+
+export default Sidebar;
