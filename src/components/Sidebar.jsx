@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { supabase, ADMIN_USERS } from 'src/lib/supabaseClient'
+import { supabase, ADMIN_USERS } from '../lib/supabaseClient'
 import '../index.css'
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
