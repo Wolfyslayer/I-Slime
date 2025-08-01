@@ -1,64 +1,46 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
-import { useNavigate } from 'react-router-dom'
 
 export default function CreateBuild() {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [user, setUser] = useState(null)
-  const navigate = useNavigate()
+  const [error, setError] = useState('')
 
-  useEffect(() => {
-    const getUser = async () => {
-      const { data, error } = await supabase.auth.getUser()
-      if (error || !data.user) {
-        alert('Du måste vara inloggad för att skapa builds.')
-        navigate('/login')
-      } else {
-        setUser(data.user)
-      }
-    }
-    getUser()
-  }, [navigate])
-
-  async function handleSubmit(e) {
+  const handleCreate = async (e) => {
     e.preventDefault()
-    setLoading(true)
-
+    const user = supabase.auth.user()
+    if (!user) {
+      setError('You must be logged in to create a build.')
+      return
+    }
     const { error } = await supabase
       .from('builds')
       .insert([{ title, description, user_id: user.id }])
-
-    setLoading(false)
-
-    if (error) {
-      alert('Fel vid skapande: ' + error.message)
-    } else {
-      alert('Build skapad!')
-      navigate('/')
+    if (error) setError(error.message)
+    else {
+      alert('Build created!')
+      setTitle('')
+      setDescription('')
     }
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Skapa ny Build</h2>
+    <form onSubmit={handleCreate}>
       <input
         type="text"
-        placeholder="Titel"
+        placeholder="Title"
         value={title}
-        onChange={(e) => setTitle(e.target.value)}
+        onChange={e => setTitle(e.target.value)}
         required
       />
       <textarea
-        placeholder="Beskrivning"
+        placeholder="Description"
         value={description}
-        onChange={(e) => setDescription(e.target.value)}
+        onChange={e => setDescription(e.target.value)}
         required
       />
-      <button type="submit" disabled={loading}>
-        {loading ? 'Sparar...' : 'Spara Build'}
-      </button>
+      <button type="submit">Create Build</button>
+      {error && <p style={{color:'red'}}>{error}</p>}
     </form>
   )
 }
