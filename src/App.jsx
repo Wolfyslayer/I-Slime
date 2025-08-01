@@ -1,15 +1,29 @@
 import React from 'react'
-import { Routes, Route } from 'react-router-dom'
-import CreateBuild from './components/CreateBuild'
-import Home from './components/Home'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import Navbar from './components/Navbar'
+import ProtectedRoute from './routes/ProtectedRoute'
+import Register from './components/Register'
 import Login from './components/Login'
+import CreateBuild from './components/CreateBuild'
+import BuildList from './components/BuildList'
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/create" element={<CreateBuild />} />
-      <Route path="/login" element={<Login />} />
-    </Routes>
+    <Router>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<BuildList />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/create-build"
+          element={
+            <ProtectedRoute>
+              <CreateBuild />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </Router>
   )
 }
