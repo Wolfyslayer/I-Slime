@@ -1,6 +1,7 @@
 import React from 'react'
 import { Navigate } from 'react-router-dom'
-import supabase from '../lib/supabaseClient'
+import { supabase } from '../lib/supabaseClient'
+
 
 export default function ProtectedRoute({ children }) {
   const user = supabase.auth.user()
