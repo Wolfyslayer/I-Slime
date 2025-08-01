@@ -1,19 +1,25 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import Sidebar from './components/Sidebar'
 import ProtectedRoute from './routes/ProtectedRoute'
 import Register from './components/Register'
 import Login from './components/Login'
 import CreateBuild from './components/CreateBuild'
 import BuildList from './components/BuildList'
 import MyBuilds from './components/MyBuilds'
+import Sidebar from './components/Sidebar'
 import './index.css'
 
 export default function App() {
+  const [sidebarOpen, setSidebarOpen] = useState(true)
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen)
+  }
+
   return (
     <Router>
-      <Sidebar />
-      <main className="main-content">
+      <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+      <div className={`main-content`}>
         <Routes>
           <Route path="/" element={<BuildList />} />
           <Route path="/register" element={<Register />} />
@@ -35,7 +41,7 @@ export default function App() {
             }
           />
         </Routes>
-      </main>
+      </div>
     </Router>
   )
 }
