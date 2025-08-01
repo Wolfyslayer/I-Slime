@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
 import { supabase, ADMIN_USERS } from '../lib/supabaseClient'
 import '../index.css'
+import { useTranslation } from 'react-i18next'
 
 export default function Sidebar({ isOpen, toggleSidebar }) {
   const { t } = useTranslation()
@@ -38,13 +38,13 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
         ☰
       </button>
       <div className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
-        <h2>{t('buildPlanner')}</h2>
+        <h2>{t('build_planner')}</h2>
         <ul>
-          <li><Link to="/" onClick={toggleSidebar}>{t('allBuilds')}</Link></li>
+          <li><Link to="/" onClick={toggleSidebar}>{t('all_builds')}</Link></li>
           {user && (
             <>
-              <li><Link to="/create-build" onClick={toggleSidebar}>{t('createBuild')}</Link></li>
-              <li><Link to="/my-builds" onClick={toggleSidebar}>{t('myBuilds')}</Link></li>
+              <li><Link to="/create-build" onClick={toggleSidebar}>{t('create_build')}</Link></li>
+              <li><Link to="/my-builds" onClick={toggleSidebar}>{t('my_builds')}</Link></li>
               <li>
                 <button
                   onClick={async () => {
@@ -71,7 +71,7 @@ export default function Sidebar({ isOpen, toggleSidebar }) {
             </>
           )}
           {isAdmin && (
-            <li><Link to="/admin" onClick={toggleSidebar}>{t('adminPanel')}</Link></li>
+            <li><Link to="/admin" onClick={toggleSidebar}>{t('admin_panel')}</Link></li>
           )}
         </ul>
       </div>
