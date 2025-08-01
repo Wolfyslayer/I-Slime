@@ -1,47 +1,32 @@
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+// src/components/BuildList.jsx
+import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
+import { Link } from 'react-router-dom'
 
 export default function BuildList() {
   const [builds, setBuilds] = useState([])
-    const [loading, setLoading] = useState(true)
 
-      useEffect(() => {
-          fetchBuilds()
-            }, [])
+  useEffect(() => {
+    async function fetchBuilds() {
+      const { data, error } = await supabase
+        .from('builds')
+        .select('*')
+        .order('created_at', { ascending: false })
 
-              async function fetchBuilds() {
-                  setLoading(true)
-                      const { data, error } = await supabase
-                            .from('builds')
-                                  .select('id, title, description, created_at')
+      if (!error) setBuilds(data)
+    }
+    fetchBuilds()
+  }, [])
 
-                                      if (error) {
-                                            console.error(error)
-                                                } else {
-                                                      setBuilds(data)
-                                                          }
-                                                              setLoading(false)
-                                                                }
-
-                                                                  if (loading) return <p>Laddar builds...</p>
-
-                                                                    return (
-                                                                        <div>
-                                                                              <h2>Builds</h2>
-                                                                                    {builds.length === 0 && <p>Inga builds än.</p>}
-                                                                                          <ul>
-                                                                                                  {builds.map((build) => (
-                                                                                                            <li key={build.id}>
-                                                                                                                        <Link to={`/build/${build.id}`}>
-                                                                                                                                      <strong>{build.title}</strong>
-                                                                                                                                                  </Link>
-                                                                                                                                                              <p>{build.description}</p>
-                                                                                                                                                                          <small>Skapad: {new Date(build.created_at).toLocaleDateString()}</small>
-                                                                                                                                                                                    </li>
-                                                                                                                                                                                            ))}
-                                                                                                                                                                                                  </ul>
-                                                                                                                                                                                                      </div>
-                                                                                                                                                                                                        )
-                                                                                                                                                                                                        }
-                                                                                                                                                                                                        
+  return (
+    <div>
+      <h2>Alla Builds</h2>
+      {builds.map(build => (
+        <div key={build.id} style={{ borderBottom: '1px solid #ccc', marginBottom: '1rem' }}>
+          <h3><Link to={`/build/${build.id}`}>{build.title}</Link></h3>
+          <p>{build.description}</p>
+        </div>
+      ))}
+    </div>
+  )
+}
