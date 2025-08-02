@@ -1,34 +1,42 @@
-import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { FaBars, FaTimes } from "react-icons/fa";
-import "./Sidebar.css"; // Anpassa om du har stil här
+// src/components/Sidebar.jsx
+import React, { useState, useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import { useUser } from '../context/UserContext'
+import './Sidebar.css'
 
-const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const location = useLocation();
+export default function Sidebar() {
+  const { user } = useUser()
+  const location = useLocation()
+  const [isOpen, setIsOpen] = useState(false)
 
-  const toggleSidebar = () => setIsOpen(!isOpen);
-  const closeSidebar = () => setIsOpen(false);
+  const toggleSidebar = () => setIsOpen(!isOpen)
 
-  const isActive = (path) => location.pathname === path;
+  // Stäng sidomeny automatiskt vid navigering
+  useEffect(() => {
+    setIsOpen(false)
+  }, [location.pathname])
 
   return (
     <>
-      <button className="sidebar-toggle" onClick={toggleSidebar}>
-        {isOpen ? <FaTimes /> : <FaBars />}
+      <button className="hamburger" onClick={toggleSidebar}>
+        ☰
       </button>
-      <nav className={`sidebar ${isOpen ? "open" : ""}`}>
-        <ul>
-          <li><Link to="/" onClick={closeSidebar} className={isActive("/") ? "active" : ""}>Home</Link></li>
-          <li><Link to="/create-build" onClick={closeSidebar} className={isActive("/create-build") ? "active" : ""}>Create Build</Link></li>
-          <li><Link to="/my-builds" onClick={closeSidebar} className={isActive("/my-builds") ? "active" : ""}>My Builds</Link></li>
-          <li><Link to="/admin" onClick={closeSidebar} className={isActive("/admin") ? "active" : ""}>AdminPanel</Link></li>
-          <li><Link to="/login" onClick={closeSidebar} className={isActive("/login") ? "active" : ""}>Login</Link></li>
-          <li><Link to="/register" onClick={closeSidebar} className={isActive("/register") ? "active" : ""}>Sign Up</Link></li>
-        </ul>
-      </nav>
+      <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
+        <h2>I-Slime</h2>
+        <nav>
+          <Link to="/" className={location.pathname === '/' ? 'active' : ''}>All Builds</Link>
+          {user && (
+            <>
+              <Link to="/create-build" className={location.pathname === '/create-build' ? 'active' : ''}>Create Build</Link>
+              <Link to="/my-builds" className={location.pathname === '/my-builds' ? 'active' : ''}>My Builds</Link>
+              {user && user.id && import.meta.env.VITE_ADMIN_IDS?.split(',').includes(user.id) && (
+                <Link to="/admin" className={location.pathname === '/admin' ? 'active' : ''}>Admin</Link>
+              )}
+            </>
+          )}
+          {!user && <Link to="/login">Login</Link>}
+        </nav>
+      </aside>
     </>
   )
-};
-
-export default Sidebar;
+}
