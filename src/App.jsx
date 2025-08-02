@@ -2,7 +2,7 @@
 import React from 'react'
 import { UserProvider } from './context/UserContext'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-// import Sidebar from './components/Sidebar'
+import Sidebar from './components/Sidebar'
 import BuildList from './components/BuildList'
 import BuildDetail from './components/BuildDetail'
 import CreateBuild from './components/CreateBuild'
