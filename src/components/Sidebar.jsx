@@ -5,7 +5,8 @@ import { useUser } from '../context/UserContext'
 import './Sidebar.css'
 
 export default function Sidebar() {
-  const { user } = useUser()
+  const { user, loading } = useUser()
+  if (loading) return null
   const location = useLocation()
   const [isOpen, setIsOpen] = useState(false)
 
