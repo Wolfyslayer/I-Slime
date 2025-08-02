@@ -1,63 +1,74 @@
-/* src/components/Sidebar.css */
+/* Sidebar.css */
 .sidebar {
   position: fixed;
   top: 0;
-  left: -240px;
+  left: 0;
   width: 240px;
   height: 100vh;
-  background-color: #1e1e2f;
+  background-color: #111;
   color: white;
   padding: 20px;
-  transition: left 0.3s ease;
-  z-index: 1000;
-}
-
-.sidebar.open {
-  left: 0;
-}
-
-.sidebar-toggle {
-  position: fixed;
-  top: 15px;
-  left: 15px;
-  z-index: 1100;
-  background: #1e1e2f;
-  color: white;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
+  overflow-y: auto;
+  transition: transform 0.3s ease-in-out;
+  z-index: 100;
 }
 
 .sidebar h2 {
-  margin-top: 0;
-  font-size: 24px;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
 }
 
-.sidebar nav ul {
-  list-style: none;
-  padding: 0;
-}
-
-.sidebar nav ul li {
-  margin-bottom: 10px;
-}
-
-.sidebar nav ul li a,
-.sidebar nav ul li button {
-  color: white;
+.sidebar nav a {
+  display: block;
+  padding: 10px 0;
+  color: #0ff;
   text-decoration: none;
+  font-size: 1rem;
+}
+
+.sidebar nav a.active {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.hamburger {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 200;
   background: none;
   border: none;
-  padding: 0;
-  font: inherit;
-  cursor: pointer;
+  font-size: 2rem;
+  color: #0ff;
+  display: none;
 }
 
-@media (min-width: 768px) {
+/* Responsiv */
+@media (max-width: 768px) {
   .sidebar {
-    left: 0;
+    transform: translateX(-100%);
   }
-  .sidebar-toggle {
-    display: none;
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .hamburger {
+    display: block;
+  }
+
+  .main-content {
+    margin-left: 0 !important;
+  }
+}
+
+/* Desktop text fix */
+@media (min-width: 769px) {
+  .sidebar nav a {
+    font-size: 1.1rem;
+  }
+
+  .main-content {
+    margin-left: 240px;
   }
 }
