@@ -5,9 +5,11 @@ import { useUser } from '../context/UserContext'
 import './Sidebar.css'
 
 export default function Sidebar() {
-  const { user, isAdmin, loading } = useUser()
+  const { user, loading } = useUser()
   const location = useLocation()
   const [isOpen, setIsOpen] = useState(false)
+
+  const toggleSidebar = () => setIsOpen(!isOpen)
 
   useEffect(() => {
     setIsOpen(false)
@@ -17,25 +19,32 @@ export default function Sidebar() {
 
   return (
     <>
-      <button className="hamburger" onClick={() => setIsOpen(!isOpen)}>☰</button>
+      <button className="hamburger" onClick={toggleSidebar}>
+        ☰
+      </button>
       <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
         <h2>I-Slime</h2>
         <nav>
-          <NavLink to="/" end>All Builds</NavLink>
+          <NavLink to="/" end>{'All Builds'}</NavLink>
+
           {user && (
             <>
-              <NavLink to="/CreateBuild">Create Build</NavLink>
-              <NavLink to="/MyBuilds">My Builds</NavLink>
-              {isAdmin && <NavLink to="/AdminPanel">Admin</NavLink>}
+              <NavLink to="/CreateBuild">{'Create Build'}</NavLink>
+              <NavLink to="/MyBuilds">{'My Builds'}</NavLink>
+              {user.id && import.meta.env.VITE_ADMIN_IDS?.split(',').includes(user.id) && (
+                <NavLink to="/AdminPanel">{'Admin'}</NavLink>
+              )}
             </>
           )}
+
           {!user && (
-  <>
-    <NavLink to="/login">{t('Login')}</NavLink>
-    <NavLink to="/register">{t('Register')}</NavLink>
-    <NavLink to="/forgot-password">{t('Forgot Password')}</NavLink>
-  </>
-)}
+            <>
+              <NavLink to="/login">{'Login'}</NavLink>
+              <NavLink to="/register">{'Register'}</NavLink>
+              <NavLink to="/forgot-password">{'Forgot Password'}</NavLink>
+            </>
+          )}
+        </nav>
       </aside>
     </>
   )
