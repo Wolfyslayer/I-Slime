@@ -19,12 +19,16 @@ export default function Register() {
     const { data, error } = await supabase.auth.signUp(
       { email, password },
       {
-        redirectTo: 'https://i-slime-builds.netlify.app/welcome'  // Korrekt redirect URL
+        redirectTo: 'https://i-slime-builds.netlify.app/welcome'
       }
     )
 
     if (error) {
-      setError(error.message)
+      if (error.message.toLowerCase().includes('already registered') || error.message.toLowerCase().includes('duplicate')) {
+        setError('This email is already registered. Please log in or reset your password.')
+      } else {
+        setError(error.message)
+      }
     } else {
       setSuccess('Check your email to confirm your account.')
       setEmail('')
@@ -56,7 +60,12 @@ export default function Register() {
       </form>
 
       {error && <p className="error">{error}</p>}
-      {success && <p className="success">{success}</p>}
+      {success && (
+        <p className="success">
+          {success} <br />
+          <a href="/login">Go to login</a>
+        </p>
+      )}
     </div>
   )
 }
