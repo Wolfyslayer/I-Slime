@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react'
+import React, { createContext, useState, useContext } from 'react'
 import { classes, paths, skills, pets, items } from '../../data/data'
 
 // BuildContext för att hantera form-state globalt
@@ -51,4 +51,13 @@ export function BuildProvider({ children }) {
       {children}
     </BuildContext.Provider>
   )
+}
+
+// Här lägger vi till useBuild-hooken som du kan importera och använda
+export function useBuild() {
+  const context = useContext(BuildContext)
+  if (!context) {
+    throw new Error('useBuild must be used within a BuildProvider')
+  }
+  return context
 }
