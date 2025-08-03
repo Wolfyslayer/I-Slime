@@ -9,8 +9,6 @@ export default function Sidebar() {
   const location = useLocation()
   const [isOpen, setIsOpen] = useState(false)
 
-  const toggleSidebar = () => setIsOpen(!isOpen)
-
   useEffect(() => {
     setIsOpen(false)
   }, [location.pathname])
@@ -19,16 +17,16 @@ export default function Sidebar() {
 
   return (
     <>
-      <button className="hamburger" onClick={toggleSidebar}>☰</button>
+      <button className="hamburger" onClick={() => setIsOpen(!isOpen)}>☰</button>
       <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
         <h2>I-Slime</h2>
         <nav>
           <NavLink to="/" end>All Builds</NavLink>
           {user && (
             <>
-              <NavLink to="/create-build">Create Build</NavLink>
-              <NavLink to="/my-builds">My Builds</NavLink>
-              {isAdmin && <NavLink to="/admin">Admin</NavLink>}
+              <NavLink to="/CreateBuild">Create Build</NavLink>
+              <NavLink to="/MyBuilds">My Builds</NavLink>
+              {isAdmin && <NavLink to="/AdminPanel">Admin</NavLink>}
             </>
           )}
           {!user && <NavLink to="/login">Login</NavLink>}
