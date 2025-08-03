@@ -1,58 +1,72 @@
-import React, { useContext, useState } from 'react'
-import { BuildContext } from './BuildSystem/BuildContext'
-import BuildForm from './BuildSystem/BuildForm'
-import { supabase } from '../lib/supabaseClient'
-import { useTranslation } from 'react-i18next'
+import React, { useState } from 'react';
+import { useUser } from '../UserContext';
+import { supabase } from '../supabase';
+import { useNavigate } from 'react-router-dom';
+import { BuildProvider, useBuild } from './BuildSystem/BuildContext';
+import BuildForm from './BuildSystem/BuildForm';
 
-export default function CreateBuild() {
-  const { title, description, selectedClass, selectedPath,
-          selectedSkills, selectedPets, selectedItems,
-          setTitle, setDescription, resetBuild } = useContext(BuildContext)
-  const { t } = useTranslation()
-  const [error, setError] = useState('')
+function CreateBuildInner() {
+  const { user } = useUser();
+  const navigate = useNavigate();
+  const { build } = useBuild();
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [error, setError] = useState(null);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
-
-    const {
-      data: { user }
-    } = await supabase.auth.getUser()
-
-    if (!user || !selectedClass || !selectedPath) {
-      setError(t('Please complete all required fields and be logged in.'))
-      return
+  const handleSave = async () => {
+    if (!title || !build.class || !build.path) {
+      setError('Titel, klass och utvecklingsväg krävs.');
+      return;
     }
 
-    const { error: insertError } = await supabase
-      .from('builds')
-      .insert([{
+    const { error: insertError } = await supabase.from('builds').insert([
+      {
         title,
         description,
-        classId: selectedClass,
-        pathId: selectedPath,
-        skills: selectedSkills,
-        pets: selectedPets,
-        items: selectedItems,
+        class_id: build.class,
+        path_id: build.path,
+        skills: build.skills,
+        pets: build.pets,
+        items: build.items,
         user_id: user.id
-      }])
+      }
+    ]);
 
     if (insertError) {
-      setError(insertError.message)
+      setError('Kunde inte spara builden.');
+      console.error(insertError);
     } else {
-      alert(t('Build created!'))
-      resetBuild()
+      navigate('/builds');
     }
-  }
+  };
 
   return (
-    <div className="main-content" style={{ maxWidth: 600, margin: '0 auto' }}>
-      <h2>{t('Create New Build')}</h2>
-      <form onSubmit={handleSubmit}>
-        <BuildForm />
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <button type="submit">{t('Create Build')}</button>
-      </form>
+    <div className="create-build">
+      <h1>Skapa Build</h1>
+
+      {error && <div className="error">{error}</div>}
+
+      <label>
+        Titel:
+        <input type="text" value={title} onChange={e => setTitle(e.target.value)} />
+      </label>
+
+      <label>
+        Beskrivning:
+        <textarea value={description} onChange={e => setDescription(e.target.value)} />
+      </label>
+
+      <BuildForm />
+
+      <button onClick={handleSave}>Spara Build</button>
     </div>
-  )
+  );
+}
+
+export default function CreateBuild() {
+  return (
+    <BuildProvider>
+      <CreateBuildInner />
+    </BuildProvider>
+  );
 }
