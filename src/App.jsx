@@ -26,14 +26,14 @@ export default function App() {
           <main className="main-content" style={{ padding: '20px' }}>
             <Routes>
               <Route path="/" element={<BuildList />} />
-              <Route path="/BuildDetail/:id" element={<BuildDetail />} />
-              <Route path="/CreateBuild" element={
+              <Route path="/build-detail/:id" element={<BuildDetail />} />
+              <Route path="/create-build" element={
                 <ProtectedRoute><CreateBuild /></ProtectedRoute>
               } />
-              <Route path="/MyBuilds" element={
+              <Route path="/my-builds" element={
                 <ProtectedRoute><MyBuilds /></ProtectedRoute>
               } />
-              <Route path="/EditBuild/:id" element={
+              <Route path="/edit-build/:id" element={
                 <ProtectedRoute><EditBuild /></ProtectedRoute>
               } />
               <Route path="/AdminPanel" element={
