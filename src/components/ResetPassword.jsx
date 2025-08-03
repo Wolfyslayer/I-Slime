@@ -1,23 +1,24 @@
+
 import React, { useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { supabase } from '../lib/supabaseClient'  // Importera klienten här
+import { useSearchParams, useNavigate } from 'react-router-dom'
+import { supabase } from '../lib/supabaseClient'
 import { useTranslation } from 'react-i18next'
 import '../styles/Auth.css'
-
-
-
 
 export default function ResetPassword() {
   const { t } = useTranslation()
   const [searchParams] = useSearchParams()
-  const accessToken = searchParams.get('access_token')
-  const refreshToken = searchParams.get('refresh_token') || '' // kan finnas i URL eller tom sträng
+  const navigate = useNavigate()
+
+  const accessToken = searchParams.get('token') // OBS! Supabase skickar token som "token" (inte "access_token") i URL
+  const refreshToken = searchParams.get('refresh_token') || ''
 
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
+  const [passwordResetDone, setPasswordResetDone] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -52,10 +53,12 @@ export default function ResetPassword() {
 
       // Uppdatera lösenord
       const { error: updateError } = await supabase.auth.updateUser({ password })
+
       if (updateError) {
         setError(updateError.message)
       } else {
         setMessage(t('Password has been reset. You can now log in.'))
+        setPasswordResetDone(true)
       }
     } catch (err) {
       setError(err.message)
@@ -68,6 +71,18 @@ export default function ResetPassword() {
       <div className="auth-container">
         <h2>{t('Password Reset')}</h2>
         <p>{t('Invalid or missing token')}</p>
+      </div>
+    )
+  }
+
+  if (passwordResetDone) {
+    return (
+      <div className="auth-container">
+        <h2>{t('Password Reset')}</h2>
+        <p className="success">{message}</p>
+        <button onClick={() => navigate('/login')}>
+          {t('Go to Login')}
+        </button>
       </div>
     )
   }
