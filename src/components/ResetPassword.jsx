@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { supabase } from '../lib/supabase'  // Importera klienten här
+import { supabase } from '../lib/supabaseClient'  // Importera klienten här
 import { useTranslation } from 'react-i18next'
 import '../styles/Auth.css'
 
