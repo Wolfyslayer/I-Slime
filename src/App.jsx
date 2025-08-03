@@ -13,6 +13,7 @@ import Register from './components/Register'
 import ForgotPassword from './components/ForgotPassword'
 import ResetPassword from './components/ResetPassword'
 import ProtectedRoute from './routes/ProtectedRoute'
+import Welcome from './components/Welcome'
 import './styles/theme.css'
 import './components/Sidebar.css'
 
@@ -42,6 +43,7 @@ export default function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/welcome" element={<Welcome />} />
             </Routes>
           </main>
         </div>
