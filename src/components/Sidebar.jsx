@@ -29,8 +29,13 @@ export default function Sidebar() {
               {isAdmin && <NavLink to="/AdminPanel">Admin</NavLink>}
             </>
           )}
-          {!user && <NavLink to="/login">Login</NavLink>}
-        </nav>
+          {!user && (
+  <>
+    <NavLink to="/login">{t('Login')}</NavLink>
+    <NavLink to="/register">{t('Register')}</NavLink>
+    <NavLink to="/forgot-password">{t('Forgot Password')}</NavLink>
+  </>
+)}
       </aside>
     </>
   )
