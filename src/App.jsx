@@ -17,51 +17,49 @@ import './components/Sidebar.css'
 export default function App() {
   return (
     <Router>
-      <UserProvider>
-        <div className="app-container">
-          <Sidebar />
-          <main className="main-content" style={{ padding: '20px' }}>
-            <Routes>
-              <Route path="/" element={<BuildList />} />
-              <Route path="/BuildDetail/:id" element={<BuildDetail />} />
-              <Route
-                path="/CreateBuild"
-                element={
-                  <ProtectedRoute>
-                    <CreateBuild />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/MyBuilds"
-                element={
-                  <ProtectedRoute>
-                    <MyBuilds />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/EditBuild/:id"
-                element={
-                  <ProtectedRoute>
-                    <EditBuild />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/AdminPanel"
-                element={
-                  <ProtectedRoute>
-                    <AdminPanel />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-            </Routes>
-          </main>
-        </div>
-      </UserProvider>
+      <div className="app-container">
+        <Sidebar />
+        <main className="main-content" style={{ padding: '20px' }}>
+          <Routes>
+            <Route path="/" element={<BuildList />} />
+            <Route path="/BuildDetail/:id" element={<BuildDetail />} />
+            <Route
+              path="/CreateBuild"
+              element={
+                <ProtectedRoute>
+                  <CreateBuild />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/MyBuilds"
+              element={
+                <ProtectedRoute>
+                  <MyBuilds />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/EditBuild/:id"
+              element={
+                <ProtectedRoute>
+                  <EditBuild />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/AdminPanel"
+              element={
+                <ProtectedRoute>
+                  <AdminPanel />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Routes>
+        </main>
+      </div>
     </Router>
   )
 }
