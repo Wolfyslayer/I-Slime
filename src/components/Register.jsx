@@ -19,7 +19,7 @@ export default function Register() {
     const { data, error } = await supabase.auth.signUp(
       { email, password },
       {
-        redirectTo: 'https://i-slime-builds.netlify.app/welcome'
+        redirectTo: `${window.location.origin}/welcome` // Dynamisk baserat på nuvarande origin
       }
     )
 
