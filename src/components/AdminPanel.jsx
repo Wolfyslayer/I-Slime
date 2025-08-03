@@ -1,31 +1,55 @@
+// src/components/AdminPanel.jsx
 import React, { useEffect, useState } from 'react'
-import { supabase, ADMIN_USERS } from '../lib/supabaseClient'
+import { supabase } from '../lib/supabaseClient'
 import { useTranslation } from 'react-i18next'
 
 export default function AdminPanel() {
   const [reports, setReports] = useState([])
   const [loading, setLoading] = useState(true)
-  const user = supabase.auth.user()
   const [error, setError] = useState(null)
   const { t } = useTranslation()
+  const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
-    if (!user || !ADMIN_USERS.includes(user.id)) {
-      setError(t('No permission'))
-      setLoading(false)
-      return
-    }
-    async function fetchReports() {
-      const { data, error } = await supabase
+    async function checkAdminAndFetch() {
+      const {
+        data: { user },
+        error: userError
+      } = await supabase.auth.getUser()
+
+      if (userError || !user) {
+        setError(t('No permission'))
+        setLoading(false)
+        return
+      }
+
+      const { data: adminData, error: adminError } = await supabase
+        .from('admin_users')
+        .select('*')
+        .eq('user_id', user.id)
+        .single()
+
+      if (adminError || !adminData) {
+        setError(t('No permission'))
+        setLoading(false)
+        return
+      }
+
+      setIsAdmin(true)
+
+      const { data: reportData, error: reportError } = await supabase
         .from('reports')
         .select('id, reason, build_id, reported_user_id, reporting_user_id, created_at, builds (title, user_id)')
         .order('created_at', { ascending: false })
-      if (error) setError(t('Error fetching reports'))
-      else setReports(data)
+
+      if (reportError) setError(t('Error fetching reports'))
+      else setReports(reportData)
+
       setLoading(false)
     }
-    fetchReports()
-  }, [user, t])
+
+    checkAdminAndFetch()
+  }, [t])
 
   async function deleteBuild(buildId) {
     if (!window.confirm(t('Delete this build permanently?'))) return
@@ -41,8 +65,8 @@ export default function AdminPanel() {
     else alert(t('User banned'))
   }
 
-  if (error) return <p>{error}</p>
   if (loading) return <p>{t('Loading reports...')}</p>
+  if (!isAdmin) return <p>{error || t('No permission')}</p>
   if (reports.length === 0) return <p>{t('No reports at the moment.')}</p>
 
   return (
