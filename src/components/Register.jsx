@@ -8,26 +8,50 @@ export default function Register() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
   const navigate = useNavigate()
 
   const handleRegister = async (e) => {
     e.preventDefault()
-    const { error } = await supabase.auth.signUp({ email, password })
+    setError('')
+    setSuccess('')
+
+    const { data, error } = await supabase.auth.signUp({ email, password })
+
     if (error) {
       setError(error.message)
     } else {
-      alert('Check your email to confirm your account.')
-      navigate('/login')
+      setSuccess('Check your email to confirm your account.')
+      setEmail('')
+      setPassword('')
+      setTimeout(() => navigate('/login'), 4000)
     }
   }
 
   return (
-    <form onSubmit={handleRegister} className="auth-form">
-      <h2>Register</h2>
-      <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
-      <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
-      <button type="submit">Register</button>
+    <div className="auth-container">
+      <h2>Create Account</h2>
+      <form onSubmit={handleRegister}>
+        <input
+          type="email"
+          placeholder="Email address"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password (min 6 chars)"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          required
+          minLength={6}
+        />
+        <button type="submit">Register</button>
+      </form>
+
       {error && <p className="error">{error}</p>}
-    </form>
+      {success && <p className="success">{success}</p>}
+    </div>
   )
 }
