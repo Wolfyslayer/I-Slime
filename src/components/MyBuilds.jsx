@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { useUser } from '../context/UserContext'
+import { classes, paths } from '../data/data'  // importera rätt data
 
 export default function MyBuilds() {
   const { user } = useUser()
@@ -40,11 +41,16 @@ export default function MyBuilds() {
         <p>Du har inga sparade builds än.</p>
       ) : (
         <ul>
-          {builds.map(build => (
-            <li key={build.id}>
-              <strong>{build.title}</strong> — Klass: {build.class} — Väg: {build.path}
-            </li>
-          ))}
+          {builds.map(build => {
+            const klass = classes.find(c => c.id === build.class_id)?.name || 'Okänd'
+            const vag = paths.find(p => p.id === build.path_id)?.name || 'Okänd'
+
+            return (
+              <li key={build.id}>
+                <strong>{build.title}</strong> — Klass: {klass} — Väg: {vag}
+              </li>
+            )
+          })}
         </ul>
       )}
     </div>
