@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { useNavigate } from 'react-router-dom'
+inport '../styles/Auth.css'
 
 export default function Register() {
   const [email, setEmail] = useState('')
