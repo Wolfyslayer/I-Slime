@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useUser } from '../UserContext';
-import { supabase } from '../supabase';
+import { useUser } from '../context/UserContext';
+import { supabase } from '../lib/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import { BuildProvider, useBuild } from './BuildSystem/BuildContext';
 import BuildForm from './BuildSystem/BuildForm';
