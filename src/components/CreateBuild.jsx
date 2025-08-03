@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { useTranslation } from 'react-i18next'
-// Importera data från din data.js
 import { classes, paths, skills, pets, items } from '../data/data'
 
 export default function CreateBuild() {
@@ -15,9 +14,11 @@ export default function CreateBuild() {
   const [error, setError] = useState('')
   const { t } = useTranslation()
 
+  // När selectedClass ändras, sätt default path som första path för den klassen
   useEffect(() => {
-    if (selectedClass && paths[selectedClass]) {
-      setSelectedPath(paths[selectedClass][0])
+    if (selectedClass) {
+      const filteredPaths = paths.filter(p => p.classId === selectedClass)
+      setSelectedPath(filteredPaths.length > 0 ? filteredPaths[0].id : '')
     } else {
       setSelectedPath('')
     }
@@ -33,6 +34,8 @@ export default function CreateBuild() {
 
   const handleCreate = async (e) => {
     e.preventDefault()
+    setError('')
+
     const user = supabase.auth.user()
     if (!user) {
       setError(t('You must be logged in to create a build.'))
@@ -48,17 +51,19 @@ export default function CreateBuild() {
       title,
       description,
       user_id: user.id,
-      class: selectedClass,
-      path: selectedPath,
+      classId: selectedClass,
+      pathId: selectedPath,
       skills: selectedSkills,
       pets: selectedPets,
       items: selectedItems
     }
 
     const { error } = await supabase.from('builds').insert([buildData])
-    if (error) setError(error.message)
-    else {
+    if (error) {
+      setError(error.message)
+    } else {
       alert(t('Build created!'))
+      // Nollställ formulärfält
       setTitle('')
       setDescription('')
       setSelectedClass('')
@@ -71,8 +76,18 @@ export default function CreateBuild() {
   }
 
   return (
-    <form onSubmit={handleCreate} style={{ maxWidth: 600, margin: '0 auto', padding: 20, background: 'rgba(0,0,0,0.6)', borderRadius: 8 }}>
+    <form
+      onSubmit={handleCreate}
+      style={{
+        maxWidth: 600,
+        margin: '0 auto',
+        padding: 20,
+        background: 'rgba(0,0,0,0.6)',
+        borderRadius: 8
+      }}
+    >
       <h2>{t('Create New Build')}</h2>
+
       <input
         type="text"
         placeholder={t('Title')}
@@ -81,6 +96,7 @@ export default function CreateBuild() {
         required
         style={{ width: '100%', padding: 8, marginBottom: 10, borderRadius: 4, border: 'none' }}
       />
+
       <textarea
         placeholder={t('Description')}
         value={description}
@@ -98,7 +114,9 @@ export default function CreateBuild() {
       >
         <option value="">{t('Select Class')}</option>
         {classes.map(c => (
-          <option key={c} value={c}>{c}</option>
+          <option key={c.id} value={c.id}>
+            {c.name}
+          </option>
         ))}
       </select>
 
@@ -107,31 +125,36 @@ export default function CreateBuild() {
         value={selectedPath}
         onChange={e => setSelectedPath(e.target.value)}
         required
-        style={{ width: '100%', padding: 8, marginBottom: 10, borderRadius: 4, border: 'none' }}
         disabled={!selectedClass}
+        style={{ width: '100%', padding: 8, marginBottom: 10, borderRadius: 4, border: 'none' }}
       >
-        {selectedClass && paths[selectedClass].map(p => (
-          <option key={p} value={p}>{p}</option>
-        ))}
+        {selectedClass &&
+          paths
+            .filter(p => p.classId === selectedClass)
+            .map(p => (
+              <option key={p.id} value={p.id}>
+                {p.name}
+              </option>
+            ))}
       </select>
 
       <label>{t('Skills')}</label>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
         {skills.map(skill => (
           <button
-            key={skill}
+            key={skill.id}
             type="button"
-            onClick={() => toggleSelect(selectedSkills, setSelectedSkills, skill)}
+            onClick={() => toggleSelect(selectedSkills, setSelectedSkills, skill.id)}
             style={{
               padding: '5px 10px',
               borderRadius: 4,
-              border: selectedSkills.includes(skill) ? '2px solid #0ff' : '1px solid #444',
-              background: selectedSkills.includes(skill) ? '#022' : '#111',
+              border: selectedSkills.includes(skill.id) ? '2px solid #0ff' : '1px solid #444',
+              background: selectedSkills.includes(skill.id) ? '#022' : '#111',
               color: '#0ff',
               cursor: 'pointer'
             }}
           >
-            {skill}
+            {skill.name}
           </button>
         ))}
       </div>
@@ -140,19 +163,19 @@ export default function CreateBuild() {
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
         {pets.map(pet => (
           <button
-            key={pet}
+            key={pet.id}
             type="button"
-            onClick={() => toggleSelect(selectedPets, setSelectedPets, pet)}
+            onClick={() => toggleSelect(selectedPets, setSelectedPets, pet.id)}
             style={{
               padding: '5px 10px',
               borderRadius: 4,
-              border: selectedPets.includes(pet) ? '2px solid #0ff' : '1px solid #444',
-              background: selectedPets.includes(pet) ? '#022' : '#111',
+              border: selectedPets.includes(pet.id) ? '2px solid #0ff' : '1px solid #444',
+              background: selectedPets.includes(pet.id) ? '#022' : '#111',
               color: '#0ff',
               cursor: 'pointer'
             }}
           >
-            {pet}
+            {pet.name}
           </button>
         ))}
       </div>
@@ -161,19 +184,19 @@ export default function CreateBuild() {
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
         {items.map(item => (
           <button
-            key={item}
+            key={item.id}
             type="button"
-            onClick={() => toggleSelect(selectedItems, setSelectedItems, item)}
+            onClick={() => toggleSelect(selectedItems, setSelectedItems, item.id)}
             style={{
               padding: '5px 10px',
               borderRadius: 4,
-              border: selectedItems.includes(item) ? '2px solid #0ff' : '1px solid #444',
-              background: selectedItems.includes(item) ? '#022' : '#111',
+              border: selectedItems.includes(item.id) ? '2px solid #0ff' : '1px solid #444',
+              background: selectedItems.includes(item.id) ? '#022' : '#111',
               color: '#0ff',
               cursor: 'pointer'
             }}
           >
-            {item}
+            {item.name}
           </button>
         ))}
       </div>
