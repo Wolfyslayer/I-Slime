@@ -12,6 +12,19 @@ export function UserProvider({ children }) {
   useEffect(() => {
     const fetchUser = async () => {
       const { data: { session } } = await supabase.auth.getSession()
+
+      // Kolla om session finns och e-post är verifierad
+      if (session?.user) {
+        const userIsVerified = session.user.email_confirmed_at || session.user.confirmed_at
+        if (!userIsVerified) {
+          // Om ej verifierad, logga ut direkt
+          await supabase.auth.signOut()
+          setUser(null)
+          setLoading(false)
+          return
+        }
+      }
+
       setUser(session?.user ?? null)
       setLoading(false)
 
@@ -27,7 +40,18 @@ export function UserProvider({ children }) {
 
     fetchUser()
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (session?.user) {
+        const userIsVerified = session.user.email_confirmed_at || session.user.confirmed_at
+        if (!userIsVerified) {
+          await supabase.auth.signOut()
+          setUser(null)
+          setIsAdmin(false)
+          setLoading(false)
+          return
+        }
+      }
+
       setUser(session?.user ?? null)
       setIsAdmin(false)
 
@@ -39,6 +63,7 @@ export function UserProvider({ children }) {
           .single()
           .then(({ data }) => setIsAdmin(!!data))
       }
+      setLoading(false)
     })
 
     return () => {
