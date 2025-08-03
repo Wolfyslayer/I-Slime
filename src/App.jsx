@@ -1,6 +1,5 @@
 // src/App.jsx
 import React from 'react'
-import { UserProvider } from './context/UserContext'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Sidebar from './components/Sidebar'
 import BuildList from './components/BuildList'
