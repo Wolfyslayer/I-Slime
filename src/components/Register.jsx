@@ -16,7 +16,12 @@ export default function Register() {
     setError('')
     setSuccess('')
 
-    const { data, error } = await supabase.auth.signUp({ email, password })
+    const { data, error } = await supabase.auth.signUp(
+      { email, password },
+      {
+        redirectTo: 'https://i-slime-builds.netlify.app/welcome'  // Korrekt redirect URL
+      }
+    )
 
     if (error) {
       setError(error.message)
