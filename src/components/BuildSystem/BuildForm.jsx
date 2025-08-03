@@ -1,5 +1,5 @@
-import React, { useContext, useEffect } from 'react'
-import { BuildContext } from './BuildContext'
+import React from 'react'
+import { useBuild } from './BuildContext'
 
 export default function BuildForm() {
   const {
@@ -8,10 +8,6 @@ export default function BuildForm() {
     skills,
     pets,
     items,
-    title,
-    setTitle,
-    description,
-    setDescription,
     selectedClass,
     setSelectedClass,
     selectedPath,
@@ -21,117 +17,108 @@ export default function BuildForm() {
     selectedPets,
     setSelectedPets,
     selectedItems,
-    setSelectedItems
-  } = useContext(BuildContext)
+    setSelectedItems,
+  } = useBuild()
 
-  // Auto-updatera paths när klass ändras
-  useEffect(() => {
+  // Toggle-funktion för checkbox-liknande val
+  const toggleSelect = (array, setArray, value) => {
+    if (array.includes(value)) {
+      setArray(array.filter(v => v !== value))
+    } else {
+      setArray([...array, value])
+    }
+  }
+
+  // När klass ändras sätt första path som default
+  React.useEffect(() => {
     if (selectedClass) {
-      const filtered = paths.filter(p => p.classId === selectedClass)
-      setSelectedPath(filtered.length > 0 ? filtered[0].id : '')
+      const filteredPaths = paths.filter(p => p.classId === selectedClass)
+      setSelectedPath(filteredPaths.length > 0 ? filteredPaths[0].id : '')
     } else {
       setSelectedPath('')
     }
-  }, [selectedClass])
-
-  const toggle = (array, setter, id) => {
-    setter(prev =>
-      prev.includes(id)
-        ? prev.filter(v => v !== id)
-        : [...prev, id]
-    )
-  }
+  }, [selectedClass, paths, setSelectedPath])
 
   return (
-    <>
-      <label>Titel</label>
-      <input value={title} onChange={e => setTitle(e.target.value)} required />
+    <div>
+      <label>
+        Klass
+        <select
+          value={selectedClass}
+          onChange={e => setSelectedClass(e.target.value)}
+          required
+          style={{ width: '100%', marginBottom: 10 }}
+        >
+          <option value="">Välj klass</option>
+          {classes.map(c => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+      </label>
 
-      <label>Beskrivning</label>
-      <textarea value={description} onChange={e => setDescription(e.target.value)} />
+      <label>
+        Väg
+        <select
+          value={selectedPath}
+          onChange={e => setSelectedPath(e.target.value)}
+          disabled={!selectedClass}
+          required
+          style={{ width: '100%', marginBottom: 10 }}
+        >
+          <option value="">Välj väg</option>
+          {paths
+            .filter(p => p.classId === selectedClass)
+            .map(p => (
+              <option key={p.id} value={p.id}>
+                {p.name}
+              </option>
+            ))}
+        </select>
+      </label>
 
-      <label>Klass</label>
-      <select
-        value={selectedClass}
-        onChange={e => setSelectedClass(e.target.value)}
-        required
-      >
-        <option value="">Välj klass</option>
-        {classes.map(c => (
-          <option key={c.id} value={c.id}>{c.name}</option>
+      <fieldset>
+        <legend>Skills</legend>
+        {skills.map(skill => (
+          <label key={skill.id} style={{ marginRight: 10 }}>
+            <input
+              type="checkbox"
+              checked={selectedSkills.includes(skill.id)}
+              onChange={() => toggleSelect(selectedSkills, setSelectedSkills, skill.id)}
+            />
+            {skill.name}
+          </label>
         ))}
-      </select>
+      </fieldset>
 
-      <label>Väg</label>
-      <select
-        value={selectedPath}
-        onChange={e => setSelectedPath(e.target.value)}
-        required
-        disabled={!selectedClass}
-      >
-        <option value="">Välj väg</option>
-        {paths.filter(p => p.classId === selectedClass).map(p => (
-          <option key={p.id} value={p.id}>{p.name}</option>
+      <fieldset>
+        <legend>Pets</legend>
+        {pets.map(pet => (
+          <label key={pet.id} style={{ marginRight: 10 }}>
+            <input
+              type="checkbox"
+              checked={selectedPets.includes(pet.id)}
+              onChange={() => toggleSelect(selectedPets, setSelectedPets, pet.id)}
+            />
+            {pet.name}
+          </label>
         ))}
-      </select>
+      </fieldset>
 
-      <label>Skills</label>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-        {skills.map(s => (
-          <button
-            key={s.id}
-            type="button"
-            onClick={() => toggle(selectedSkills, setSelectedSkills, s.id)}
-            style={{
-              padding: '5px 10px',
-              marginBottom: '0.3rem',
-              background: selectedSkills.includes(s.id) ? '#022' : '#111',
-              color: '#0ff',
-              border: selectedSkills.includes(s.id) ? '2px solid #0ff' : '1px solid #444'
-            }}
-          >
-            {s.name}
-          </button>
+      <fieldset>
+        <legend>Items</legend>
+        {items.map(item => (
+          <label key={item.id} style={{ marginRight: 10 }}>
+            <input
+              type="checkbox"
+              checked={selectedItems.includes(item.id)}
+              onChange={() => toggleSelect(selectedItems, setSelectedItems, item.id)}
+            />
+            {item.name}
+          </label>
         ))}
-      </div>
-
-      <label>Pets</label>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-        {pets.map(p => (
-          <button
-            key={p.id}
-            type="button"
-            onClick={() => toggle(selectedPets, setSelectedPets, p.id)}
-            style={{
-              padding: '5px 10px',
-              background: selectedPets.includes(p.id) ? '#022' : '#111',
-              color: '#0ff',
-              border: selectedPets.includes(p.id) ? '2px solid #0ff' : '1px solid #444'
-            }}
-          >
-            {p.name}
-          </button>
-        ))}
-      </div>
-
-      <label>Items</label>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-        {items.map(i => (
-          <button
-            key={i.id}
-            type="button"
-            onClick={() => toggle(selectedItems, setSelectedItems, i.id)}
-            style={{
-              padding: '5px 10px',
-              background: selectedItems.includes(i.id) ? '#022' : '#111',
-              color: '#0ff',
-              border: selectedItems.includes(i.id) ? '2px solid #0ff' : '1px solid #444'
-            }}
-          >
-            {i.name}
-          </button>
-        ))}
-      </div>
-    </>
+      </fieldset>
+    </div>
   )
 }
