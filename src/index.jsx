@@ -3,7 +3,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import { UserProvider } from './context/UserContext'
-import './i18n' // om du använder i18n för översättning
+import './lib/i18n' // om du använder i18n för översättning
 import './styles/theme.css'
 
 const root = document.getElementById('root')
