@@ -12,7 +12,6 @@ export default function Sidebar() {
 
   const toggleSidebar = () => setIsOpen(!isOpen)
 
-  // Stäng sidomeny automatiskt vid navigering
   useEffect(() => {
     setIsOpen(false)
   }, [location.pathname])
@@ -25,17 +24,38 @@ export default function Sidebar() {
       <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
         <h2>I-Slime</h2>
         <nav>
-          <Link to="/" className={location.pathname === '/' ? 'active' : ''}>All Builds</Link>
+          <Link to="/" className={location.pathname === '/' ? 'active' : ''}>
+            All Builds
+          </Link>
           {user && (
             <>
-              <Link to="/create-build" className={location.pathname === '/CreateBuild' ? 'active' : ''}>Create Build</Link>
-              <Link to="/my-builds" className={location.pathname === '/MyBuilds' ? 'active' : ''}>My Builds</Link>
-              {user && user.id && import.meta.env.VITE_ADMIN_IDS?.split(',').includes(user.id) && (
-                <Link to="/admin" className={location.pathname === '/AdminPanel' ? 'active' : ''}>Admin</Link>
+              <Link
+                to="/create-build"
+                className={location.pathname === '/create-build' ? 'active' : ''}
+              >
+                Create Build
+              </Link>
+              <Link
+                to="/my-builds"
+                className={location.pathname === '/my-builds' ? 'active' : ''}
+              >
+                My Builds
+              </Link>
+              {import.meta.env.VITE_ADMIN_IDS?.split(',').includes(user.id) && (
+                <Link
+                  to="/admin"
+                  className={location.pathname === '/admin' ? 'active' : ''}
+                >
+                  Admin
+                </Link>
               )}
             </>
           )}
-          {!user && <Link to="/login">Login</Link>}
+          {!user && (
+            <Link to="/login" className={location.pathname === '/login' ? 'active' : ''}>
+              Login
+            </Link>
+          )}
         </nav>
       </aside>
     </>
