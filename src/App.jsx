@@ -1,53 +1,77 @@
-// src/App.jsximport React from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { UserProvider } from './context/UserContext'
-import Sidebar from './components/Sidebar'
-import BuildList from './components/BuildList'
-import BuildDetail from './components/BuildDetail'
-import CreateBuild from './components/CreateBuild'
-import EditBuild from './components/EditBuild'
-import MyBuilds from './components/MyBuilds'
-import AdminPanel from './components/AdminPanel'
-import Login from './components/Login'
-import Register from './components/Register'
-import ForgotPassword from './components/ForgotPassword'
-import ResetPassword from './components/ResetPassword'
-import ProtectedRoute from './routes/ProtectedRoute'
-import Welcome from './components/Welcome'
-import './styles/theme.css'
-import './components/Sidebar.css'
+// src/App.jsx
 
-export default function App() {
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { UserProvider } from './UserContext';
+import { BuildProvider } from './components/BuildSystem/BuildContext';
+import Navbar from './components/Navbar';
+import Sidebar from './components/Sidebar';
+import Home from './components/Home';
+import Login from './components/Login';
+import Register from './components/Register';
+import ForgotPassword from './components/ForgotPassword';
+import CreateBuild from './components/CreateBuild';
+import MyBuilds from './components/MyBuilds';
+import BuildDetail from './components/BuildDetail';
+import EditBuild from './components/EditBuild';
+import AdminPanel from './components/AdminPanel';
+import ProtectedRoute from './components/ProtectedRoute';
+import './styles.css';
+
+function App() {
   return (
     <Router>
       <UserProvider>
-        <div className="app-container">
-          <Sidebar />
-          <main className="main-content" style={{ padding: '20px' }}>
-            <Routes>
-              <Route path="/" element={<BuildList />} />
-              <Route path="/build-detail/:id" element={<BuildDetail />} />
-              <Route path="/create-build" element={
-                <ProtectedRoute><CreateBuild /></ProtectedRoute>
-              } />
-              <Route path="/my-builds" element={
-                <ProtectedRoute><MyBuilds /></ProtectedRoute>
-              } />
-              <Route path="/edit-build/:id" element={
-                <ProtectedRoute><EditBuild /></ProtectedRoute>
-              } />
-              <Route path="/AdminPanel" element={
-                <ProtectedRoute><AdminPanel /></ProtectedRoute>
-              } />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/welcome" element={<Welcome />} />
-            </Routes>
-          </main>
-        </div>
+        <BuildProvider>
+          <div className="app-container">
+            <Sidebar />
+            <div className="main-content">
+              <Navbar />
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route
+                  path="/create-build"
+                  element={
+                    <ProtectedRoute>
+                      <CreateBuild />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/my-builds"
+                  element={
+                    <ProtectedRoute>
+                      <MyBuilds />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="/build/:id" element={<BuildDetail />} />
+                <Route
+                  path="/edit-build/:id"
+                  element={
+                    <ProtectedRoute>
+                      <EditBuild />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin"
+                  element={
+                    <ProtectedRoute adminOnly>
+                      <AdminPanel />
+                    </ProtectedRoute>
+                  }
+                />
+              </Routes>
+            </div>
+          </div>
+        </BuildProvider>
       </UserProvider>
     </Router>
-  )
+  );
 }
+
+export default App;
