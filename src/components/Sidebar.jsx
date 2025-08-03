@@ -28,10 +28,10 @@ export default function Sidebar() {
           <Link to="/" className={location.pathname === '/' ? 'active' : ''}>All Builds</Link>
           {user && (
             <>
-              <Link to="/create-build" className={location.pathname === '/create-build' ? 'active' : ''}>Create Build</Link>
-              <Link to="/my-builds" className={location.pathname === '/my-builds' ? 'active' : ''}>My Builds</Link>
+              <Link to="/create-build" className={location.pathname === '/CreateBuild' ? 'active' : ''}>Create Build</Link>
+              <Link to="/my-builds" className={location.pathname === '/MyBuilds' ? 'active' : ''}>My Builds</Link>
               {user && user.id && import.meta.env.VITE_ADMIN_IDS?.split(',').includes(user.id) && (
-                <Link to="/admin" className={location.pathname === '/admin' ? 'active' : ''}>Admin</Link>
+                <Link to="/admin" className={location.pathname === '/AdminPanel' ? 'active' : ''}>Admin</Link>
               )}
             </>
           )}
