@@ -16,14 +16,20 @@ export default function Login() {
     setError('')
     setBanInfo(null)
 
-    // Försök att logga in
+    // Försök logga in
     const { data: signInData, error: loginError } = await supabase.auth.signInWithPassword({
       email,
       password
     })
 
     if (loginError || !signInData.user) {
-      setError('Invalid email or password')
+      setError(loginError?.message || 'Invalid email or password')
+      return
+    }
+
+    // Kontrollera att e-post är verifierad
+    if (!signInData.user.email_confirmed_at && !signInData.user.confirmed_at) {
+      setError('Please verify your email before logging in.')
       return
     }
 
@@ -42,12 +48,13 @@ export default function Login() {
           reason: ban.reason || 'No reason provided',
           expires: banExpires.toLocaleString()
         })
-        // Logga ut användaren om de är inloggade
         await supabase.auth.signOut()
+        setError('Your account is banned.')
         return
       }
     }
 
+    // Lyckad inloggning, navigera till startsidan
     navigate('/')
   }
 
@@ -73,6 +80,7 @@ export default function Login() {
       </form>
 
       {error && <p className="error">{error}</p>}
+
       {banInfo && (
         <div className="ban-popup">
           <h3>🚫 Account Banned</h3>
