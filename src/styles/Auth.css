@@ -1,97 +1,122 @@
-/* Container style */
+/* Auth Container */
 .auth-container {
   max-width: 400px;
   margin: 60px auto;
-  padding: 30px 25px;
-  background-color: #111;
-  border-radius: 8px;
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 30px;
+  border-radius: 10px;
   color: #fff;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-shadow: 0 0 10px #0ff4;
 }
 
 /* Headings */
 .auth-container h2 {
   text-align: center;
-  color: #0ff;
   margin-bottom: 20px;
-  font-size: 1.6rem;
+  font-size: 1.8rem;
+  color: #00f9ff;
 }
 
-/* Input fields */
+/* Form Fields */
 .auth-container input {
   width: 100%;
   padding: 12px;
   margin-bottom: 15px;
-  background-color: #222;
-  border: 1px solid #333;
+  border: none;
   border-radius: 6px;
+  background-color: #111;
   color: #0ff;
   font-size: 1rem;
+  outline: none;
 }
 
-.auth-container input::placeholder {
-  color: #777;
+.auth-container input:focus {
+  border: 1px solid #0ff;
 }
 
-/* Buttons */
+/* Button */
 .auth-container button {
   width: 100%;
   padding: 12px;
-  background-color: #0ff;
-  color: #000;
+  background-color: #00f9ff;
   border: none;
   border-radius: 6px;
   font-weight: bold;
-  font-size: 1rem;
+  color: #000;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease-in-out;
 }
 
 .auth-container button:hover {
-  background-color: #00cfd6;
+  background-color: #0ff;
 }
 
-/* Error + success messages */
+/* Error Message */
 .auth-container .error {
-  color: red;
-  margin-top: 10px;
+  color: #ff4d4d;
   text-align: center;
-  font-size: 0.95rem;
+  margin-top: 10px;
 }
 
+/* Success Message */
 .auth-container .success {
-  color: #0f0;
+  color: #00ff99;
+  text-align: center;
   margin-top: 10px;
+}
+
+/* Link Text */
+.auth-container p {
   text-align: center;
   font-size: 0.95rem;
 }
 
-/* Forgot password link */
-.auth-container .forgot-link {
-  text-align: center;
-  margin-top: 10px;
-  font-size: 0.9rem;
-}
-
-.auth-container .forgot-link a {
+.auth-container a {
   color: #0ff;
   text-decoration: underline;
+  cursor: pointer;
+}
+
+.auth-container a:hover {
+  color: #00f9ff;
+}
+
+/* Ban Popup */
+.ban-popup {
+  background-color: #2a0000;
+  color: #ffcccc;
+  border: 1px solid #ff4d4d;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-top: 1rem;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.ban-popup h3 {
+  margin-top: 0;
+  color: #ff4d4d;
+}
+
+/* Fade In Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Responsive */
-@media (max-width: 480px) {
+@media (max-width: 500px) {
   .auth-container {
-    margin: 30px 15px;
+    margin: 40px 20px;
     padding: 20px;
   }
 
   .auth-container h2 {
-    font-size: 1.4rem;
-  }
-
-  .auth-container input,
-  .auth-container button {
-    font-size: 0.95rem;
+    font-size: 1.5rem;
   }
 }
