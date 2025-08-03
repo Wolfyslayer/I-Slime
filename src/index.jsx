@@ -1,11 +1,20 @@
+// src/index.jsx
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
-import './index.css'
-import './lib/i18n'  // Importera i18n här
+import { UserProvider } from './context/UserContext'
+import './i18n' // om du använder i18n för översättning
+import './styles/theme.css'
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-)
+const root = document.getElementById('root')
+
+if (root) {
+  const reactRoot = ReactDOM.createRoot(root)
+  reactRoot.render(
+    <React.StrictMode>
+      <UserProvider>
+        <App />
+      </UserProvider>
+    </React.StrictMode>
+  )
+}
