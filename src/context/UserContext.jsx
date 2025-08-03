@@ -6,45 +6,48 @@ const UserContext = createContext()
 
 export function UserProvider({ children }) {
   const [user, setUser] = useState(null)
-  const [isAdmin, setIsAdmin] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
-    const session = supabase.auth.session()
-    const currentUser = session?.user ?? null
-    setUser(currentUser)
-    checkAdmin(currentUser)
-    
+    const fetchUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      setUser(session?.user ?? null)
+      setLoading(false)
+
+      if (session?.user) {
+        const { data: adminData } = await supabase
+          .from('admin_users')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .single()
+        setIsAdmin(!!adminData)
+      }
+    }
+
+    fetchUser()
+
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      const updatedUser = session?.user ?? null
-      setUser(updatedUser)
-      checkAdmin(updatedUser)
+      setUser(session?.user ?? null)
+      setIsAdmin(false)
+
+      if (session?.user) {
+        supabase
+          .from('admin_users')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .single()
+          .then(({ data }) => setIsAdmin(!!data))
+      }
     })
 
     return () => {
-      listener?.subscription?.unsubscribe()
+      listener.subscription.unsubscribe()
     }
   }, [])
 
-  async function checkAdmin(user) {
-    if (!user) {
-      setIsAdmin(false)
-      setLoading(false)
-      return
-    }
-
-    const { data, error } = await supabase
-      .from('admin_users')
-      .select('id')
-      .eq('id', user.id)
-      .single()
-
-    setIsAdmin(!error && !!data)
-    setLoading(false)
-  }
-
   return (
-    <UserContext.Provider value={{ user, isAdmin, loading }}>
+    <UserContext.Provider value={{ user, loading, isAdmin }}>
       {children}
     </UserContext.Provider>
   )
