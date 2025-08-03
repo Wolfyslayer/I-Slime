@@ -14,9 +14,8 @@ export default function ForgotPassword() {
     setMessage('')
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: 'https://i-slime-builds.netlify.app/reset-password`,
-    })
-
+  redirectTo: 'https://i-slime-builds.netlify.app/reset-password',
+})
     if (error) setError(error.message)
     else setMessage('Check your email to reset your password.')
   }
