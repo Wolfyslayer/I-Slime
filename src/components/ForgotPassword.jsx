@@ -1,38 +1,41 @@
+// src/components/ForgotPassword.jsx
 import React, { useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
-import { useTranslation } from 'react-i18next'
+import '../styles/Auth.css'
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
-  const { t } = useTranslation()
+  const [error, setError] = useState('')
 
   const handleReset = async (e) => {
     e.preventDefault()
-    const { error } = await supabase.auth.api.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + '/reset-password',
+    setError('')
+    setMessage('')
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
     })
-    if (error) {
-      setMessage(t('Failed to send reset email.'))
-    } else {
-      setMessage(t('Password reset link sent! Check your email.'))
-    }
+
+    if (error) setError(error.message)
+    else setMessage('Check your email to reset your password.')
   }
 
   return (
-    <div className="auth-form">
-      <h2>{t('Forgot Password')}</h2>
+    <div className="auth-container">
+      <h2>Forgot Password</h2>
       <form onSubmit={handleReset}>
         <input
           type="email"
-          placeholder={t('Enter your email')}
+          placeholder="Enter your email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={e => setEmail(e.target.value)}
           required
         />
-        <button type="submit">{t('Send Reset Email')}</button>
-        {message && <p>{message}</p>}
+        <button type="submit">Send Reset Email</button>
       </form>
+      {error && <p className="error">{error}</p>}
+      {message && <p className="success">{message}</p>}
     </div>
   )
 }
