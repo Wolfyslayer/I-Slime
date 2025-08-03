@@ -1,43 +1,51 @@
 // src/components/Login.jsx
 import React, { useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
+import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [message, setMessage] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const navigate = useNavigate()
+  const { t } = useTranslation()
 
-  async function handleLogin(e) {
+  const handleLogin = async (e) => {
     e.preventDefault()
+    setLoading(true)
+    setError('')
     const { error } = await supabase.auth.signInWithPassword({ email, password })
-
     if (error) {
-      setMessage(error.message)
+      setError(error.message)
     } else {
-      setMessage('Inloggning lyckades!')
-      // Här kan du t.ex. redirecta till dashboard eller liknande
+      navigate('/')
     }
+    setLoading(false)
   }
 
   return (
-    <form onSubmit={handleLogin}>
-      <h2>Logga in</h2>
+    <form onSubmit={handleLogin} className="auth-form">
+      <h2>{t('Login')}</h2>
       <input
         type="email"
-        placeholder="E-post"
+        placeholder={t('Email')}
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
       />
       <input
         type="password"
-        placeholder="Lösenord"
+        placeholder={t('Password')}
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         required
       />
-      <button type="submit">Logga in</button>
-      <p>{message}</p>
+      <button type="submit" disabled={loading}>
+        {loading ? t('Logging in...') : t('Login')}
+      </button>
+      {error && <p className="error">{error}</p>}
     </form>
   )
 }
