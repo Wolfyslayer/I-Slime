@@ -23,9 +23,9 @@ export default function App() {
           <main className="main-content" style={{ padding: '20px' }}>
             <Routes>
               <Route path="/" element={<BuildList />} />
-              <Route path="/build/:id" element={<BuildDetail />} />
+              <Route path="/BuildDetail/:id" element={<BuildDetail />} />
               <Route
-                path="/create-build"
+                path="/CreateBuild"
                 element={
                   <ProtectedRoute>
                     <CreateBuild />
@@ -33,7 +33,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/my-builds"
+                path="/MyBuilds"
                 element={
                   <ProtectedRoute>
                     <MyBuilds />
@@ -41,7 +41,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/edit-build/:id"
+                path="/EditBuild/:id"
                 element={
                   <ProtectedRoute>
                     <EditBuild />
@@ -49,7 +49,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/admin"
+                path="/AdminPanel"
                 element={
                   <ProtectedRoute>
                     <AdminPanel />
