@@ -6,11 +6,8 @@ import { useUser } from '../context/UserContext'
 export default function ProtectedRoute({ children }) {
   const { user, loading } = useUser()
 
-  if (loading) return null // eller en spinner
-
-  if (!user) {
-    return <Navigate to="/login" replace />
-  }
+  if (loading) return <p>Loading...</p>
+  if (!user) return <Navigate to="/login" />
 
   return children
 }
