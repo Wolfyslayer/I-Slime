@@ -1,4 +1,4 @@
-/* theme.css – ditt nya tema över hela appen */
+/* Reset och grund */
 body {
   margin: 0;
   padding: 0;
@@ -7,6 +7,7 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
+/* Rubriker */
 h1, h2 {
   font-family: 'Orbitron', sans-serif;
   color: #00f9ff;
@@ -14,17 +15,19 @@ h1, h2 {
   text-align: center;
 }
 
+/* Container */
 .app-container {
   display: flex;
 }
 
+/* Huvudinnehåll */
 .main-content {
-  margin-left: 220px;
+  margin-left: 240px;
   padding: 2rem;
   flex: 1;
 }
 
-/* Flex för komponentsektioner */
+/* Sektioner med bakgrund */
 .section {
   margin: 2rem auto;
   max-width: 1000px;
@@ -34,79 +37,7 @@ h1, h2 {
   box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
 }
 
-/* Samma val-styling i hela appen */
-.choices {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-  gap: 1rem;
-  justify-items: center;
-}
-
-.choice {
-  background-color: rgba(0,0,0,0.6);
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  text-align: center;
-  width: 100%;
-  max-width: 100px;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  box-shadow: 0 0 5px #0ff;
-}
-
-.choice.selected {
-  box-shadow: 0 0 15px #0ff;
-  border: 2px solid #0ff;
-}
-
-.choice img {
-  width: 100%;
-  height: auto;
-  border-radius: 0.5rem;
-}
-
-.choice span {
-  display: block;
-  margin-top: 0.3rem;
-  font-size: 0.8rem;
-}
-
-/* Items-fönster */
-.item-container {
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid #0ff;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  margin-bottom: 1rem;
-}
-.item-header {
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  font-size: 1.1rem;
-  color: #0ff;
-}
-.special-stats {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-.stat-select label {
-  display: block;
-  font-size: 0.9rem;
-  margin-bottom: 0.2rem;
-}
-.stat-select select, .stat-select input {
-  padding: 0.2rem;
-  border-radius: 0.3rem;
-  border: none;
-  background: #222;
-  color: #fff;
-}
-.atk-speed {
-  margin-top: 0.5rem;
-}
-
-/* Buttons globalt */
+/* Globala knappar */
 button {
   background-color: #00f9ff;
   border: none;
@@ -116,91 +47,115 @@ button {
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  font-family: 'Roboto', sans-serif;
 }
 button:hover {
   background-color: #00d4ff;
 }
 
-/* Sidebar styling */
-.sidebar {
-  background: rgba(0, 0, 0, 0.8);
-  width: 220px;
-  height: 100vh;
-  padding: 1.5rem 1rem;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  box-shadow: 0 0 20px #00f9ff;
-  font-family: 'Orbitron', sans-serif;
-  color: #00f9ff;
-  position: fixed;
-  top: 0;
-  left: 0;
-  user-select: none;
-  z-index: 1000;
+/* Inputs */
+input, select, textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: none;
+  border-radius: 6px;
+  background-color: #111;
+  color: #0ff;
+  font-size: 1rem;
+  outline: none;
+  font-family: 'Roboto', sans-serif;
 }
-.sidebar-title {
-  font-size: 1.8rem;
-  font-weight: 900;
-  margin-bottom: 2rem;
-  text-align: center;
-  text-shadow: 0 0 8px #00f9ff;
-}
-.sidebar-menu {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  flex-grow: 1;
-}
-.sidebar-item {
-  padding: 0.75rem;
-  margin-bottom: 0.8rem;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  font-weight: 700;
-  font-size: 1.1rem;
-  text-align: center;
-}
-.sidebar-item:hover {
-  background-color: rgba(0, 255, 255, 0.2);
-  box-shadow: 0 0 10px #00f9ff;
-}
-.sidebar-item.active {
-  background-color: #00f9ff;
-  color: #000;
-  box-shadow: 0 0 15px #00f9ff;
-}
-.sidebar-footer {
-  font-size: 0.8rem;
-  opacity: 0.7;
-  margin-top: auto;
+input:focus, select:focus, textarea:focus {
+  border: 1px solid #0ff;
 }
 
-/* Mobilvy för sidebar */
+/* Auth containers (ex Register, Login, Reset osv) */
+.auth-container {
+  max-width: 400px;
+  margin: 60px auto;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 30px;
+  border-radius: 10px;
+  color: #fff;
+  box-shadow: 0 0 10px #0ff4;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Auth rubriker */
+.auth-container h2 {
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+  color: #00f9ff;
+  text-align: center;
+}
+
+/* Felmeddelanden */
+.auth-container .error {
+  color: #ff4d4d;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* Successmeddelanden */
+.auth-container .success {
+  color: #00ff99;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* Länkar i auth */
+.auth-container p {
+  text-align: center;
+  font-size: 0.95rem;
+}
+.auth-container a {
+  color: #0ff;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.auth-container a:hover {
+  color: #00f9ff;
+}
+
+/* Ban popup */
+.ban-popup {
+  background-color: #2a0000;
+  color: #ffcccc;
+  border: 1px solid #ff4d4d;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-top: 1rem;
+  animation: fadeIn 0.4s ease-in-out;
+}
+.ban-popup h3 {
+  margin-top: 0;
+  color: #ff4d4d;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsiv för mobil */
 @media (max-width: 768px) {
-  .sidebar {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    height: auto;
-    flex-direction: row;
-    justify-content: space-around;
-    padding: 0.5rem;
-  }
-  .sidebar-menu {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    justify-content: space-around;
-  }
-  .sidebar-item {
-    margin-bottom: 0;
-    font-size: 0.9rem;
-  }
   .main-content {
     margin-left: 0;
     padding-bottom: 60px;
+  }
+  .auth-container {
+    margin: 40px 20px;
+    padding: 20px;
+  }
+  .auth-container h2 {
+    font-size: 1.5rem;
   }
 }
