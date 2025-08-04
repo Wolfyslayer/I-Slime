@@ -6,26 +6,37 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const restoreSession = async () => {
-      const { data, error } = await supabase.auth.getSession()
+      try {
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
 
-      if (!data.session) {
-        console.warn('⚠️ Ingen aktiv session – försöker uppdatera...')
-        const { data: refreshed, error: refreshError } = await supabase.auth.refreshSession()
-
-        if (refreshError) {
-          console.error('❌ Kunde inte uppdatera sessionen:', refreshError)
-        } else {
-          console.log('✅ Session uppdaterad:', refreshed)
+        if (sessionError) {
+          console.error('❌ Fel vid hämtning av session:', sessionError)
         }
-      }
 
-      setLoading(false)
+        if (!sessionData.session) {
+          console.warn('⚠️ Ingen aktiv session – försöker uppdatera...')
+
+          const { data: refreshed, error: refreshError } = await supabase.auth.refreshSession()
+
+          if (refreshError) {
+            console.error('❌ Kunde inte uppdatera session:', refreshError)
+          } else {
+            console.log('✅ Session uppdaterad:', refreshed)
+          }
+        } else {
+          console.log('✅ Aktiv session:', sessionData.session)
+        }
+      } catch (err) {
+        console.error('❗ Ovänterat fel i restoreSession:', err)
+      } finally {
+        setLoading(false)
+      }
     }
 
     restoreSession()
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log('🔄 Auth event:', _event)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('🔄 Auth event:', event)
       if (!session) {
         console.warn('⚠️ Session försvann – försöker uppdatera...')
         supabase.auth.refreshSession()
