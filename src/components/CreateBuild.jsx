@@ -71,13 +71,15 @@ export default function CreateBuild() {
   }, [selectedClass, setSelectedPath])
 
   // Toggle för skills och pets (behålls som checkboxar eller uppdateras till ikoner enligt ditt val)
-  const toggleSelect = (array, setArray, value) => {
-    if (array.includes(value)) {
-      setArray(array.filter(v => v !== value))
-    } else {
-      setArray([...array, value])
+  const toggleSelect = (array, setArray, value, max = 5) => {
+  if (array.includes(value)) {
+    setArray(array.filter(v => v !== value));
+  } else {
+    if (array.length < max) {
+      setArray([...array, value]);
     }
   }
+
 
   const handleStatChange = (category, statKey, value) => {
     setSelectedItems(prev => ({
