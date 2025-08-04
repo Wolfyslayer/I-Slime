@@ -1,4 +1,9 @@
-// CreateBuild.jsx (med utkast och rensa-knapp) import React, { useState, useContext, useEffect } from 'react' import { useUser } from '../context/UserContext' import { supabase } from '../lib/supabaseClient' import { useNavigate } from 'react-router-dom' import { BuildContext } from './BuildSystem/BuildContext' import { classes, paths, skills, pets, items } from '../data/data'
+// CreateBuild.jsx (med utkast och rensa-knapp) import React, { useState, useContext, useEffect } from 'react' 
+import { useUser } from '../context/UserContext' 
+import { supabase } from '../lib/supabaseClient' 
+import { useNavigate } from 'react-router-dom' 
+import { BuildContext } from './BuildSystem/BuildContext' 
+import { classes, paths, skills, pets, items } from '../data/data'
 
 export default function CreateBuild() { const { user } = useUser() const navigate = useNavigate()
 
@@ -170,3 +175,4 @@ return ( <form onSubmit={handleSubmit} style={{ maxWidth: 600, margin: '0 auto',
 
 ) }
 
+        
