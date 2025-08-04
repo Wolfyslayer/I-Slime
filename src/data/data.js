@@ -29,7 +29,7 @@ export const skills = Array.from({ length: 36 }, (_, i) => {
 export const pets = Array.from({ length: 63 }, (_, i) => {
   const index = i + 1;
   return {
-    id: `pet${index}`,
+    id: `${index}`,
     name: `Pet ${index}`,
     icon: `/images/pets/icons/${index}.png`,
     cardImage: `/images/pets/cards/${index}_card.png`
