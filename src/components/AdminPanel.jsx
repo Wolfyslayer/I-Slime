@@ -3,6 +3,12 @@ import React, { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { useTranslation } from 'react-i18next'
 
+const { user, isAdmin, loading } = useUser()
+
+if (loading) return <div>Laddar adminpanel...</div>
+if (!isAdmin) return <div>❌ Du har inte behörighet.</div>
+
+
 export default function AdminPanel() {
   const [reports, setReports] = useState([])
   const [loading, setLoading] = useState(true)
