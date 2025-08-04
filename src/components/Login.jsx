@@ -18,34 +18,24 @@ export default function Login() {
 
     let emailToUse = identifier
 
-    // Om användarnamn (inte en email)
+    // Om användaren har skrivit in ett användarnamn (inte en e-post)
     if (!identifier.includes('@')) {
+      // Steg 1: hämta användarens email från profiles via username
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('id')
+        .select('email')
         .eq('username', identifier)
         .single()
 
-      if (profileError || !profile) {
+      if (profileError || !profile || !profile.email) {
         setError('No user found with that username.')
         return
       }
 
-      const { data: userInfo, error: userError } = await supabase
-        .from('users')
-        .select('email')
-        .eq('id', profile.id)
-        .single()
-
-      if (userError || !userInfo) {
-        setError('Failed to find user email.')
-        return
-      }
-
-      emailToUse = userInfo.email
+      emailToUse = profile.email
     }
 
-    // Inloggning med email (från input eller username-match)
+    // Steg 2: logga in med email och lösenord
     const { data: signInData, error: loginError } = await supabase.auth.signInWithPassword({
       email: emailToUse,
       password
@@ -56,12 +46,13 @@ export default function Login() {
       return
     }
 
+    // Steg 3: kontrollera om e-post är verifierad
     if (!signInData.user.email_confirmed_at && !signInData.user.confirmed_at) {
       setError('Please verify your email before logging in.')
       return
     }
 
-    // Bann-kontroll
+    // Steg 4: kontrollera om användaren är bannad
     const { data: ban, error: banError } = await supabase
       .from('banned_users')
       .select('*')
@@ -82,7 +73,7 @@ export default function Login() {
       }
     }
 
-    // Allt OK → vidare
+    // Inloggning lyckades
     navigate('/')
   }
 
