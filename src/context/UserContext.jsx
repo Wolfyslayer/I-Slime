@@ -11,10 +11,11 @@ export function UserProvider({ children }) {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-
+      const { data: { session }, error } = await supabase.auth.getSession()
       const newUser = session?.user ?? null
       const verified = newUser?.email_confirmed_at || newUser?.confirmed_at
+
+      console.log('[UserContext] Initial session:', session)
 
       if (newUser && !verified) {
         await supabase.auth.signOut()
@@ -23,7 +24,7 @@ export function UserProvider({ children }) {
         return
       }
 
-      setUser(prev => (prev?.id === newUser?.id ? prev : newUser))
+      setUser(newUser)
       setLoading(false)
 
       if (newUser) {
@@ -43,6 +44,8 @@ export function UserProvider({ children }) {
       const newUser = session?.user ?? null
       const verified = newUser?.email_confirmed_at || newUser?.confirmed_at
 
+      console.log('[UserContext] Auth state change:', session)
+
       if (newUser && !verified) {
         await supabase.auth.signOut()
         setUser(null)
@@ -51,7 +54,7 @@ export function UserProvider({ children }) {
         return
       }
 
-      setUser(prev => (prev?.id === newUser?.id ? prev : newUser))
+      setUser(newUser)
       setLoading(false)
 
       if (newUser) {
