@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import '../styles/Auth.css'
 
 export default function Login() {
-  const [email, setEmail] = useState('')
+  const [identifier, setIdentifier] = useState('') // email or username
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [banInfo, setBanInfo] = useState(null)
@@ -16,9 +16,38 @@ export default function Login() {
     setError('')
     setBanInfo(null)
 
-    // Försök logga in
+    let emailToUse = identifier
+
+    // Om användarnamn (inte en email)
+    if (!identifier.includes('@')) {
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('username', identifier)
+        .single()
+
+      if (profileError || !profile) {
+        setError('No user found with that username.')
+        return
+      }
+
+      const { data: userInfo, error: userError } = await supabase
+        .from('users')
+        .select('email')
+        .eq('id', profile.id)
+        .single()
+
+      if (userError || !userInfo) {
+        setError('Failed to find user email.')
+        return
+      }
+
+      emailToUse = userInfo.email
+    }
+
+    // Inloggning med email (från input eller username-match)
     const { data: signInData, error: loginError } = await supabase.auth.signInWithPassword({
-      email,
+      email: emailToUse,
       password
     })
 
@@ -27,13 +56,12 @@ export default function Login() {
       return
     }
 
-    // Kontrollera att e-post är verifierad
     if (!signInData.user.email_confirmed_at && !signInData.user.confirmed_at) {
       setError('Please verify your email before logging in.')
       return
     }
 
-    // Kolla om användaren är bannad
+    // Bann-kontroll
     const { data: ban, error: banError } = await supabase
       .from('banned_users')
       .select('*')
@@ -54,7 +82,7 @@ export default function Login() {
       }
     }
 
-    // Lyckad inloggning, navigera till startsidan
+    // Allt OK → vidare
     navigate('/')
   }
 
@@ -63,10 +91,10 @@ export default function Login() {
       <h2>Login</h2>
       <form onSubmit={handleLogin}>
         <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
+          type="text"
+          placeholder="Email or Username"
+          value={identifier}
+          onChange={e => setIdentifier(e.target.value)}
           required
         />
         <input
