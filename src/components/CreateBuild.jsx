@@ -29,6 +29,14 @@ const statOptions = [
   { value: 'stun', label: 'Stun' },
 ];
 
+const initialItemsState = () => {
+  const initial = {};
+  itemCategories.forEach(cat => {
+    initial[cat] = { stat1: '', stat2: '', atkSpd: false };
+  });
+  return initial;
+};
+
 export default function CreateBuild() {
   const { user } = useUser()
   const navigate = useNavigate()
@@ -50,15 +58,7 @@ export default function CreateBuild() {
   } = useContext(BuildContext)
 
   const [error, setError] = useState(null)
-
-  // Item stats state
-  const [selectedItems, setSelectedItems] = useState(() => {
-    const initial = {};
-    itemCategories.forEach(cat => {
-      initial[cat] = { stat1: '', stat2: '', atkSpd: false };
-    });
-    return initial;
-  });
+  const [selectedItems, setSelectedItems] = useState(initialItemsState);
 
   // När klassen ändras, sätt första path automatiskt
   useEffect(() => {
@@ -70,27 +70,33 @@ export default function CreateBuild() {
     }
   }, [selectedClass, setSelectedPath])
 
-  // Toggle för skills och pets (behålls som checkboxar eller uppdateras till ikoner enligt ditt val)
   const toggleSelect = (array, setArray, value, max = 5) => {
-  if (array.includes(value)) {
-    setArray(array.filter(v => v !== value));
-  } else {
-    if (array.length < max) {
-      setArray([...array, value]);
+    if (array.includes(value)) {
+      setArray(array.filter(v => v !== value));
+    } else {
+      if (array.length < max) {
+        setArray([...array, value]);
+      }
     }
-  }
-};
-
+  };
 
   const handleStatChange = (category, statKey, value) => {
-    setSelectedItems(prev => ({
-      ...prev,
-      [category]: {
-        ...prev[category],
-        [statKey]: value
-      }
-    }));
+    setSelectedItems(prev => {
+      const otherStatKey = statKey === 'stat1' ? 'stat2' : 'stat1';
+      const otherValue = prev[category][otherStatKey];
+      return {
+        ...prev,
+        [category]: {
+          ...prev[category],
+          [statKey]: value,
+          // Om nya värdet är samma som det andra och inte tomt, nollställ det andra
+          [otherStatKey]: otherValue === value && value !== '' ? '' : otherValue,
+        }
+      };
+    });
   };
+
+  const resetItems = () => setSelectedItems(initialItemsState());
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -106,6 +112,16 @@ export default function CreateBuild() {
       return
     }
 
+    // Filtrera bort tomma statval i items
+    const filteredItems = {};
+    Object.entries(selectedItems).forEach(([cat, stats]) => {
+      const filteredStats = {};
+      if (stats.stat1) filteredStats.stat1 = stats.stat1;
+      if (stats.stat2) filteredStats.stat2 = stats.stat2;
+      if (stats.atkSpd) filteredStats.atkSpd = stats.atkSpd;
+      filteredItems[cat] = filteredStats;
+    });
+
     const buildData = {
       title: title.trim(),
       description: description.trim(),
@@ -114,7 +130,7 @@ export default function CreateBuild() {
       path_id: selectedPath,
       skills: selectedSkills,
       pets: selectedPets,
-      items: selectedItems // sparar objekt med statval per kategori
+      items: filteredItems
     }
 
     const { error: insertError } = await supabase.from('builds').insert([buildData])
@@ -123,6 +139,7 @@ export default function CreateBuild() {
       setError('Misslyckades med att spara builden: ' + insertError.message)
     } else {
       resetBuild()
+      resetItems()
       navigate('/my-builds')
     }
   }
@@ -190,8 +207,6 @@ export default function CreateBuild() {
         </select>
       </label>
 
-      {/* Här kan du lägga till dina Pets och Skills med ikoner eller checkboxar som du önskar */}
-
       <fieldset style={{ marginBottom: 15 }}>
         <legend>Skills</legend>
         {skills.map(skill => (
@@ -246,7 +261,6 @@ export default function CreateBuild() {
         ))}
       </fieldset>
 
-      {/* Items stats */}
       <fieldset style={{ marginBottom: 15 }}>
         <legend>Items Stats</legend>
         {itemCategories.map(category => (
@@ -290,5 +304,4 @@ export default function CreateBuild() {
       </button>
     </form>
   )
-        }
-    
+}
