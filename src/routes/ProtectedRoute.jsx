@@ -4,9 +4,8 @@ import { useUser } from '../context/UserContext'
 export default function ProtectedRoute({ children }) {
   const { user, loading } = useUser()
 
-  if (loading) return null
+  if (loading) return <div style={{ padding: 20 }}>🔄 Laddar...</div>
 
-  // Kontrollera att user finns OCH att e-post är verifierad
   const isVerified = user?.email_confirmed_at || user?.confirmed_at
 
   if (!user || !isVerified) {
