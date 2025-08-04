@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import '../styles/Auth.css'
 
 export default function Register() {
+  const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -17,9 +18,15 @@ export default function Register() {
     setSuccess('')
 
     const { data, error } = await supabase.auth.signUp(
-      { email, password },
       {
-        redirectTo: `${window.location.origin}/welcome` // Dynamisk baserat på nuvarande origin
+        email,
+        password,
+        options: {
+          data: {
+            username: username
+          },
+          redirectTo: `${window.location.origin}/welcome`
+        }
       }
     )
 
@@ -33,6 +40,7 @@ export default function Register() {
       setSuccess('Check your email to confirm your account.')
       setEmail('')
       setPassword('')
+      setUsername('')
       setTimeout(() => navigate('/login'), 4000)
     }
   }
@@ -41,6 +49,13 @@ export default function Register() {
     <div className="auth-container">
       <h2>Create Account</h2>
       <form onSubmit={handleRegister}>
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={e => setUsername(e.target.value)}
+          required
+        />
         <input
           type="email"
           placeholder="Email address"
