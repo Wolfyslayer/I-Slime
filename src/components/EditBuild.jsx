@@ -21,11 +21,12 @@ export default function EditBuild() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  // ❗ Vänta tills "user" är laddad
-  useEffect(() => {
-    if (user === undefined) return // user är inte laddad än
+  if (user === undefined) return null // Vänta tills user laddats
 
-    async function fetchBuild() {
+  useEffect(() => {
+    if (!user) return
+
+    const fetchBuild = async () => {
       setLoading(true)
 
       const { data, error } = await supabase
@@ -40,7 +41,7 @@ export default function EditBuild() {
         return
       }
 
-      if (user && data.user_id !== user.id) {
+      if (data.user_id !== user.id) {
         setError(t('You can only edit your own builds.'))
         setLoading(false)
         return
@@ -53,14 +54,12 @@ export default function EditBuild() {
       setSelectedSkills(data.skills || [])
       setSelectedPets(data.pets || [])
       setSelectedItems(data.items || [])
-
       setLoading(false)
     }
 
     fetchBuild()
   }, [id, user, t])
 
-  // Uppdatera path när klass ändras
   useEffect(() => {
     if (selectedClass) {
       const availablePaths = paths.filter(p => p.classId === selectedClass)
@@ -243,4 +242,4 @@ export default function EditBuild() {
       </form>
     </div>
   )
-                    }
+}
