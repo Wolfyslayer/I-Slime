@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { useTranslation } from 'react-i18next'
-import '../styles/Auth.css
+import '../styles/Auth.css'
 
 export default function AdminPanel() {
   const [reports, setReports] = useState([])
