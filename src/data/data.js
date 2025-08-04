@@ -13,22 +13,32 @@ export const paths = [
   { id: 'wizard', name: 'Wizard', classId: 'mage' }
 ];
 
-export const skills = [
-  { id: 'skill1', name: 'Skill 1' },
-  { id: 'skill2', name: 'Skill 2' },
-  { id: 'skill3', name: 'Skill 3' }
-  // Lägg till alla skills här...
-];
+// 36 Skills
+export const skills = Array.from({ length: 36 }, (_, i) => {
+  const id = `skill${i + 1}`;
+  return {
+    id,
+    name: `Skill ${i + 1}`,
+    icon: `/images/skills/icons/${id}.png`,
+    cardImage: `/images/skills/cards/${id}.png`,
+    description: `Beskrivning för Skill ${i + 1}`
+  };
+});
 
-export const pets = [
-  { id: 'pet1', name: 'Pet 1' },
-  { id: 'pet2', name: 'Pet 2' },
-  { id: 'pet3', name: 'Pet 3' }
-  // Lägg till alla pets här...
-];
+// 63 Pets
+export const pets = Array.from({ length: 63 }, (_, i) => {
+  const id = `pet${i + 1}`;
+  return {
+    id,
+    name: `Pet ${i + 1}`,
+    icon: `/images/pets/icons/${id}.png`,
+    cardImage: `/images/pets/cards/${id}.png`,
+    description: `Beskrivning för Pet ${i + 1}`
+  };
+});
 
+// Items kan du anpassa vidare efter kategori
 export const items = [
   { id: 'item1', name: 'Item 1' },
   { id: 'item2', name: 'Item 2' }
-  // Lägg till alla items här...
 ];
