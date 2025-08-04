@@ -1,178 +1,196 @@
-// CreateBuild.jsx (med utkast och rensa-knapp) import React, { useState, useContext, useEffect } from 'react' 
-import { useUser } from '../context/UserContext' 
-import { supabase } from '../lib/supabaseClient' 
-import { useNavigate } from 'react-router-dom' 
-import { BuildContext } from './BuildSystem/BuildContext' 
+import React, { useState, useContext } from 'react'
+import { useUser } from '../context/UserContext'
+import { supabase } from '../lib/supabaseClient'
+import { useNavigate } from 'react-router-dom'
+import { BuildContext } from './BuildSystem/BuildContext'
 import { classes, paths, skills, pets, items } from '../data/data'
 
-export default function CreateBuild() { const { user } = useUser() const navigate = useNavigate()
+export default function CreateBuild() {
+  const { user } = useUser()
+  const navigate = useNavigate()
 
-const { title, setTitle, description, setDescription, selectedClass, setSelectedClass, selectedPath, setSelectedPath, selectedSkills, setSelectedSkills, selectedPets, setSelectedPets, selectedItems, setSelectedItems, resetBuild } = useContext(BuildContext)
+  // Hämta formdata och setters från BuildContext
+  const {
+    title,
+    setTitle,
+    description,
+    setDescription,
+    selectedClass,
+    setSelectedClass,
+    selectedPath,
+    setSelectedPath,
+    selectedSkills,
+    setSelectedSkills,
+    selectedPets,
+    setSelectedPets,
+    selectedItems,
+    setSelectedItems,
+    resetBuild
+  } = useContext(BuildContext)
 
-const [error, setError] = useState(null)
+  const [error, setError] = useState(null)
 
-useEffect(() => { const savedDraft = localStorage.getItem('buildDraft') if (savedDraft) { try { const parsed = JSON.parse(savedDraft) if (parsed.title) setTitle(parsed.title) if (parsed.description) setDescription(parsed.description) if (parsed.selectedClass) setSelectedClass(parsed.selectedClass) if (parsed.selectedPath) setSelectedPath(parsed.selectedPath) if (Array.isArray(parsed.selectedSkills)) setSelectedSkills(parsed.selectedSkills) if (Array.isArray(parsed.selectedPets)) setSelectedPets(parsed.selectedPets) if (Array.isArray(parsed.selectedItems)) setSelectedItems(parsed.selectedItems) } catch (err) { console.error('Kunde inte läsa utkast:', err) } } }, [])
+  // När klassen ändras, sätt första path automatiskt
+  React.useEffect(() => {
+    if (selectedClass) {
+      const filteredPaths = paths.filter(p => p.classId === selectedClass)
+      setSelectedPath(filteredPaths.length > 0 ? filteredPaths[0].id : '')
+    } else {
+      setSelectedPath('')
+    }
+  }, [selectedClass, setSelectedPath])
 
-useEffect(() => { const draft = { title, description, selectedClass, selectedPath, selectedSkills, selectedPets, selectedItems } localStorage.setItem('buildDraft', JSON.stringify(draft)) }, [title, description, selectedClass, selectedPath, selectedSkills, selectedPets, selectedItems])
+  const toggleSelect = (array, setArray, value) => {
+    if (array.includes(value)) {
+      setArray(array.filter(v => v !== value))
+    } else {
+      setArray([...array, value])
+    }
+  }
 
-useEffect(() => { if (selectedClass) { const filteredPaths = paths.filter(p => p.classId === selectedClass) setSelectedPath(filteredPaths.length > 0 ? filteredPaths[0].id : '') } else { setSelectedPath('') } }, [selectedClass, setSelectedPath])
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setError(null)
 
-const toggleSelect = (array, setArray, value) => { if (array.includes(value)) { setArray(array.filter(v => v !== value)) } else { setArray([...array, value]) } }
+    if (!title.trim() || !selectedClass || !selectedPath) {
+      setError('Titel, klass och väg är obligatoriska.')
+      return
+    }
 
-const handleSubmit = async (e) => { e.preventDefault() setError(null)
+    if (!user) {
+      setError('Du måste vara inloggad för att skapa en build.')
+      return
+    }
 
-if (!title.trim() || !selectedClass || !selectedPath) {
-  setError('Titel, klass och väg är obligatoriska.')
-  return
-}
+    const buildData = {
+      title: title.trim(),
+      description: description.trim(),
+      user_id: user.id,
+      class_id: selectedClass,
+      path_id: selectedPath,
+      skills: selectedSkills,
+      pets: selectedPets,
+      items: selectedItems
+    }
 
-if (!user) {
-  setError('Du måste vara inloggad för att skapa en build.')
-  return
-}
+    const { error: insertError } = await supabase.from('builds').insert([buildData])
 
-const buildData = {
-  title: title.trim(),
-  description: description.trim(),
-  user_id: user.id,
-  class_id: selectedClass,
-  path_id: selectedPath,
-  skills: selectedSkills,
-  pets: selectedPets,
-  items: selectedItems
-}
+    if (insertError) {
+      setError('Misslyckades med att spara builden: ' + insertError.message)
+    } else {
+      resetBuild()
+      navigate('/my-builds')
+    }
+  }
 
-const { error: insertError } = await supabase.from('builds').insert([buildData])
+  return (
+    <form onSubmit={handleSubmit} style={{ maxWidth: 600, margin: '0 auto', padding: 20 }}>
+      <h2>Skapa ny Build</h2>
 
-if (insertError) {
-  setError('Misslyckades med att spara builden: ' + insertError.message)
-} else {
-  resetBuild()
-  navigate('/my-builds')
-}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
 
-}
-
-return ( <form onSubmit={handleSubmit} style={{ maxWidth: 600, margin: '0 auto', padding: 20 }}> <h2>Skapa ny Build</h2>
-
-{error && <p style={{ color: 'red' }}>{error}</p>}
-
-  <button
-    type="button"
-    onClick={resetBuild}
-    style={{ padding: '8px 16px', marginBottom: '10px', marginRight: '10px' }}
-  >
-    Rensa formulär
-  </button>
-
-  <button
-    type="button"
-    onClick={() => {
-      localStorage.removeItem('buildDraft')
-      alert('Utkast raderat!')
-    }}
-    style={{ padding: '8px 16px', marginBottom: '10px' }}
-  >
-    Rensa utkast
-  </button>
-
-  <label>
-    Titel:
-    <input
-      type="text"
-      value={title}
-      onChange={e => setTitle(e.target.value)}
-      required
-      style={{ width: '100%', padding: 8, marginBottom: 10 }}
-    />
-  </label>
-
-  <label>
-    Beskrivning:
-    <textarea
-      value={description}
-      onChange={e => setDescription(e.target.value)}
-      style={{ width: '100%', padding: 8, marginBottom: 10 }}
-    />
-  </label>
-
-  <label>
-    Klass:
-    <select
-      value={selectedClass}
-      onChange={e => setSelectedClass(e.target.value)}
-      required
-      style={{ width: '100%', padding: 8, marginBottom: 10 }}
-    >
-      <option value="">Välj klass</option>
-      {classes.map(c => (
-        <option key={c.id} value={c.id}>{c.name}</option>
-      ))}
-    </select>
-  </label>
-
-  <label>
-    Väg:
-    <select
-      value={selectedPath}
-      onChange={e => setSelectedPath(e.target.value)}
-      required
-      disabled={!selectedClass}
-      style={{ width: '100%', padding: 8, marginBottom: 10 }}
-    >
-      {selectedClass && paths.filter(p => p.classId === selectedClass).map(p => (
-        <option key={p.id} value={p.id}>{p.name}</option>
-      ))}
-    </select>
-  </label>
-
-  <fieldset style={{ marginBottom: 10 }}>
-    <legend>Skills</legend>
-    {skills.map(skill => (
-      <label key={skill.id} style={{ display: 'block' }}>
+      <label>
+        Titel:
         <input
-          type="checkbox"
-          checked={selectedSkills.includes(skill.id)}
-          onChange={() => toggleSelect(selectedSkills, setSelectedSkills, skill.id)}
+          type="text"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+          required
+          style={{ width: '100%', padding: 8, marginBottom: 10 }}
         />
-        {skill.name}
       </label>
-    ))}
-  </fieldset>
 
-  <fieldset style={{ marginBottom: 10 }}>
-    <legend>Pets</legend>
-    {pets.map(pet => (
-      <label key={pet.id} style={{ display: 'block' }}>
-        <input
-          type="checkbox"
-          checked={selectedPets.includes(pet.id)}
-          onChange={() => toggleSelect(selectedPets, setSelectedPets, pet.id)}
+      <label>
+        Beskrivning:
+        <textarea
+          value={description}
+          onChange={e => setDescription(e.target.value)}
+          style={{ width: '100%', padding: 8, marginBottom: 10 }}
         />
-        {pet.name}
       </label>
-    ))}
-  </fieldset>
 
-  <fieldset style={{ marginBottom: 10 }}>
-    <legend>Items</legend>
-    {items.map(item => (
-      <label key={item.id} style={{ display: 'block' }}>
-        <input
-          type="checkbox"
-          checked={selectedItems.includes(item.id)}
-          onChange={() => toggleSelect(selectedItems, setSelectedItems, item.id)}
-        />
-        {item.name}
+      <label>
+        Klass:
+        <select
+          value={selectedClass}
+          onChange={e => setSelectedClass(e.target.value)}
+          required
+          style={{ width: '100%', padding: 8, marginBottom: 10 }}
+        >
+          <option value="">Välj klass</option>
+          {classes.map(c => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
       </label>
-    ))}
-  </fieldset>
 
-  <button type="submit" style={{ padding: '10px 20px', fontWeight: 'bold' }}>
-    Skapa Build
-  </button>
-</form>
+      <label>
+        Väg:
+        <select
+          value={selectedPath}
+          onChange={e => setSelectedPath(e.target.value)}
+          required
+          disabled={!selectedClass}
+          style={{ width: '100%', padding: 8, marginBottom: 10 }}
+        >
+          {selectedClass &&
+            paths
+              .filter(p => p.classId === selectedClass)
+              .map(p => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+        </select>
+      </label>
 
-) }
+      <fieldset style={{ marginBottom: 10 }}>
+        <legend>Skills</legend>
+        {skills.map(skill => (
+          <label key={skill.id} style={{ display: 'block' }}>
+            <input
+              type="checkbox"
+              checked={selectedSkills.includes(skill.id)}
+              onChange={() => toggleSelect(selectedSkills, setSelectedSkills, skill.id)}
+            />
+            {skill.name}
+          </label>
+        ))}
+      </fieldset>
 
-        
+      <fieldset style={{ marginBottom: 10 }}>
+        <legend>Pets</legend>
+        {pets.map(pet => (
+          <label key={pet.id} style={{ display: 'block' }}>
+            <input
+              type="checkbox"
+              checked={selectedPets.includes(pet.id)}
+              onChange={() => toggleSelect(selectedPets, setSelectedPets, pet.id)}
+            />
+            {pet.name}
+          </label>
+        ))}
+      </fieldset>
+
+      <fieldset style={{ marginBottom: 10 }}>
+        <legend>Items</legend>
+        {items.map(item => (
+          <label key={item.id} style={{ display: 'block' }}>
+            <input
+              type="checkbox"
+              checked={selectedItems.includes(item.id)}
+              onChange={() => toggleSelect(selectedItems, setSelectedItems, item.id)}
+            />
+            {item.name}
+          </label>
+        ))}
+      </fieldset>
+
+      <button type="submit" style={{ padding: '10px 20px', fontWeight: 'bold' }}>
+        Skapa Build
+      </button>
+    </form>
+  )
+}
