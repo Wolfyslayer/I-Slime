@@ -69,7 +69,7 @@ export default function App() {
                 element={
                   <AdminRoute>
                     <AdminPanel />
-                  <AdminRoute>
+                  </AdminRoute>
                 }
               />
               <Route path="/login" element={<Login />} />
