@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -18,89 +18,105 @@ export default function AdminPanel() {
   const [expandedReportId, setExpandedReportId] = useState(null)
   const { t } = useTranslation()
   const [isAdmin, setIsAdmin] = useState(false)
+  const mounted = useRef(true)
 
   useEffect(() => {
+    mounted.current = true
+
     async function fetchReportsAndUsers() {
-      setLoading(true)
-      setError(null)
+      try {
+        if (!mounted.current) return
+        setLoading(true)
+        setError(null)
 
-      // Kontrollera adminrättigheter och användare
-      const {
-        data: { user },
-        error: userError
-      } = await supabase.auth.getUser()
+        const {
+          data: { user },
+          error: userError
+        } = await supabase.auth.getUser()
 
-      if (userError || !user) {
-        setError(t('No permission'))
+        if (userError || !user) {
+          if (!mounted.current) return
+          setError(t('No permission'))
+          setLoading(false)
+          return
+        }
+
+        const { data: adminData, error: adminError } = await supabase
+          .from('admin_users')
+          .select('*')
+          .eq('user_id', user.id)
+          .single()
+
+        if (adminError || !adminData) {
+          if (!mounted.current) return
+          setError(t('No permission'))
+          setLoading(false)
+          return
+        }
+
+        if (!mounted.current) return
+        setIsAdmin(true)
+
+        const { data: reportData, error: reportError } = await supabase
+          .from('build_reports')
+          .select('id, reason, build_id, reported_by, reported_at, reported_user_id, builds(id, title, user_id)')
+          .order('reported_at', { ascending: false })
+
+        if (reportError) {
+          if (!mounted.current) return
+          setError(t('Error fetching reports'))
+          setLoading(false)
+          return
+        }
+
+        // Samla userIds för username hämtning
+        const userIds = new Set()
+        reportData.forEach(r => {
+          if (r.builds?.user_id) userIds.add(r.builds.user_id)
+          if (r.reported_user_id) userIds.add(r.reported_user_id)
+          if (r.reported_by) userIds.add(r.reported_by)
+        })
+
+        const { data: profilesData, error: profilesError } = await supabase
+          .from('profiles')
+          .select('id, username')
+          .in('id', Array.from(userIds))
+
+        if (profilesError) {
+          if (!mounted.current) return
+          setError(t('Error fetching user profiles'))
+          setLoading(false)
+          return
+        }
+
+        const userMap = {}
+        profilesData.forEach(p => {
+          userMap[p.id] = p.username
+        })
+
+        const enrichedReports = reportData.map(r => ({
+          ...r,
+          build_owner_username: userMap[r.builds?.user_id] || t('Unknown'),
+          reported_user_username: userMap[r.reported_user_id] || t('Unknown'),
+          reported_by_username: userMap[r.reported_by] || t('Unknown')
+        }))
+
+        if (!mounted.current) return
+        setReports(enrichedReports)
         setLoading(false)
-        return
-      }
-
-      const { data: adminData, error: adminError } = await supabase
-        .from('admin_users')
-        .select('*')
-        .eq('user_id', user.id)
-        .single()
-
-      if (adminError || !adminData) {
-        setError(t('No permission'))
+      } catch (err) {
+        if (!mounted.current) return
+        setError(t('Unexpected error occurred'))
         setLoading(false)
-        return
+        console.error(err)
       }
-
-      setIsAdmin(true)
-
-      // Hämta rapporter och builds (utan djupa relationer)
-      const { data: reportData, error: reportError } = await supabase
-        .from('build_reports')
-        .select('id, reason, build_id, reported_by, reported_at, reported_user_id, builds(id, title, user_id)')
-        .order('reported_at', { ascending: false })
-
-      if (reportError) {
-        setError(t('Error fetching reports'))
-        setLoading(false)
-        return
-      }
-
-      // Samla alla user_ids för att hämta usernames
-      const userIds = new Set()
-      reportData.forEach(r => {
-        if (r.builds?.user_id) userIds.add(r.builds.user_id)
-        if (r.reported_user_id) userIds.add(r.reported_user_id)
-        if (r.reported_by) userIds.add(r.reported_by)
-      })
-
-      // Hämta profiler med usernames
-      const { data: profilesData, error: profilesError } = await supabase
-        .from('profiles')
-        .select('id, username')
-        .in('id', Array.from(userIds))
-
-      if (profilesError) {
-        setError(t('Error fetching user profiles'))
-        setLoading(false)
-        return
-      }
-
-      // Map user_id till username
-      const userMap = {}
-      profilesData.forEach(p => {
-        userMap[p.id] = p.username
-      })
-
-      // Lägg till usernames i rapporterna
-      const enrichedReports = reportData.map(r => ({
-        ...r,
-        build_owner_username: userMap[r.builds?.user_id] || t('Unknown'),
-        reported_user_username: userMap[r.reported_user_id] || t('Unknown'),
-        reported_by_username: userMap[r.reported_by] || t('Unknown')
-      }))
-
-      setReports(enrichedReports)
-      setLoading(false)
     }
 
     fetchReportsAndUsers()
+
+    return () => {
+      mounted.current = false
+    }
   }, [t])
 
   const toggleExpand = (id) => {
@@ -109,31 +125,24 @@ export default function AdminPanel() {
 
   async function deleteBuild(buildId) {
     if (!window.confirm(t('Delete this build permanently?'))) return
-
     setLoading(true)
     const { error } = await supabase.from('builds').delete().eq('id', buildId)
-
     if (error) {
       alert(t('Error deleting build'))
       setLoading(false)
       return
     }
-
-    // Uppdatera rapporter utan de som tillhör den borttagna builden
     setReports(prev => prev.filter(r => r.build_id !== buildId))
     setLoading(false)
   }
 
   async function banUser(userId) {
     if (!window.confirm(t('Do you want to ban this user?'))) return
-
     const { error } = await supabase.from('banned_users').insert([{ user_id: userId }])
-
     if (error) {
       alert(t('Error banning user'))
       return
     }
-
     alert(t('User banned'))
   }
 
@@ -209,4 +218,4 @@ export default function AdminPanel() {
       })}
     </div>
   )
-          }
+            }
