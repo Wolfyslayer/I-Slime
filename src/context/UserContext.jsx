@@ -13,27 +13,26 @@ export function UserProvider({ children }) {
     const fetchUser = async () => {
       const { data: { session } } = await supabase.auth.getSession()
 
-      // Kolla om session finns och e-post är verifierad
-      if (session?.user) {
-        const userIsVerified = session.user.email_confirmed_at || session.user.confirmed_at
-        if (!userIsVerified) {
-          // Om ej verifierad, logga ut direkt
-          await supabase.auth.signOut()
-          setUser(null)
-          setLoading(false)
-          return
-        }
+      const newUser = session?.user ?? null
+      const verified = newUser?.email_confirmed_at || newUser?.confirmed_at
+
+      if (newUser && !verified) {
+        await supabase.auth.signOut()
+        setUser(null)
+        setLoading(false)
+        return
       }
 
-      setUser(session?.user ?? null)
+      setUser(prev => (prev?.id === newUser?.id ? prev : newUser))
       setLoading(false)
 
-      if (session?.user) {
+      if (newUser) {
         const { data: adminData } = await supabase
           .from('admin_users')
           .select('*')
-          .eq('user_id', session.user.id)
+          .eq('user_id', newUser.id)
           .single()
+
         setIsAdmin(!!adminData)
       }
     }
@@ -41,29 +40,31 @@ export function UserProvider({ children }) {
     fetchUser()
 
     const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (session?.user) {
-        const userIsVerified = session.user.email_confirmed_at || session.user.confirmed_at
-        if (!userIsVerified) {
-          await supabase.auth.signOut()
-          setUser(null)
-          setIsAdmin(false)
-          setLoading(false)
-          return
-        }
+      const newUser = session?.user ?? null
+      const verified = newUser?.email_confirmed_at || newUser?.confirmed_at
+
+      if (newUser && !verified) {
+        await supabase.auth.signOut()
+        setUser(null)
+        setIsAdmin(false)
+        setLoading(false)
+        return
       }
 
-      setUser(session?.user ?? null)
-      setIsAdmin(false)
+      setUser(prev => (prev?.id === newUser?.id ? prev : newUser))
+      setLoading(false)
 
-      if (session?.user) {
-        supabase
+      if (newUser) {
+        const { data } = await supabase
           .from('admin_users')
           .select('*')
-          .eq('user_id', session.user.id)
+          .eq('user_id', newUser.id)
           .single()
-          .then(({ data }) => setIsAdmin(!!data))
+
+        setIsAdmin(!!data)
+      } else {
+        setIsAdmin(false)
       }
-      setLoading(false)
     })
 
     return () => {
