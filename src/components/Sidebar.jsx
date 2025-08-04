@@ -6,8 +6,7 @@ import { supabase } from '../lib/supabaseClient'
 import './Sidebar.css'
 
 export default function Sidebar() {
-  const { user, loading } = useUser()
-  const [isAdmin, setIsAdmin] = useState(false)
+  const { user, loading, isAdmin } = useUser()
   const location = useLocation()
   const navigate = useNavigate()
   const [isOpen, setIsOpen] = useState(false)
@@ -17,22 +16,6 @@ export default function Sidebar() {
   useEffect(() => {
     setIsOpen(false)
   }, [location.pathname])
-
-  useEffect(() => {
-    const checkAdmin = async () => {
-      if (user?.id) {
-        const { data } = await supabase
-          .from('admin_users')
-          .select('user_id')
-          .eq('user_id', user.id)
-          .single()
-
-        setIsAdmin(!!data)
-      }
-    }
-
-    checkAdmin()
-  }, [user])
 
   if (loading) return null
 
@@ -50,9 +33,9 @@ export default function Sidebar() {
           <NavLink to="/" end>All Builds</NavLink>
           {user && (
             <>
-              <NavLink to="/CreateBuild">Create Build</NavLink>
-              <NavLink to="/MyBuilds">My Builds</NavLink>
-              {isAdmin && <NavLink to="/AdminPanel">Admin</NavLink>}
+              <NavLink to="/create-build">Create Build</NavLink>
+              <NavLink to="/my-builds">My Builds</NavLink>
+              {isAdmin && <NavLink to="/admin-panel">Admin Panel</NavLink>}
 
               {/* Logga ut-knappen som en vanlig knapp med styling som länk */}
               <button

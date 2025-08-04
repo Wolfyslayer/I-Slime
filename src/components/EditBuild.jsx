@@ -3,11 +3,13 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabaseClient'
 import { classes, paths, skills, pets, items } from '../data/data'
 import { useTranslation } from 'react-i18next'
+import { useUser } from '../context/UserContext'
 
 export default function EditBuild() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { t } = useTranslation()
+  const { user } = useUser()
 
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -16,10 +18,12 @@ export default function EditBuild() {
   const [selectedSkills, setSelectedSkills] = useState([])
   const [selectedPets, setSelectedPets] = useState([])
   const [selectedItems, setSelectedItems] = useState([])
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
   useEffect(() => {
     async function fetchBuild() {
+      setLoading(true)
       const { data, error } = await supabase
         .from('builds')
         .select('*')
@@ -29,28 +33,42 @@ export default function EditBuild() {
       if (error) {
         setError(error.message)
       } else if (data) {
+        // Check if user owns this build
+        if (user && data.user_id !== user.id) {
+          setError(t('You can only edit your own builds.'))
+          setLoading(false)
+          return
+        }
+        
         setTitle(data.title)
         setDescription(data.description)
-        setSelectedClass(data.class || '')  // assuming string class
-        setSelectedPath(data.path || '')    // assuming string path
+        setSelectedClass(data.class_id || '')
+        setSelectedPath(data.path_id || '')
         setSelectedSkills(data.skills || [])
         setSelectedPets(data.pets || [])
         setSelectedItems(data.items || [])
       }
+      setLoading(false)
     }
     fetchBuild()
-  }, [id])
+  }, [id, user, t])
 
-  // Uppdatera path när klass ändras (som i CreateBuild)
+  // Update path when class changes
   useEffect(() => {
-    if (selectedClass && paths[selectedClass]) {
-      if (!paths[selectedClass].includes(selectedPath)) {
-        setSelectedPath(paths[selectedClass][0])
+    if (selectedClass) {
+      const availablePaths = paths.filter(p => p.classId === selectedClass)
+      if (availablePaths.length > 0) {
+        const currentPathValid = availablePaths.some(p => p.id === selectedPath)
+        if (!currentPathValid) {
+          setSelectedPath(availablePaths[0].id)
+        }
+      } else {
+        setSelectedPath('')
       }
     } else {
       setSelectedPath('')
     }
-  }, [selectedClass])
+  }, [selectedClass, selectedPath])
 
   const toggleSelect = (array, setArray, value) => {
     if (array.includes(value)) {
@@ -62,156 +80,164 @@ export default function EditBuild() {
 
   const handleUpdate = async (e) => {
     e.preventDefault()
-    const user = supabase.auth.user()
+    
     if (!user) {
       setError(t('You must be logged in to edit a build.'))
       return
     }
+    
+    if (!title.trim() || !selectedClass || !selectedPath) {
+      setError(t('Title, class and path are required.'))
+      return
+    }
+    
     const { error } = await supabase
       .from('builds')
       .update({
         title,
         description,
-        class: selectedClass,
-        path: selectedPath,
+        class_id: selectedClass,
+        path_id: selectedPath,
         skills: selectedSkills,
         pets: selectedPets,
         items: selectedItems,
       })
       .eq('id', id)
 
-    if (error) setError(error.message)
-    else {
-      alert(t('Build updated!'))
-      navigate(`/BuildDetail/${id}`)  // matcha route i App.jsx
+    if (error) {
+      setError(error.message)
+    } else {
+      navigate(`/build-detail/${id}`)
     }
   }
 
+  if (loading) return <div className="loading">{t('Loading...')}</div>
+  if (error && !title) return <div className="error">{error}</div>
+
   return (
-    <form onSubmit={handleUpdate} style={{ maxWidth: 600, margin: '0 auto', padding: 20, background: 'rgba(0,0,0,0.6)', borderRadius: 8, color: '#0ff' }}>
-      <h2>{t('Edit Build')}</h2>
-      <input
-        type="text"
-        placeholder={t('Title')}
-        value={title}
-        onChange={e => setTitle(e.target.value)}
-        required
-        style={{ width: '100%', padding: 8, marginBottom: 10, borderRadius: 4, border: 'none', background: '#111', color: '#0ff' }}
-      />
-      <textarea
-        placeholder={t('Description')}
-        value={description}
-        onChange={e => setDescription(e.target.value)}
-        required
-        style={{ width: '100%', padding: 8, marginBottom: 10, borderRadius: 4, border: 'none', resize: 'vertical', background: '#111', color: '#0ff' }}
-      />
+    <div className="edit-build-container">
+      <h1>{t('Edit Build')}</h1>
+      
+      <form onSubmit={handleUpdate} className="build-form">
+        {error && <div className="error-message">{error}</div>}
+        
+        <div className="form-group">
+          <label htmlFor="title">{t('Title')}</label>
+          <input
+            id="title"
+            type="text"
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            required
+          />
+        </div>
 
-      <label>{t('Class')}</label>
-      <select
-        value={selectedClass}
-        onChange={e => setSelectedClass(e.target.value)}
-        required
-        style={{ width: '100%', padding: 8, marginBottom: 10, borderRadius: 4, border: 'none', background: '#111', color: '#0ff' }}
-      >
-        <option value="">{t('Select Class')}</option>
-        {classes.map(c => (
-          <option key={c} value={c}>{c}</option>
-        ))}
-      </select>
+        <div className="form-group">
+          <label htmlFor="description">{t('Description')}</label>
+          <textarea
+            id="description"
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+            rows={4}
+          />
+        </div>
 
-      <label>{t('Path')}</label>
-      <select
-        value={selectedPath}
-        onChange={e => setSelectedPath(e.target.value)}
-        required
-        disabled={!selectedClass}
-        style={{ width: '100%', padding: 8, marginBottom: 10, borderRadius: 4, border: 'none', background: '#111', color: '#0ff' }}
-      >
-        {selectedClass && paths[selectedClass].map(p => (
-          <option key={p} value={p}>{p}</option>
-        ))}
-      </select>
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="class">{t('Class')}</label>
+            <select
+              id="class"
+              value={selectedClass}
+              onChange={e => setSelectedClass(e.target.value)}
+              required
+            >
+              <option value="">{t('Select Class')}</option>
+              {classes.map(c => (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              ))}
+            </select>
+          </div>
 
-      <label>{t('Skills')}</label>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
-        {skills.map(skill => (
-          <button
-            key={skill}
-            type="button"
-            onClick={() => toggleSelect(selectedSkills, setSelectedSkills, skill)}
-            style={{
-              padding: '5px 10px',
-              borderRadius: 4,
-              border: selectedSkills.includes(skill) ? '2px solid #0ff' : '1px solid #444',
-              background: selectedSkills.includes(skill) ? '#022' : '#111',
-              color: '#0ff',
-              cursor: 'pointer'
-            }}
+          <div className="form-group">
+            <label htmlFor="path">{t('Path')}</label>
+            <select
+              id="path"
+              value={selectedPath}
+              onChange={e => setSelectedPath(e.target.value)}
+              required
+              disabled={!selectedClass}
+            >
+              <option value="">{t('Select Path')}</option>
+              {paths
+                .filter(p => p.classId === selectedClass)
+                .map(p => (
+                  <option key={p.id} value={p.id}>{p.name}</option>
+                ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="form-group">
+          <label>{t('Skills')}</label>
+          <div className="selection-grid">
+            {skills.map(skill => (
+              <button
+                key={skill.id}
+                type="button"
+                className={`selection-btn ${selectedSkills.includes(skill.id) ? 'selected' : ''}`}
+                onClick={() => toggleSelect(selectedSkills, setSelectedSkills, skill.id)}
+              >
+                {skill.name}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="form-group">
+          <label>{t('Pets')}</label>
+          <div className="selection-grid">
+            {pets.map(pet => (
+              <button
+                key={pet.id}
+                type="button"
+                className={`selection-btn ${selectedPets.includes(pet.id) ? 'selected' : ''}`}
+                onClick={() => toggleSelect(selectedPets, setSelectedPets, pet.id)}
+              >
+                {pet.name}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="form-group">
+          <label>{t('Items')}</label>
+          <div className="selection-grid">
+            {items.map(item => (
+              <button
+                key={item.id}
+                type="button"
+                className={`selection-btn ${selectedItems.includes(item.id) ? 'selected' : ''}`}
+                onClick={() => toggleSelect(selectedItems, setSelectedItems, item.id)}
+              >
+                {item.name}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="form-actions">
+          <button 
+            type="button" 
+            onClick={() => navigate(`/build-detail/${id}`)}
+            className="btn-secondary"
           >
-            {skill}
+            {t('Cancel')}
           </button>
-        ))}
-      </div>
-
-      <label>{t('Pets')}</label>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
-        {pets.map(pet => (
-          <button
-            key={pet}
-            type="button"
-            onClick={() => toggleSelect(selectedPets, setSelectedPets, pet)}
-            style={{
-              padding: '5px 10px',
-              borderRadius: 4,
-              border: selectedPets.includes(pet) ? '2px solid #0ff' : '1px solid #444',
-              background: selectedPets.includes(pet) ? '#022' : '#111',
-              color: '#0ff',
-              cursor: 'pointer'
-            }}
-          >
-            {pet}
+          <button type="submit" className="btn-primary">
+            {t('Update Build')}
           </button>
-        ))}
-      </div>
-
-      <label>{t('Items')}</label>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
-        {items.map(item => (
-          <button
-            key={item}
-            type="button"
-            onClick={() => toggleSelect(selectedItems, setSelectedItems, item)}
-            style={{
-              padding: '5px 10px',
-              borderRadius: 4,
-              border: selectedItems.includes(item) ? '2px solid #0ff' : '1px solid #444',
-              background: selectedItems.includes(item) ? '#022' : '#111',
-              color: '#0ff',
-              cursor: 'pointer'
-            }}
-          >
-            {item}
-          </button>
-        ))}
-      </div>
-
-      <button
-        type="submit"
-        style={{
-          backgroundColor: '#00f9ff',
-          color: '#000',
-          fontWeight: 'bold',
-          padding: '10px 20px',
-          borderRadius: 6,
-          border: 'none',
-          cursor: 'pointer',
-          width: '100%'
-        }}
-      >
-        {t('Update Build')}
-      </button>
-
-      {error && <p style={{ color: 'red', marginTop: 10 }}>{error}</p>}
-    </form>
+        </div>
+      </form>
+    </div>
   )
 }

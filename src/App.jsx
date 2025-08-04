@@ -66,7 +66,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/AdminPanel"
+                path="/admin-panel"
                 element={
                   <ProtectedRoute>
                     <AdminPanel />
