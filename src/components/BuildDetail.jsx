@@ -49,6 +49,23 @@ export default function BuildDetail() {
 
   const canEdit = user && build && user.id === build.user_id
 
+  const handleReport = async () => {
+    const { error } = await supabase
+      .from('build_reports')
+      .insert({
+        build_id: build.id,
+        reported_by: user.id,
+        reported_at: new Date().toISOString(),
+      })
+
+    if (error) {
+      alert(t('Something went wrong reporting the build.'))
+      console.error(error)
+    } else {
+      alert(t('Thank you for reporting this build.'))
+    }
+  }
+
   if (loading) return <div className="loading">{t('Loading...')}</div>
   if (error) return <p style={{ color: 'red' }}>{error}</p>
   if (!build) return <p>{t('Build not found')}</p>
@@ -119,12 +136,22 @@ export default function BuildDetail() {
         <button onClick={() => navigate('/')} className="btn-secondary">
           {t('Back to Builds')}
         </button>
+
         {canEdit && (
           <button 
             onClick={() => navigate(`/edit-build/${id}`)} 
             className="btn-primary"
           >
             {t('Edit Build')}
+          </button>
+        )}
+
+        {user && build && user.id !== build.user_id && (
+          <button 
+            onClick={handleReport}
+            className="btn-danger"
+          >
+            {t('Report Build')}
           </button>
         )}
       </div>
