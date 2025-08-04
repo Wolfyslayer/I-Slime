@@ -1,5 +1,6 @@
 // src/components/AccessDenied.jsx
 import React from 'react'
+import '../styles/Auth.css'
 
 export default function AccessDenied({ message = 'Du har inte behörighet att se denna sida.' }) {
   return (
