@@ -79,6 +79,7 @@ export default function CreateBuild() {
       setArray([...array, value]);
     }
   }
+};
 
 
   const handleStatChange = (category, statKey, value) => {
