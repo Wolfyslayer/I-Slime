@@ -16,6 +16,7 @@ export default function AdminPanel() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [expandedReportId, setExpandedReportId] = useState(null)
+  const [deletingId, setDeletingId] = useState(null)
   const { t } = useTranslation()
   const [isAdmin, setIsAdmin] = useState(false)
 
@@ -46,6 +47,7 @@ export default function AdminPanel() {
 
       setIsAdmin(true)
 
+      // Hämta rapporter + användarnamn för build owner, rapporterad användare och rapporterare
       const { data: reportData, error: reportError } = await supabase
         .from('build_reports')
         .select(`
@@ -55,19 +57,20 @@ export default function AdminPanel() {
           reported_by,
           reported_at,
           reported_user_id,
-          builds (
-            title,
-            user_id,
-            profiles (username)
-          ),
-          reported_user:profiles!reported_user_id (username),
-          reporting_user:profiles!reported_by (username)
+          builds (title, user_id),
+          profiles_by_reported_user_id:profiles!build_reports_reported_user_id (username),
+          profiles_by_reported_by:profiles!build_reports_reported_by_fkey (username),
+          profiles_by_build_owner:profiles!builds_user_id_fkey (username)
         `)
         .order('reported_at', { ascending: false })
 
-      if (reportError) setError(t('Error fetching reports'))
-      else setReports(reportData)
+      if (reportError) {
+        setError(t('Error fetching reports'))
+        setLoading(false)
+        return
+      }
 
+      setReports(reportData)
       setLoading(false)
     }
 
@@ -80,9 +83,34 @@ export default function AdminPanel() {
 
   async function deleteBuild(buildId) {
     if (!window.confirm(t('Delete this build permanently?'))) return
-    const { error } = await supabase.from('builds').delete().eq('id', buildId)
-    if (error) alert(t('Error deleting build'))
-    else setReports(reports.filter(r => r.build_id !== buildId))
+    setDeletingId(buildId)
+
+    // Ta bort relaterade rapporter först
+    const { error: reportError } = await supabase
+      .from('build_reports')
+      .delete()
+      .eq('build_id', buildId)
+
+    if (reportError) {
+      alert(t('Error deleting related reports'))
+      setDeletingId(null)
+      return
+    }
+
+    // Ta bort builden
+    const { error } = await supabase
+      .from('builds')
+      .delete()
+      .eq('id', buildId)
+
+    if (error) {
+      console.error('Delete build error:', error)
+      alert(t('Error deleting build'))
+    } else {
+      setReports(prevReports => prevReports.filter(r => r.build_id !== buildId))
+    }
+
+    setDeletingId(null)
   }
 
   async function banUser(userId) {
@@ -101,6 +129,7 @@ export default function AdminPanel() {
       <h1>{t('Admin Panel - Report Management')}</h1>
       {reports.map(report => {
         const isExpanded = expandedReportId === report.id
+        const deleting = deletingId === report.build_id
 
         return (
           <motion.div
@@ -140,16 +169,22 @@ export default function AdminPanel() {
                   onClick={(e) => e.stopPropagation()}
                   style={{ overflow: 'hidden', marginTop: '1rem' }}
                 >
-                  <p><strong>{t('Build Owner')}:</strong> {report.builds?.profiles?.username || report.builds?.user_id}</p>
-                  <p><strong>{t('Reported User')}:</strong> {report.reported_user?.username || report.reported_user_id}</p>
-                  <p><strong>{t('Reported By')}:</strong> {report.reporting_user?.username || report.reported_by}</p>
+                  <p><strong>{t('Build Owner')}:</strong> {report.profiles_by_build_owner?.username || report.builds?.user_id}</p>
+                  <p><strong>{t('Reported User')}:</strong> {report.profiles_by_reported_user_id?.username || report.reported_user_id}</p>
+                  <p><strong>{t('Reported By')}:</strong> {report.profiles_by_reported_by?.username || report.reported_by}</p>
                   <p><strong>{t('Reason')}:</strong> {report.reason}</p>
                   <p><strong>{t('Date')}:</strong> {new Date(report.reported_at).toLocaleString()}</p>
 
                   <div className="report-actions" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '1rem' }}>
-                    <button onClick={() => deleteBuild(report.build_id)}>
-                      <FaTrashAlt style={{ marginRight: '0.4rem' }} />
-                      {t('Delete Build')}
+                    <button onClick={() => deleteBuild(report.build_id)} disabled={deleting}>
+                      {deleting
+                        ? t('Deleting...')
+                        : (
+                          <>
+                            <FaTrashAlt style={{ marginRight: '0.4rem' }} />
+                            {t('Delete Build')}
+                          </>
+                        )}
                     </button>
                     <button onClick={() => banUser(report.reported_user_id)}>
                       <FaBan style={{ marginRight: '0.4rem' }} />
