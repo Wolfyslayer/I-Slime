@@ -27,15 +27,15 @@ export const skills = Array.from({ length: 36 }, (_, i) => {
 
 // 63 Pets
 export const pets = Array.from({ length: 63 }, (_, i) => {
-  const id = `pet${i + 1}`;
+  const index = i + 1;
   return {
-    id,
-    name: `Pet ${i + 1}`,
-    icon: `/images/pets/icons/${id}.png`,
-    cardImage: `/images/pets/cards/${id}.png`,
-    description: `Beskrivning för Pet ${i + 1}`
+    id: `pet${index}`,
+    name: `Pet ${index}`,
+    icon: `/images/pets/icons/${index}.png`,
+    cardImage: `/images/pets/cards/${index}_card.png`
   };
 });
+
 
 // Items kan du anpassa vidare efter kategori
 export const items = [
