@@ -16,6 +16,7 @@ import ForgotPassword from './components/ForgotPassword'
 import ResetPassword from './components/ResetPassword'
 import ProtectedRoute from './routes/ProtectedRoute'
 import Welcome from './components/Welcome'
+import AdminRoute from './routes/AdminRoute'
 
 // Importera BuildContext Provider
 import { BuildProvider } from './components/BuildSystem/BuildContext'
@@ -66,9 +67,9 @@ export default function App() {
               <Route
                 path="/admin-panel"
                 element={
-                  <ProtectedRoute>
+                  <AdminRoute>
                     <AdminPanel />
-                  </ProtectedRoute>
+                  <AdminRoute>
                 }
               />
               <Route path="/login" element={<Login />} />
