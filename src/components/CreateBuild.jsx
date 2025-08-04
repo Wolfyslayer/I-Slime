@@ -4,12 +4,28 @@ import { supabase } from '../lib/supabaseClient'
 import { useNavigate } from 'react-router-dom'
 import { BuildContext } from './BuildSystem/BuildContext'
 import { classes, paths, skills, pets, items } from '../data/data'
+import ReactModal from 'react-modal'
+import './CreateBuild.css'
+
+const itemSlots = [
+  'weapon', 'gloves', 'armguards', 'boots', 'mask',
+  'chest', 'pants', 'shoulder', 'helmet', 'belt'
+]
+
+const statOptions = [
+  { value: 'crit', label: 'Crit Hit' },
+  { value: 'combo', label: 'Combo' },
+  { value: 'counter', label: 'Counter' },
+  { value: 'skillcrit', label: 'Skill Crit Hit' },
+  { value: 'recover', label: 'Recover' },
+  { value: 'dodge', label: 'Dodge' },
+  { value: 'stun', label: 'Stun' }
+]
 
 export default function CreateBuild() {
   const { user } = useUser()
   const navigate = useNavigate()
 
-  // Hämta formdata och setters från BuildContext
   const {
     title,
     setTitle,
@@ -29,8 +45,21 @@ export default function CreateBuild() {
   } = useContext(BuildContext)
 
   const [error, setError] = useState(null)
+  const [modalItem, setModalItem] = useState(null)
+  const [selectedSkillsOrdered, setSelectedSkillsOrdered] = useState([])
+  const [selectedPetsOrdered, setSelectedPetsOrdered] = useState([])
+  const [itemStats, setItemStats] = useState(() => {
+    const defaultStats = {}
+    itemSlots.forEach(slot => {
+      defaultStats[slot] = {
+        stat1: '',
+        stat2: '',
+        atkSpd: false
+      }
+    })
+    return defaultStats
+  })
 
-  // När klassen ändras, sätt första path automatiskt
   React.useEffect(() => {
     if (selectedClass) {
       const filteredPaths = paths.filter(p => p.classId === selectedClass)
@@ -40,11 +69,10 @@ export default function CreateBuild() {
     }
   }, [selectedClass, setSelectedPath])
 
-  const toggleSelect = (array, setArray, value) => {
-    if (array.includes(value)) {
-      setArray(array.filter(v => v !== value))
-    } else {
-      setArray([...array, value])
+  const addToOrderedList = (id, orderedList, setOrdered, setContextArray) => {
+    if (!orderedList.includes(id)) {
+      setOrdered([...orderedList, id])
+      setContextArray(prev => [...prev, id])
     }
   }
 
@@ -68,9 +96,9 @@ export default function CreateBuild() {
       user_id: user.id,
       class_id: selectedClass,
       path_id: selectedPath,
-      skills: selectedSkills,
-      pets: selectedPets,
-      items: selectedItems
+      skills: selectedSkillsOrdered,
+      pets: selectedPetsOrdered,
+      items: itemStats
     }
 
     const { error: insertError } = await supabase.from('builds').insert([buildData])
@@ -84,7 +112,7 @@ export default function CreateBuild() {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ maxWidth: 600, margin: '0 auto', padding: 20 }}>
+    <form onSubmit={handleSubmit} style={{ maxWidth: 800, margin: '0 auto', padding: 20 }}>
       <h2>Skapa ny Build</h2>
 
       {error && <p style={{ color: 'red' }}>{error}</p>}
@@ -146,51 +174,128 @@ export default function CreateBuild() {
         </select>
       </label>
 
-      <fieldset style={{ marginBottom: 10 }}>
+      {/* Skills */}
+      <fieldset>
         <legend>Skills</legend>
-        {skills.map(skill => (
-          <label key={skill.id} style={{ display: 'block' }}>
-            <input
-              type="checkbox"
-              checked={selectedSkills.includes(skill.id)}
-              onChange={() => toggleSelect(selectedSkills, setSelectedSkills, skill.id)}
-            />
-            {skill.name}
-          </label>
-        ))}
+        <div className="selection-grid">
+          {selectedSkillsOrdered.map(id => {
+            const skill = skills.find(s => s.id === id)
+            return <img key={id} src={skill.image} alt={skill.name} className="selected-thumb" />
+          })}
+        </div>
+        <div className="scroll-container">
+          {skills.map(skill => (
+            <div
+              key={skill.id}
+              className="item-card"
+              onClick={() => setModalItem({ ...skill, type: 'skill' })}
+            >
+              <img src={skill.image} alt={skill.name} />
+              <div className="plus-icon">+</div>
+            </div>
+          ))}
+        </div>
       </fieldset>
 
-      <fieldset style={{ marginBottom: 10 }}>
+      {/* Pets */}
+      <fieldset>
         <legend>Pets</legend>
-        {pets.map(pet => (
-          <label key={pet.id} style={{ display: 'block' }}>
-            <input
-              type="checkbox"
-              checked={selectedPets.includes(pet.id)}
-              onChange={() => toggleSelect(selectedPets, setSelectedPets, pet.id)}
-            />
-            {pet.name}
-          </label>
-        ))}
+        <div className="selection-grid">
+          {selectedPetsOrdered.map(id => {
+            const pet = pets.find(p => p.id === id)
+            return <img key={id} src={pet.image} alt={pet.name} className="selected-thumb" />
+          })}
+        </div>
+        <div className="scroll-container">
+          {pets.map(pet => (
+            <div
+              key={pet.id}
+              className="item-card"
+              onClick={() => setModalItem({ ...pet, type: 'pet' })}
+            >
+              <img src={pet.image} alt={pet.name} />
+              <div className="plus-icon">+</div>
+            </div>
+          ))}
+        </div>
       </fieldset>
 
-      <fieldset style={{ marginBottom: 10 }}>
+      {/* Items */}
+      <fieldset>
         <legend>Items</legend>
-        {items.map(item => (
-          <label key={item.id} style={{ display: 'block' }}>
-            <input
-              type="checkbox"
-              checked={selectedItems.includes(item.id)}
-              onChange={() => toggleSelect(selectedItems, setSelectedItems, item.id)}
-            />
-            {item.name}
-          </label>
+        {itemSlots.map(slot => (
+          <div key={slot} className="item-slot">
+            <strong>{slot.charAt(0).toUpperCase() + slot.slice(1)}:</strong>
+            <select
+              value={itemStats[slot].stat1}
+              onChange={e => setItemStats(prev => ({
+                ...prev,
+                [slot]: { ...prev[slot], stat1: e.target.value }
+              }))}
+            >
+              <option value="">Stat 1</option>
+              {statOptions.map(opt => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+            <select
+              value={itemStats[slot].stat2}
+              onChange={e => setItemStats(prev => ({
+                ...prev,
+                [slot]: { ...prev[slot], stat2: e.target.value }
+              }))}
+            >
+              <option value="">Stat 2</option>
+              {statOptions.map(opt => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+            <label>
+              <input
+                type="checkbox"
+                checked={itemStats[slot].atkSpd}
+                onChange={e => setItemStats(prev => ({
+                  ...prev,
+                  [slot]: { ...prev[slot], atkSpd: e.target.checked }
+                }))}
+              />
+              Atk Spd
+            </label>
+          </div>
         ))}
       </fieldset>
 
       <button type="submit" style={{ padding: '10px 20px', fontWeight: 'bold' }}>
         Skapa Build
       </button>
+
+      {/* Modal */}
+      <ReactModal
+        isOpen={!!modalItem}
+        onRequestClose={() => setModalItem(null)}
+        className="modal-content"
+        overlayClassName="modal-overlay"
+      >
+        {modalItem && (
+          <div>
+            <img src={modalItem.image} alt={modalItem.name} style={{ width: '100%' }} />
+            <h3>{modalItem.name}</h3>
+            <p>{modalItem.description}</p>
+            <button
+              onClick={() => {
+                if (modalItem.type === 'skill') {
+                  addToOrderedList(modalItem.id, selectedSkillsOrdered, setSelectedSkillsOrdered, setSelectedSkills)
+                } else {
+                  addToOrderedList(modalItem.id, selectedPetsOrdered, setSelectedPetsOrdered, setSelectedPets)
+                }
+                setModalItem(null)
+              }}
+            >
+              + Lägg till
+            </button>
+          </div>
+        )}
+      </ReactModal>
     </form>
   )
 }
