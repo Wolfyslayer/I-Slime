@@ -24,9 +24,12 @@ export default function EditBuild() {
   if (user === undefined) return null // Vänta tills user laddats
 
   useEffect(() => {
-    if (!user) return
+    if (!id || !user?.id) return
+
+    let cancelled = false
 
     const fetchBuild = async () => {
+      console.log('[fetchBuild] Triggered')
       setLoading(true)
 
       const { data, error } = await supabase
@@ -35,8 +38,11 @@ export default function EditBuild() {
         .eq('id', id)
         .single()
 
-      if (error) {
-        setError(error.message)
+      if (cancelled) return
+
+      if (error || !data) {
+        console.error('[fetchBuild error]', error?.message)
+        setError(error?.message || 'Build not found.')
         setLoading(false)
         return
       }
@@ -58,7 +64,11 @@ export default function EditBuild() {
     }
 
     fetchBuild()
-  }, [id, user, t])
+
+    return () => {
+      cancelled = true
+    }
+  }, [id, user?.id]) // ❗ t tas bort
 
   useEffect(() => {
     if (selectedClass) {
@@ -242,4 +252,4 @@ export default function EditBuild() {
       </form>
     </div>
   )
-}
+} 
