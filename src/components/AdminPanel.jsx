@@ -39,7 +39,7 @@ export default function AdminPanel() {
       setIsAdmin(true)
 
       const { data: reportData, error: reportError } = await supabase
-        .from('reports')
+        .from('build_reports')
         .select('id, reason, build_id, reported_user_id, reporting_user_id, created_at, builds (title, user_id)')
         .order('created_at', { ascending: false })
 
