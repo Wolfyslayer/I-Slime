@@ -1,70 +1,163 @@
-.selection-grid {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 10px;
+.form-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+  width: 90%;
+  font-family: Arial, sans-serif;
 }
 
-.selected-thumb {
-  width: 50px;
-  height: 50px;
-  object-fit: cover;
-  border: 2px solid #ccc;
-  border-radius: 6px;
-}
-
-.scroll-container {
-  display: flex;
-  overflow-x: auto;
-  gap: 10px;
-  padding: 10px 0;
-}
-
-.item-card {
-  position: relative;
-  width: 60px;
-  height: 60px;
-  cursor: pointer;
-}
-
-.item-card img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 6px;
-}
-
-.plus-icon {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  background: white;
-  border: 1px solid black;
-  border-radius: 50%;
-  font-size: 12px;
-  padding: 2px 5px;
+label {
+  display: block;
+  margin-bottom: 8px;
   font-weight: bold;
 }
 
-.item-slot {
+input[type="text"],
+textarea,
+select {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: inherit;
+}
+
+textarea {
+  resize: vertical;
+}
+
+button {
+  padding: 12px 20px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: white;
+  width: auto;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.error-text {
+  color: red;
+  margin-bottom: 12px;
+}
+
+/* Scrollbara containers för pets och skills */
+.icon-scroll-container {
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+}
+
+.icon-scroll-container::-webkit-scrollbar {
+  height: 6px;
+}
+
+.icon-scroll-container::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 3px;
+}
+
+/* Små rutor för pets och skills */
+.icon-box {
+  flex: 0 0 auto;
+  width: 60px;
+  height: 60px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  position: relative;
+  cursor: pointer;
+  background-color: white;
   display: flex;
   align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  transition: box-shadow 0.2s ease;
+}
+
+.icon-box:hover {
+  box-shadow: 0 0 8px rgba(0,0,0,0.3);
+}
+
+/* Plus-knappen i hörnet */
+.icon-box .plus-button {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background-color: #28a745;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 14px;
+  line-height: 18px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Container för utvalda pets och skills */
+.selected-container {
+  display: flex;
   gap: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
-.modal-content {
-  background: white;
-  padding: 20px;
-  max-width: 400px;
-  margin: auto;
-  border-radius: 10px;
+.selected-box {
+  width: 50px;
+  height: 50px;
+  border: 2px solid #007bff;
+  border-radius: 6px;
+  background-color: #e7f1ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 4px;
+  box-sizing: border-box;
 }
 
-.modal-overlay {
-  background: rgba(0, 0, 0, 0.6);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+/* RESPONSIVT */
+
+/* Mindre skärmar (mobil) */
+@media (max-width: 480px) {
+  .form-container {
+    padding: 12px;
+    width: 95%;
+  }
+
+  .icon-box {
+    width: 48px;
+    height: 48px;
+  }
+
+  .selected-box {
+    width: 40px;
+    height: 40px;
+    font-size: 0.65rem;
+  }
+
+  button {
+    width: 100%;
+    padding: 14px;
+  }
 }
