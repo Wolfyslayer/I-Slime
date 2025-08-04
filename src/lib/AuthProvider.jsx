@@ -1,12 +1,10 @@
-// AuthProvider.tsx (eller i App.tsx / main.tsx)
 import { useEffect, useState } from 'react'
 import { supabase } from './supabaseClient'
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Hämta och uppdatera session direkt
     const restoreSession = async () => {
       const { data, error } = await supabase.auth.getSession()
       if (!data.session) {
@@ -18,10 +16,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     restoreSession()
 
-    // Lyssna på framtida förändringar (inloggning, utloggning, timeout etc)
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log('🔄 Auth event:', event)
       if (!session) {
         console.warn('⚠️ Session försvann – uppdaterar...')
