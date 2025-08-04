@@ -50,9 +50,7 @@ export default function App() {
                 path="/edit-build/:id"
                 element={
                   <ProtectedRoute>
-                    <BuildProvider>
                       <EditBuild />
-                    </BuildProvider>
                   </ProtectedRoute>
                 }
               />
