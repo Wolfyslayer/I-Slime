@@ -21,9 +21,13 @@ export default function EditBuild() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
+  // ❗ Vänta tills "user" är laddad
   useEffect(() => {
+    if (user === undefined) return // user är inte laddad än
+
     async function fetchBuild() {
       setLoading(true)
+
       const { data, error } = await supabase
         .from('builds')
         .select('*')
@@ -32,38 +36,37 @@ export default function EditBuild() {
 
       if (error) {
         setError(error.message)
-      } else if (data) {
-        // Check if user owns this build
-        if (user && data.user_id !== user.id) {
-          setError(t('You can only edit your own builds.'))
-          setLoading(false)
-          return
-        }
-        
-        setTitle(data.title)
-        setDescription(data.description)
-        setSelectedClass(data.class_id || '')
-        setSelectedPath(data.path_id || '')
-        setSelectedSkills(data.skills || [])
-        setSelectedPets(data.pets || [])
-        setSelectedItems(data.items || [])
+        setLoading(false)
+        return
       }
+
+      if (user && data.user_id !== user.id) {
+        setError(t('You can only edit your own builds.'))
+        setLoading(false)
+        return
+      }
+
+      setTitle(data.title)
+      setDescription(data.description)
+      setSelectedClass(data.class_id || '')
+      setSelectedPath(data.path_id || '')
+      setSelectedSkills(data.skills || [])
+      setSelectedPets(data.pets || [])
+      setSelectedItems(data.items || [])
+
       setLoading(false)
     }
+
     fetchBuild()
   }, [id, user, t])
 
-  // Update path when class changes
+  // Uppdatera path när klass ändras
   useEffect(() => {
     if (selectedClass) {
       const availablePaths = paths.filter(p => p.classId === selectedClass)
-      if (availablePaths.length > 0) {
-        const currentPathValid = availablePaths.some(p => p.id === selectedPath)
-        if (!currentPathValid) {
-          setSelectedPath(availablePaths[0].id)
-        }
-      } else {
-        setSelectedPath('')
+      const currentPathValid = availablePaths.some(p => p.id === selectedPath)
+      if (!currentPathValid) {
+        setSelectedPath(availablePaths[0]?.id || '')
       }
     } else {
       setSelectedPath('')
@@ -80,17 +83,17 @@ export default function EditBuild() {
 
   const handleUpdate = async (e) => {
     e.preventDefault()
-    
+
     if (!user) {
       setError(t('You must be logged in to edit a build.'))
       return
     }
-    
+
     if (!title.trim() || !selectedClass || !selectedPath) {
       setError(t('Title, class and path are required.'))
       return
     }
-    
+
     const { error } = await supabase
       .from('builds')
       .update({
@@ -117,10 +120,10 @@ export default function EditBuild() {
   return (
     <div className="edit-build-container">
       <h1>{t('Edit Build')}</h1>
-      
+
       <form onSubmit={handleUpdate} className="build-form">
         {error && <div className="error-message">{error}</div>}
-        
+
         <div className="form-group">
           <label htmlFor="title">{t('Title')}</label>
           <input
@@ -226,8 +229,8 @@ export default function EditBuild() {
         </div>
 
         <div className="form-actions">
-          <button 
-            type="button" 
+          <button
+            type="button"
             onClick={() => navigate(`/build-detail/${id}`)}
             className="btn-secondary"
           >
