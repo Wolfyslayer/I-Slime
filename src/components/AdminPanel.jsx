@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -16,28 +16,19 @@ export default function AdminPanel() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [expandedReportId, setExpandedReportId] = useState(null)
-  const { t } = useTranslation()
   const [isAdmin, setIsAdmin] = useState(false)
-  const mounted = useRef(true)
+  const { t } = useTranslation()
 
   useEffect(() => {
-    mounted.current = true
-
-    async function fetchReportsAndUsers() {
+    const fetchData = async () => {
       try {
-        if (!mounted.current) return
-        setLoading(true)
-        setError(null)
-
         const {
           data: { user },
           error: userError
         } = await supabase.auth.getUser()
 
         if (userError || !user) {
-          if (!mounted.current) return
           setError(t('No permission'))
-          setLoading(false)
           return
         }
 
@@ -48,106 +39,85 @@ export default function AdminPanel() {
           .single()
 
         if (adminError || !adminData) {
-          if (!mounted.current) return
           setError(t('No permission'))
-          setLoading(false)
           return
         }
 
-        if (!mounted.current) return
         setIsAdmin(true)
 
         const { data: reportData, error: reportError } = await supabase
           .from('build_reports')
-          .select('id, reason, build_id, reported_by, reported_at, reported_user_id, builds(id, title, user_id)')
+          .select(`
+            id,
+            reason,
+            build_id,
+            reported_by,
+            reported_at,
+            reported_user_id,
+            builds (
+              title,
+              user_id
+            ),
+            reported_by_profile:profiles!build_reports_reported_by_fkey (
+              username
+            ),
+            reported_user_profile:profiles!build_reports_reported_user_id_fkey (
+              username
+            ),
+            build_owner_profile:profiles!builds_user_id_fkey (
+              username
+            )
+          `)
           .order('reported_at', { ascending: false })
 
         if (reportError) {
-          if (!mounted.current) return
+          console.error('Report fetch error:', reportError)
           setError(t('Error fetching reports'))
-          setLoading(false)
-          return
+        } else {
+          setReports(reportData)
         }
-
-        // Samla userIds för username hämtning
-        const userIds = new Set()
-        reportData.forEach(r => {
-          if (r.builds?.user_id) userIds.add(r.builds.user_id)
-          if (r.reported_user_id) userIds.add(r.reported_user_id)
-          if (r.reported_by) userIds.add(r.reported_by)
-        })
-
-        const { data: profilesData, error: profilesError } = await supabase
-          .from('profiles')
-          .select('id, username')
-          .in('id', Array.from(userIds))
-
-        if (profilesError) {
-          if (!mounted.current) return
-          setError(t('Error fetching user profiles'))
-          setLoading(false)
-          return
-        }
-
-        const userMap = {}
-        profilesData.forEach(p => {
-          userMap[p.id] = p.username
-        })
-
-        const enrichedReports = reportData.map(r => ({
-          ...r,
-          build_owner_username: userMap[r.builds?.user_id] || t('Unknown'),
-          reported_user_username: userMap[r.reported_user_id] || t('Unknown'),
-          reported_by_username: userMap[r.reported_by] || t('Unknown')
-        }))
-
-        if (!mounted.current) return
-        setReports(enrichedReports)
-        setLoading(false)
       } catch (err) {
-        if (!mounted.current) return
-        setError(t('Unexpected error occurred'))
+        console.error('Unexpected error:', err)
+        setError(t('Unexpected error'))
+      } finally {
         setLoading(false)
-        console.error(err)
       }
     }
 
-    fetchReportsAndUsers()
-
-    return () => {
-      mounted.current = false
-    }
+    fetchData()
   }, [t])
 
   const toggleExpand = (id) => {
     setExpandedReportId(prev => (prev === id ? null : id))
   }
 
-  async function deleteBuild(buildId) {
+  const deleteBuild = async (buildId) => {
     if (!window.confirm(t('Delete this build permanently?'))) return
-    setLoading(true)
     const { error } = await supabase.from('builds').delete().eq('id', buildId)
     if (error) {
+      console.error('Delete error:', error)
       alert(t('Error deleting build'))
-      setLoading(false)
-      return
+    } else {
+      setReports(prev => prev.filter(r => r.build_id !== buildId))
     }
-    setReports(prev => prev.filter(r => r.build_id !== buildId))
-    setLoading(false)
   }
 
-  async function banUser(userId) {
+  const banUser = async (userId) => {
     if (!window.confirm(t('Do you want to ban this user?'))) return
-    const { error } = await supabase.from('banned_users').insert([{ user_id: userId }])
+    const { error } = await supabase
+      .from('banned_users')
+      .insert([{ user_id: userId }])
     if (error) {
+      console.error('Ban error:', error)
       alert(t('Error banning user'))
-      return
+    } else {
+      alert(t('User banned'))
     }
-    alert(t('User banned'))
   }
 
   if (loading) return <p>{t('Loading reports...')}</p>
-  if (!isAdmin) return <p>{error || t('No permission')}</p>
+  if (error) return <p>{error}</p>
+  if (!isAdmin) return <p>{t('No permission')}</p>
   if (reports.length === 0) return <p>{t('No reports at the moment.')}</p>
 
   return (
@@ -155,6 +125,10 @@ export default function AdminPanel() {
       <h1>{t('Admin Panel - Report Management')}</h1>
       {reports.map(report => {
         const isExpanded = expandedReportId === report.id
+        const buildTitle = report.builds?.title || t('Unknown')
+        const buildOwner = report.build_owner_profile?.username || report.builds?.user_id || t('Unknown')
+        const reportedUser = report.reported_user_profile?.username || report.reported_user_id || t('Unknown')
+        const reportedBy = report.reported_by_profile?.username || report.reported_by || t('Unknown')
 
         return (
           <motion.div
@@ -177,7 +151,7 @@ export default function AdminPanel() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <FaExclamationTriangle color="#ffcc00" />
                 <h2 style={{ margin: 0, fontSize: '1.2rem' }}>
-                  {report.builds?.title || t('Unknown')}
+                  {buildTitle}
                 </h2>
               </div>
               {isExpanded ? <FaChevronUp /> : <FaChevronDown />}
@@ -194,13 +168,18 @@ export default function AdminPanel() {
                   onClick={(e) => e.stopPropagation()}
                   style={{ overflow: 'hidden', marginTop: '1rem' }}
                 >
-                  <p><strong>{t('Build Owner')}:</strong> {report.build_owner_username}</p>
-                  <p><strong>{t('Reported User')}:</strong> {report.reported_user_username}</p>
-                  <p><strong>{t('Reported By')}:</strong> {report.reported_by_username}</p>
+                  <p><strong>{t('Build Owner')}:</strong> {buildOwner}</p>
+                  <p><strong>{t('Reported User')}:</strong> {reportedUser}</p>
+                  <p><strong>{t('Reported By')}:</strong> {reportedBy}</p>
                   <p><strong>{t('Reason')}:</strong> {report.reason}</p>
                   <p><strong>{t('Date')}:</strong> {new Date(report.reported_at).toLocaleString()}</p>
 
-                  <div className="report-actions" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '1rem' }}>
+                  <div className="report-actions" style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: '0.75rem',
+                    marginTop: '1rem'
+                  }}>
                     <button onClick={() => deleteBuild(report.build_id)}>
                       <FaTrashAlt style={{ marginRight: '0.4rem' }} />
                       {t('Delete Build')}
@@ -218,4 +197,4 @@ export default function AdminPanel() {
       })}
     </div>
   )
-            }
+}
