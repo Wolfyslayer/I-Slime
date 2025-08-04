@@ -9,7 +9,7 @@ export default function AdminRoute({ children }) {
   if (loading) return <div style={{ padding: 20 }}>🔄 Laddar adminrättigheter...</div>
 
   if (!user || !isAdmin) {
-  return <AccessDenied message=\"Du måste vara administratör för att komma åt denna sida.\" />
+    return <AccessDenied message="Du måste vara administratör för att komma åt denna sida." />
   }
 
   return children
