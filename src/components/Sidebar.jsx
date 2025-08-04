@@ -35,7 +35,11 @@ export default function Sidebar() {
             <>
               <NavLink to="/create-build">Create Build</NavLink>
               <NavLink to="/my-builds">My Builds</NavLink>
-              {isAdmin && <NavLink to="/admin-panel">Admin Panel</NavLink>}
+              {isAdmin && (
+               <NavLink to="/admin-panel">
+                  🛠️ Admin Panel
+               </NavLink>
+               )}
 
               {/* Logga ut-knappen som en vanlig knapp med styling som länk */}
               <button
@@ -53,7 +57,7 @@ export default function Sidebar() {
                   fontFamily: 'inherit'
                 }}
               >
-                Logga ut
+                Sign out
               </button>
             </>
           )}
