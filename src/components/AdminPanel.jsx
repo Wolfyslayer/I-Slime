@@ -40,7 +40,7 @@ export default function AdminPanel() {
 
       const { data: reportData, error: reportError } = await supabase
         .from('build_reports')
-        .select('id, reason, build_id, reported_user_id, reporting_user_id, created_at, builds (title, user_id)')
+        .select('id, reason, build_id, reported_by, reported_at, reported_user_id, builds (title, user_id)')
         .order('created_at', { ascending: false })
 
       if (reportError) setError(t('Error fetching reports'))
@@ -78,9 +78,8 @@ export default function AdminPanel() {
           <p><b>{t('Build')}:</b> {report.builds?.title || t('Unknown')}</p>
           <p><b>{t('Build Owner')}:</b> {report.builds?.user_id}</p>
           <p><b>{t('Reported User')}:</b> {report.reported_user_id}</p>
-          <p><b>{t('Reported By')}:</b> {report.reporting_user_id}</p>
-          <p><b>{t('Reason')}:</b> {report.reason}</p>
-          <p><b>{t('Date')}:</b> {new Date(report.created_at).toLocaleString()}</p>
+          <p><b>{t('Reported By')}:</b> {report.reportedtoLocaleString     <p><b>{t('Reason')}:</b> {report.reason}</p>
+          <p><b>{t('Date')}:</b> {new Date(report.reported_at).toLocaleString()}</p>
           <button onClick={() => deleteBuild(report.build_id)} style={{ marginRight: '10px' }}>
             {t('Delete Build')}
           </button>
