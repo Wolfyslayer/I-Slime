@@ -16,11 +16,14 @@ export default function AdminPanel() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [expandedReportId, setExpandedReportId] = useState(null)
-  const [isAdmin, setIsAdmin] = useState(false)
   const { t } = useTranslation()
+  const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
-    const fetchData = async () => {
+    async function checkAdminAndFetch() {
+      setLoading(true)
+      setError(null)
+
       try {
         const {
           data: { user },
@@ -29,6 +32,7 @@ export default function AdminPanel() {
 
         if (userError || !user) {
           setError(t('No permission'))
+          setLoading(false)
           return
         }
 
@@ -40,6 +44,7 @@ export default function AdminPanel() {
 
         if (adminError || !adminData) {
           setError(t('No permission'))
+          setLoading(false)
           return
         }
 
@@ -51,73 +56,56 @@ export default function AdminPanel() {
             id,
             reason,
             build_id,
-            reported_by,
             reported_at,
+            reported_by,
             reported_user_id,
-            builds (
-              title,
-              user_id
-            ),
-            reported_by_profile:profiles!build_reports_reported_by_fkey (
-              username
-            ),
-            reported_user_profile:profiles!build_reports_reported_user_id_fkey (
-              username
-            ),
-            build_owner_profile:profiles!builds_user_id_fkey (
-              username
-            )
+            builds (title, user_id),
+            profiles_reported_by: profiles!build_reports_reported_by_fkey (username),
+            profiles_reported_user: profiles!fk_reported_user (username)
           `)
           .order('reported_at', { ascending: false })
 
         if (reportError) {
-          console.error('Report fetch error:', reportError)
           setError(t('Error fetching reports'))
         } else {
           setReports(reportData)
         }
       } catch (err) {
-        console.error('Unexpected error:', err)
-        setError(t('Unexpected error'))
-      } finally {
-        setLoading(false)
+        setError(t('Unexpected error occurred'))
       }
+      setLoading(false)
     }
 
-    fetchData()
+    checkAdminAndFetch()
   }, [t])
 
   const toggleExpand = (id) => {
     setExpandedReportId(prev => (prev === id ? null : id))
   }
 
-  const deleteBuild = async (buildId) => {
+  async function deleteBuild(buildId) {
     if (!window.confirm(t('Delete this build permanently?'))) return
+    setLoading(true)
+    setError(null)
     const { error } = await supabase.from('builds').delete().eq('id', buildId)
     if (error) {
-      console.error('Delete error:', error)
       alert(t('Error deleting build'))
+      setError(t('Error deleting build'))
     } else {
-      setReports(prev => prev.filter(r => r.build_id !== buildId))
+      setReports(reports.filter(r => r.build_id !== buildId))
     }
+    setLoading(false)
   }
 
-  const banUser = async (userId) => {
+  async function banUser(userId) {
     if (!window.confirm(t('Do you want to ban this user?'))) return
-    const { error } = await supabase
-      .from('banned_users')
-      .insert([{ user_id: userId }])
-    if (error) {
-      console.error('Ban error:', error)
-      alert(t('Error banning user'))
-    } else {
-      alert(t('User banned'))
-    }
+    const { error } = await supabase.from('banned_users').insert([{ user_id: userId }])
+    if (error) alert(t('Error banning user'))
+    else alert(t('User banned'))
   }
 
   if (loading) return <p>{t('Loading reports...')}</p>
-  if (error) return <p>{error}</p>
-  if (!isAdmin) return <p>{t('No permission')}</p>
+  if (!isAdmin) return <p>{error || t('No permission')}</p>
   if (reports.length === 0) return <p>{t('No reports at the moment.')}</p>
 
   return (
@@ -125,10 +113,6 @@ export default function AdminPanel() {
       <h1>{t('Admin Panel - Report Management')}</h1>
       {reports.map(report => {
         const isExpanded = expandedReportId === report.id
-        const buildTitle = report.builds?.title || t('Unknown')
-        const buildOwner = report.build_owner_profile?.username || report.builds?.user_id || t('Unknown')
-        const reportedUser = report.reported_user_profile?.username || report.reported_user_id || t('Unknown')
-        const reportedBy = report.reported_by_profile?.username || report.reported_by || t('Unknown')
 
         return (
           <motion.div
@@ -151,7 +135,7 @@ export default function AdminPanel() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <FaExclamationTriangle color="#ffcc00" />
                 <h2 style={{ margin: 0, fontSize: '1.2rem' }}>
-                  {buildTitle}
+                  {report.builds?.title || t('Unknown')}
                 </h2>
               </div>
               {isExpanded ? <FaChevronUp /> : <FaChevronDown />}
@@ -168,18 +152,13 @@ export default function AdminPanel() {
                   onClick={(e) => e.stopPropagation()}
                   style={{ overflow: 'hidden', marginTop: '1rem' }}
                 >
-                  <p><strong>{t('Build Owner')}:</strong> {buildOwner}</p>
-                  <p><strong>{t('Reported User')}:</strong> {reportedUser}</p>
-                  <p><strong>{t('Reported By')}:</strong> {reportedBy}</p>
-                  <p><strong>{t('Reason')}:</strong> {report.reason}</p>
+                  <p><strong>{t('Build Owner')}:</strong> {report.builds?.user_id || t('Unknown')}</p>
+                  <p><strong>{t('Reported User')}:</strong> {report.profiles_reported_user?.username || t('Unknown')}</p>
+                  <p><strong>{t('Reported By')}:</strong> {report.profiles_reported_by?.username || t('Unknown')}</p>
+                  <p><strong>{t('Reason')}:</strong> {report.reason || t('No reason specified')}</p>
                   <p><strong>{t('Date')}:</strong> {new Date(report.reported_at).toLocaleString()}</p>
 
-                  <div className="report-actions" style={{
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    gap: '0.75rem',
-                    marginTop: '1rem'
-                  }}>
+                  <div className="report-actions" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '1rem' }}>
                     <button onClick={() => deleteBuild(report.build_id)}>
                       <FaTrashAlt style={{ marginRight: '0.4rem' }} />
                       {t('Delete Build')}
