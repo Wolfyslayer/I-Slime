@@ -48,7 +48,21 @@ export default function AdminPanel() {
 
       const { data: reportData, error: reportError } = await supabase
         .from('build_reports')
-        .select('id, reason, build_id, reported_by, reported_at, reported_user_id, builds (title, user_id)')
+        .select(`
+          id,
+          reason,
+          build_id,
+          reported_by,
+          reported_at,
+          reported_user_id,
+          builds (
+            title,
+            user_id,
+            profiles (username)
+          ),
+          reported_user:profiles!reported_user_id (username),
+          reporting_user:profiles!reported_by (username)
+        `)
         .order('reported_at', { ascending: false })
 
       if (reportError) setError(t('Error fetching reports'))
@@ -126,9 +140,9 @@ export default function AdminPanel() {
                   onClick={(e) => e.stopPropagation()}
                   style={{ overflow: 'hidden', marginTop: '1rem' }}
                 >
-                  <p><strong>{t('Build Owner')}:</strong> {report.builds?.user_id}</p>
-                  <p><strong>{t('Reported User')}:</strong> {report.reported_user_id}</p>
-                  <p><strong>{t('Reported By')}:</strong> {report.reported_by}</p>
+                  <p><strong>{t('Build Owner')}:</strong> {report.builds?.profiles?.username || report.builds?.user_id}</p>
+                  <p><strong>{t('Reported User')}:</strong> {report.reported_user?.username || report.reported_user_id}</p>
+                  <p><strong>{t('Reported By')}:</strong> {report.reporting_user?.username || report.reported_by}</p>
                   <p><strong>{t('Reason')}:</strong> {report.reason}</p>
                   <p><strong>{t('Date')}:</strong> {new Date(report.reported_at).toLocaleString()}</p>
 
