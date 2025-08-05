@@ -120,11 +120,10 @@
   margin-right: 6px;
 }
 
-/* Hamburger button */
 .hamburger {
   position: fixed;
-  top: 1rem;
-  left: 1rem;
+  top: calc(env(safe-area-inset-top, 1.5rem));
+  left: calc(env(safe-area-inset-left, 1.5rem));
   font-size: 2rem;
   background: transparent;
   border: none;
@@ -132,7 +131,14 @@
   cursor: pointer;
   z-index: 3000;
   user-select: none;
+  padding: 0.5rem;
+  border-radius: 8px;
 }
+
+.hamburger:hover {
+  background-color: rgba(0, 255, 255, 0.1);
+}
+
 
 /* Mobile adjustments */
 @media (max-width: 500px) {
