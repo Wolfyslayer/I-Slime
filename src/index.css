@@ -1,32 +1,31 @@
-/* index.css */
-
-/* Reset och bas */
+/* Reset & bas */
 body {
-  font-family: Arial, sans-serif; /* Detta kan överrida theme.css om du vill */
-  background-color: #111; /* mörk bakgrund */
-  color: #fff;
+  font-family: Arial, sans-serif; /* OBS: kan krocka, men du kan ändra till Roboto i theme.css om du vill */
+  background-color: transparent; /* låt theme.css ha bakgrund */
+  color: inherit; /* ärva från theme.css */
   overflow-x: hidden;
   margin: 0;
 }
 
-/* Länkar */
 a {
   color: inherit;
   text-decoration: none;
 }
 
-/* Justeringar för main-content */
+/* Main content area justeringar för index */
 .main-content {
-  /* Padding och margin hanteras i theme.css, här kan du lägga till mer specifikt om behövs */
-  transition: margin-left 0.3s ease;
+  /* Ingen margin-left här, theme.css sköter sidebar-avstånd */
+  padding: 20px;
+  padding-top: 0; /* Undvik överlappning, theme.css ger padding */
+  transition: none;
+  text-align: left;
 }
 
-/* Admin-panel */
+/* Admin panel och build-card */
 .admin-panel {
   padding: 20px;
 }
 
-/* Byggkort */
 .build-card {
   background-color: #1a1a1a;
   border: 1px solid #333;
@@ -35,21 +34,23 @@ a {
   border-radius: 6px;
 }
 
-/* Knappar - mer neutrala, enklare look */
+/* Knappstil - separera från theme.css knappar med mer neutrala färger */
 button {
-  background-color: #444;
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 4px;
-  cursor: pointer;
+  background-color: #444 !important;
+  color: white !important;
+  border: none !important;
+  padding: 8px 14px !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  font-family: Arial, sans-serif !important;
+  font-weight: normal !important;
 }
 
 button:hover {
-  background-color: #555;
+  background-color: #555 !important;
 }
 
-/* Inputs, selects och textarea */
+/* Formulär-element */
 input,
 select,
 textarea {
@@ -61,11 +62,5 @@ textarea {
   margin-bottom: 12px;
   width: 100%;
   box-sizing: border-box;
-}
-
-/* Media Queries (kan ha extra regler) */
-@media (max-width: 768px) {
-  .main-content {
-    padding-top: 80px;
-  }
+  font-family: Arial, sans-serif;
 }
