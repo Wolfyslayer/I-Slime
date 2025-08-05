@@ -11,6 +11,11 @@
   transition: transform 0.3s ease-in-out;
   z-index: 100;
   font-family: 'Orbitron', sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  /* relative behövs för absolut positionerad LanguageSwitcher */
+  position: relative;
 }
 
 .sidebar h2 {
@@ -19,6 +24,10 @@
   color: #0ff;
   text-align: center;
   text-shadow: 0 0 8px #00f9ff;
+}
+
+.sidebar nav {
+  flex-grow: 1; /* tar upp allt utrymme mellan header och language switcher */
 }
 
 .sidebar nav a {
@@ -55,6 +64,27 @@
   color: #0ff;
   cursor: pointer;
   display: none;
+}
+
+/* LanguageSwitcher placering */
+.sidebar > button {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  padding: 8px 16px;
+  font-size: 16px;
+  background-color: #00f9ff;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #000;
+  user-select: none;
+  justify-content: center;
 }
 
 /* Mobilvy */
