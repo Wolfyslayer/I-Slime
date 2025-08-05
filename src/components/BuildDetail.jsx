@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabaseClient'
 import { classes, paths, skills, pets } from '../data/data'
 import { useTranslation } from 'react-i18next'
 import { useUser } from '../context/UserContext'
-import '../styles/builds.css'
+import './CreateBuild.css'
 
 export default function BuildDetail() {
   const { id } = useParams()
