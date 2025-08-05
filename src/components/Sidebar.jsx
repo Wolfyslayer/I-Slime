@@ -15,6 +15,7 @@ export default function Sidebar() {
 
   const toggleSidebar = () => setIsOpen(!isOpen)
 
+  // Close sidebar when path changes
   useEffect(() => {
     setIsOpen(false)
   }, [location.pathname])
@@ -36,11 +37,16 @@ export default function Sidebar() {
 
   return (
     <>
-      <button className="hamburger" onClick={toggleSidebar} aria-label="Toggle menu">☰</button>
+      <button className="hamburger" onClick={toggleSidebar} aria-label="Toggle menu">
+        ☰
+      </button>
+
       <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
         <h2>I-Slime</h2>
         <nav>
-          <NavLink to="/" end>{t('All Builds')}</NavLink>
+          <NavLink to="/" end>
+            {t('All Builds')}
+          </NavLink>
           {user ? (
             <>
               <NavLink to="/create-build">{t('Create Build')}</NavLink>
@@ -55,22 +61,13 @@ export default function Sidebar() {
           )}
         </nav>
 
-        {/* Under nav: sign out och language switcher bredvid varandra */}
         {user && (
           <div className="bottom-buttons">
-            <button
-              onClick={handleLogout}
-              className="logout-button"
-              aria-label={t('Sign out')}
-            >
+            <button onClick={handleLogout} className="logout-button" aria-label={t('Sign out')}>
               {t('Sign out')}
             </button>
 
-            <button
-              className="language-switcher"
-              onClick={toggleLanguage}
-              aria-label="Change language"
-            >
+            <button className="language-switcher" onClick={toggleLanguage} aria-label="Change language">
               <span className="flag">{flag}</span> {langLabel}
             </button>
           </div>
