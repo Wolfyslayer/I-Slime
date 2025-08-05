@@ -12,58 +12,6 @@ a {
   text-decoration: none;
 }
 
-/* ====== Sidebar toggle button ====== */
-.sidebar-toggle {
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  z-index: 1001;
-  background-color: #333;
-  color: white;
-  border: none;
-  font-size: 24px;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-/* ====== Sidebar ====== */
-.sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 220px;
-  height: 100%;
-  background-color: #222;
-  color: white;
-  padding-top: 60px;
-  transition: transform 0.3s ease;
-  z-index: 1000;
-}
-
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-}
-
-.sidebar li {
-  padding: 12px 20px;
-  border-bottom: 1px solid #444;
-}
-
-.sidebar li:hover {
-  background-color: #333;
-}
-
-/* Sidebar states */
-.sidebar.closed {
-  transform: translateX(-100%);
-}
-
-.sidebar.open {
-  transform: translateX(0);
-}
-
 /* ====== Main content area ====== */
 .main-content {
   padding: 20px;
@@ -72,21 +20,8 @@ a {
   margin-left: 0;
 }
 
-.sidebar-active {
-  margin-left: 220px;
-}
-
 /* ====== Responsive behavior for mobile ====== */
 @media (max-width: 768px) {
-  .sidebar {
-    width: 100%;
-    padding-top: 80px;
-  }
-
-  .sidebar-active {
-    margin-left: 0; /* Don't push content on small screens */
-  }
-
   .main-content {
     padding-top: 80px;
   }
