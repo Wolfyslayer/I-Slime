@@ -1,7 +1,8 @@
+// src/components/BuildDetail.jsx
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabaseClient'
-import { classes, paths } from '../data/data'
+import { classes, paths, skills, pets } from '../data/data'
 import { useTranslation } from 'react-i18next'
 import { useUser } from '../context/UserContext'
 
@@ -98,42 +99,80 @@ export default function BuildDetail() {
           </div>
         </div>
 
+        {/* Valda skills som bilder med border */}
         {build.skills && build.skills.length > 0 && (
           <div className="build-section">
             <h3>{t('Skills')}</h3>
-            <div className="skills-list">
-              {build.skills.map((skill, index) => (
-                <span key={index} className="skill-tag">{skill}</span>
-              ))}
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {build.skills.map(skillId => {
+                const skill = skills.find(s => s.id === skillId)
+                if (!skill) return null
+                return (
+                  <img
+                    key={skillId}
+                    src={skill.cardImage}
+                    alt={skill.name}
+                    title={skill.name}
+                    style={{
+                      width: 60,
+                      height: 80,
+                      border: '2px solid #4caf50',
+                      borderRadius: 4,
+                      objectFit: 'cover',
+                    }}
+                  />
+                )
+              })}
             </div>
           </div>
         )}
 
+        {/* Valda pets som bilder med border */}
         {build.pets && build.pets.length > 0 && (
           <div className="build-section">
             <h3>{t('Pets')}</h3>
-            <div className="pets-list">
-              {build.pets.map((pet, index) => (
-                <span key={index} className="pet-tag">{pet}</span>
-              ))}
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {build.pets.map(petId => {
+                const pet = pets.find(p => p.id === petId)
+                if (!pet) return null
+                return (
+                  <img
+                    key={petId}
+                    src={pet.icon}
+                    alt={pet.name}
+                    title={pet.name}
+                    style={{
+                      width: 60,
+                      height: 80,
+                      border: '2px solid #4caf50',
+                      borderRadius: 4,
+                      objectFit: 'cover',
+                    }}
+                  />
+                )
+              })}
             </div>
           </div>
         )}
 
-        {build.items && build.items.length > 0 && (
+        {/* Items som lista med stats */}
+        {build.items && typeof build.items === 'object' && (
           <div className="build-section">
             <h3>{t('Items')}</h3>
-            <div className="items-list">
-              {build.items.map((item, index) => (
-                <span key={index} className="item-tag">{item}</span>
-              ))}
-            </div>
+            {Object.entries(build.items).map(([category, stats]) => (
+              <div key={category} style={{ marginBottom: 10 }}>
+                <strong>{t(category)}</strong>:&nbsp;
+                {stats.stat1 && <span>{t(stats.stat1)}</span>}
+                {stats.stat2 && <span>, {t(stats.stat2)}</span>}
+                {stats.atkSpd && <span>, {t('Attack Speed')}</span>}
+              </div>
+            ))}
           </div>
         )}
       </div>
 
-      <div className="build-actions">
-        <button onClick={() => navigate('/')} className="btn-secondary">
+      <div className="build-actions" style={{ marginTop: 20 }}>
+        <button onClick={() => navigate('/')} className="btn-secondary" style={{ marginRight: 10 }}>
           {t('Back to Builds')}
         </button>
 
@@ -141,6 +180,7 @@ export default function BuildDetail() {
           <button 
             onClick={() => navigate(`/edit-build/${id}`)} 
             className="btn-primary"
+            style={{ marginRight: 10 }}
           >
             {t('Edit Build')}
           </button>
