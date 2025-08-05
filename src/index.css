@@ -1,6 +1,6 @@
 /* ===== Reset & Basstil ===== */
 body {
-  font-family: Arial, sans-serif; /* Om du vill kan du ta bort denna, annars fallback */
+  font-family: Arial, sans-serif;
   background-color: transparent;
   color: inherit;
   overflow-x: hidden;
@@ -15,8 +15,7 @@ a {
 /* ===== Main Content Area ===== */
 .main-content {
   padding: 20px;
-  padding-top: 0; /* theme.css styr detta */
-  transition: none;
+  padding-top: 0; /* theme.css will override padding-top on desktop */
   text-align: left;
 }
 
