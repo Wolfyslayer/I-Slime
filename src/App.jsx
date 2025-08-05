@@ -27,15 +27,12 @@ class ErrorBoundary extends React.Component {
     super(props)
     this.state = { hasError: false, error: null }
   }
-
   static getDerivedStateFromError(error) {
     return { hasError: true, error }
   }
-
   componentDidCatch(error, errorInfo) {
     console.error('App Error:', error, errorInfo)
   }
-
   render() {
     if (this.state.hasError) {
       return (
@@ -56,8 +53,7 @@ function ErrorBoundaryWithTranslation(props) {
 
 export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-
-  const toggleSidebar = () => setSidebarOpen(!sidebarOpen)
+  const toggleSidebar = () => setSidebarOpen(open => !open)
   const closeSidebar = () => setSidebarOpen(false)
 
   return (
@@ -66,47 +62,17 @@ export default function App() {
         <UserProvider>
           <BuildProvider>
             <>
-              {/* Hamburgerknapp fixed uppe i vänster hörn */}
+              {/* Hamburger button fixed top left */}
               <button
-                className="hamburger"
+                className={`hamburger-btn${sidebarOpen ? ' open' : ''}`}
                 onClick={toggleSidebar}
-                aria-label="Toggle menu"
-                style={{
-                  position: 'fixed',
-                  top: '1rem',
-                  left: '1rem',
-                  fontSize: '2rem',
-                  zIndex: 3000,
-                  background: 'transparent',
-                  border: 'none',
-                  color: '#0ff',
-                  cursor: 'pointer',
-                  userSelect: 'none',
-                }}
+                aria-label="Toggle sidebar"
               >
                 ☰
               </button>
-
-              <div
-                className="app-container"
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  minHeight: '100vh',
-                  backgroundColor: '#111',
-                }}
-              >
+              <div className={`app-container${sidebarOpen ? ' sidebar-open' : ''}`}>
                 <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
-
-                <main
-                  className="main-content"
-                  style={{
-                    marginLeft: sidebarOpen ? 240 : 0,
-                    transition: 'margin-left 0.3s ease',
-                    paddingTop: '60px',
-                    flexGrow: 1,
-                  }}
-                >
+                <main className="main-content">
                   <Routes>
                     <Route path="/" element={<BuildList />} />
                     <Route path="/build-detail/:id" element={<BuildDetail />} />
