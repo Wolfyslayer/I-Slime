@@ -37,7 +37,7 @@ h1, h2 {
 
 .main-content {
   flex: 1;
-  margin-left: 240px; /* lämnar plats för sidebar */
+  /* margin-left: 240px;  <-- TAGEN BORT för att margin styrs i App.jsx */
   padding: 2rem 1rem;
   padding-top: 60px; /* för att inte sidebar-knappar ska överlappa */
   box-sizing: border-box;
