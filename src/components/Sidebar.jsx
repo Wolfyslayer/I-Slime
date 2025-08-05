@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
 import { LogOut } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { supabase } from '../lib/supabaseClient'
 import '../components/Sidebar.css'
 
 export default function Sidebar({ isOpen, onClose }) {
@@ -29,33 +30,33 @@ export default function Sidebar({ isOpen, onClose }) {
       <h2>{t('I-Slime') || 'Menu'}</h2>
 
       <nav>
-        <Link to="/" className={isActive('/') ? 'active' : ''}>
+        <Link to="/" onClick={onClose} className={isActive('/') ? 'active' : ''}>
           {t('All Builds') || 'All Builds'}
         </Link>
 
         {user && (
           <>
-            <Link to="/create-build" className={isActive('/create-build') ? 'active' : ''}>
+            <Link to="/create-build" onClick={onClose} className={isActive('/create-build') ? 'active' : ''}>
               {t('Create Build') || 'Create Build'}
             </Link>
-            <Link to="/my-builds" className={isActive('/my-builds') ? 'active' : ''}>
+            <Link to="/my-builds" onClick={onClose} className={isActive('/my-builds') ? 'active' : ''}>
               {t('My Builds') || 'My Builds'}
             </Link>
           </>
         )}
 
         {isAdmin && (
-          <Link to="/admin-panel" className={isActive('/admin-panel') ? 'active' : ''}>
+          <Link to="/admin-panel" onClick={onClose} className={isActive('/admin-panel') ? 'active' : ''}>
             {t('Admin Panel') || 'Admin Panel'}
           </Link>
         )}
 
         {!user && (
           <>
-            <Link to="/login" className={isActive('/login') ? 'active' : ''}>
+            <Link to="/login" onClick={onClose} className={isActive('/login') ? 'active' : ''}>
               {t('Login') || 'Login'}
             </Link>
-            <Link to="/register" className={isActive('/register') ? 'active' : ''}>
+            <Link to="/register" onClick={onClose} className={isActive('/register') ? 'active' : ''}>
               {t('Sign Up') || 'Register'}
             </Link>
           </>
