@@ -19,12 +19,24 @@
   overflow-y: auto;
 }
 
-/* När sidebar är öppen */
+/* When sidebar is open */
 .sidebar.open {
   transform: translateX(0);
 }
 
-/* ===== STÄNG-KNAPP ===== */
+/* Overlay for sidebar on mobile */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 80vw;
+    max-width: 320px;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    z-index: 3000;
+  }
+}
+
+/* ===== CLOSE BUTTON ===== */
 .close-sidebar {
   display: none;
   position: absolute;
@@ -38,15 +50,15 @@
   z-index: 2100;
 }
 
-/* Visa stängknappen på mobil */
+/* Show close button on mobile */
 @media (max-width: 768px) {
   .close-sidebar {
     display: block;
   }
 }
 
-/* ===== HAMBURGERKNAPP ===== */
-.hamburger {
+/* ===== HAMBURGER BUTTON ===== */
+.hamburger-btn, .hamburger {
   position: fixed;
   top: 1rem;
   left: 1rem;
@@ -55,8 +67,12 @@
   border: none;
   color: #0ff;
   cursor: pointer;
-  z-index: 3000; /* Viktigt! Så den alltid är överst */
+  z-index: 4000;
   user-select: none;
+}
+
+.hamburger-btn.open {
+  color: #00f9ff;
 }
 
 /* ===== NAVIGATION ===== */
@@ -84,7 +100,7 @@
   font-weight: bold;
 }
 
-/* ===== BOTTOM-BUTTONS (logga ut + språk) ===== */
+/* ===== BOTTOM-BUTTONS (logout + language) ===== */
 .bottom-buttons {
   margin-top: auto;
   display: flex;
@@ -109,14 +125,27 @@
   background-color: #00e0e0;
 }
 
-/* Flagga + språktext */
+/* Flag + language text */
 .language-switcher .flag {
   margin-right: 6px;
 }
 
-/* ===== ÖVRIGT ===== */
+/* ===== OTHER ===== */
 .sidebar h2 {
   margin: 0;
   font-size: 1.5rem;
   color: #0ff;
+}
+
+/* Optional overlay for mobile when sidebar is open */
+@media (max-width: 768px) {
+  .sidebar.open::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.5);
+    z-index: 2999;
+    pointer-events: none;
+  }
 }
