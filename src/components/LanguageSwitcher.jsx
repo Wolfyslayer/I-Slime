@@ -1,50 +1,43 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 
+const flags = {
+  en: '🇬🇧',
+  sv: '🇸🇪',
+}
+
 export default function LanguageSwitcher() {
   const { i18n } = useTranslation()
 
-  const changeLanguage = (lng) => {
-    i18n.changeLanguage(lng)
+  const toggleLanguage = () => {
+    const newLang = i18n.language === 'en' ? 'sv' : 'en'
+    i18n.changeLanguage(newLang)
   }
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: '10px',
-      right: '10px',
-      zIndex: 1000,
-      display: 'flex',
-      gap: '8px'
-    }}>
-      <button
-        onClick={() => changeLanguage('en')}
-        style={{
-          padding: '6px 12px',
-          fontSize: '12px',
-          backgroundColor: i18n.language === 'en' ? '#00f9ff' : 'transparent',
-          color: i18n.language === 'en' ? '#000' : '#0ff',
-          border: '1px solid #0ff',
-          borderRadius: '4px',
-          cursor: 'pointer'
-        }}
-      >
-        EN
-      </button>
-      <button
-        onClick={() => changeLanguage('sv')}
-        style={{
-          padding: '6px 12px',
-          fontSize: '12px',
-          backgroundColor: i18n.language === 'sv' ? '#00f9ff' : 'transparent',
-          color: i18n.language === 'sv' ? '#000' : '#0ff',
-          border: '1px solid #0ff',
-          borderRadius: '4px',
-          cursor: 'pointer'
-        }}
-      >
-        SV
-      </button>
-    </div>
+    <button
+      onClick={toggleLanguage}
+      style={{
+        position: 'absolute',
+        bottom: '20px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        padding: '8px 16px',
+        fontSize: '16px',
+        backgroundColor: '#00f9ff',
+        border: 'none',
+        borderRadius: '20px',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        color: '#000',
+        userSelect: 'none',
+      }}
+      aria-label="Switch language"
+    >
+      <span>{flags[i18n.language]}</span>
+      <span>{i18n.language === 'en' ? 'En' : 'Av'}</span>
+    </button>
   )
 }
