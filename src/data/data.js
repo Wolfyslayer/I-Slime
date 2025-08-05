@@ -49,7 +49,7 @@ export const itemCategories = [
 
 // Stat options för items
 export const statOptions = [
-  { value: '', label: 'Välj stat' },
+  { value: '' },
   { value: 'crit_hit', label: 'Crit Hit' },
   { value: 'combo', label: 'Combo' },
   { value: 'counter', label: 'Counter' },
