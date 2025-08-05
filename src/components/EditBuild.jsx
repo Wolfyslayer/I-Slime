@@ -6,7 +6,6 @@ import { itemCategories, statOptions } from '../data/data'
 import { useTranslation } from 'react-i18next'
 import '../styles/build.css'
 
-
 export default function EditBuild() {
   const { id } = useParams()
   const { t } = useTranslation()
@@ -280,12 +279,13 @@ export default function EditBuild() {
 
       {/* Valda pets */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
+        {/* fix från pet?.Icon */}
         {selectedPets.map(petId => {
           const pet = pets.find(p => p.id === petId)
           return (
             <img
               key={petId}
-              src={pet?.icon}  {/* fix från pet?.Icon */}
+              src={pet?.icon}
               alt={`Pet ${petId}`}
               title={pet?.name}
               style={{
@@ -407,4 +407,4 @@ export default function EditBuild() {
       </button>
     </form>
   )
-        }
+}
