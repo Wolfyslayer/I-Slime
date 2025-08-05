@@ -1,7 +1,7 @@
-import React, { useContext } from 'react'
+fromext React, { useContext } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { UserContext } from '../context/UserContext'
+import { useUser } from '../context/UserContext'
 
 export default function Sidebar({ isOpen, onClose }) {
   const { t } = useTranslation()
