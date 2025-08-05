@@ -1,4 +1,4 @@
-/* ===== SIDEBAR ===== */
+margin-topottom-buttonsottom-buttons* ===== SIDEBAR ===== */
 .sidebar {
   position: fixed;
   top: 0;
@@ -104,8 +104,10 @@
 .bottom-buttons {
   margin-top: auto;
   display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
+  flex-direction: row;      /* Buttons side by side */
+  gap: 0.6rem;              /* Space between buttons */
+  justify-content: flex-end;/* Align to right edge, change to 'center' if you want center */
+  padding-bottom: 1.2rem;   /* Space from bottom */
 }
 
 .logout-button,
@@ -114,13 +116,13 @@
   color: #000;
   border: none;
   border-radius: 4px;
-  padding: 10px 12px;
+  padding: 6px 9px;         /* Smaller buttons */
+  font-size: 0.8rem;        /* Smaller text */
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.2s ease;
-}
-
-.logout-button:hover,
+  min-width: 80px;          /* Ensures touchable size, adjust if needed */
+}witcherut-button:hover,
 .language-switcher:hover {
   background-color: #00e0e0;
 }
