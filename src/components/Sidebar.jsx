@@ -1,19 +1,43 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
+// src/components/Sidebar.jsx
+
+import React, { useEffect, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
+import { supabase } from '../lib/supabaseClient'
+import { LogOut, Menu } from 'lucide-react'
+import './Sidebar.css'
 
-export default function Sidebar({ isOpen, onClose }) {
-  const { t } = useTranslation()
-  const { user, isAdmin, setUser } = useUser()
+export default function Sidebar() {
+  const { user, logout } = useUser()
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const location = useLocation()
 
-  const signedIn = !!user
+  useEffect(() => {
+    const fetchAdminStatus = async () => {
+      if (user) {
+        const { data, error } = await supabase
+          .from('admin_users')
+          .select('user_id')
+          .eq('user_id', user.id)
+          .single()
 
-  const handleSignOut = async () => {
-    if (window.confirm(t("Are you sure you want to sign out?"))) {
-      setUser(null)
-      window.location.href = '/login'
+        setIsAdmin(!!data && !error)
+      } else {
+        setIsAdmin(false)
+      }
     }
+
+    fetchAdminStatus()
+  }, [user])
+
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [location.pathname])
+
+  const handleLogout = async () => {
+    await logout()
+    setIsAdmin(false)
   }
 
   return (
@@ -42,7 +66,7 @@ export default function Sidebar({ isOpen, onClose }) {
         )}
         <button className="language-switcher">
           <span className="flag">🌐</span>
-          {t('Build Planner')}
+          {t('Change language')}
         </button>
       </div>
     </aside>
