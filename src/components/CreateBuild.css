@@ -135,29 +135,3 @@ button:hover {
   padding: 4px;
   box-sizing: border-box;
 }
-
-/* RESPONSIVT */
-
-/* Mindre skärmar (mobil) */
-@media (max-width: 480px) {
-  .form-container {
-    padding: 12px;
-    width: 95%;
-  }
-
-  .icon-box {
-    width: 48px;
-    height: 48px;
-  }
-
-  .selected-box {
-    width: 40px;
-    height: 40px;
-    font-size: 0.65rem;
-  }
-
-  button {
-    width: 100%;
-    padding: 14px;
-  }
-}
