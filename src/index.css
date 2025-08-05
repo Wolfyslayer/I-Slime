@@ -1,8 +1,8 @@
-/* Reset & bas */
+/* ===== Reset & Basstil ===== */
 body {
-  font-family: Arial, sans-serif; /* OBS: kan krocka, men du kan ändra till Roboto i theme.css om du vill */
-  background-color: transparent; /* låt theme.css ha bakgrund */
-  color: inherit; /* ärva från theme.css */
+  font-family: Arial, sans-serif; /* Överstyr bara om du vill, annars hanteras i theme.css */
+  background-color: transparent;  /* Låt theme.css ha kontroll över bakgrund */
+  color: inherit;                 /* Ärvs från theme.css */
   overflow-x: hidden;
   margin: 0;
 }
@@ -12,16 +12,15 @@ a {
   text-decoration: none;
 }
 
-/* Main content area justeringar för index */
+/* ===== Main Content Area ===== */
 .main-content {
-  /* Ingen margin-left här, theme.css sköter sidebar-avstånd */
   padding: 20px;
-  padding-top: 0; /* Undvik överlappning, theme.css ger padding */
+  padding-top: 0;              /* theme.css tar hand om det om nödvändigt */
   transition: none;
-  text-align: left;
+  text-align: left;            /* Viktigt: hindrar text från att centreras om theme.css gör det */
 }
 
-/* Admin panel och build-card */
+/* ===== Admin Panel & Cards ===== */
 .admin-panel {
   padding: 20px;
 }
@@ -34,8 +33,8 @@ a {
   border-radius: 6px;
 }
 
-/* Knappstil - separera från theme.css knappar med mer neutrala färger */
-button {
+/* ===== Knappstil: Exkludera .hamburger ===== */
+button:not(.hamburger) {
   background-color: #444 !important;
   color: white !important;
   border: none !important;
@@ -46,11 +45,11 @@ button {
   font-weight: normal !important;
 }
 
-button:hover {
+button:not(.hamburger):hover {
   background-color: #555 !important;
 }
 
-/* Formulär-element */
+/* ===== Formulär ===== */
 input,
 select,
 textarea {
