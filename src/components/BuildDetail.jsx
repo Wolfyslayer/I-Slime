@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabaseClient'
-import { classes, paths, skills, pets } from '../data/data'
+import { classes, paths, skills, pets, statOptions, itemCategories } from '../data/data'
 import { useTranslation } from 'react-i18next'
 import { useUser } from '../context/UserContext'
 import './CreateBuild.css'
