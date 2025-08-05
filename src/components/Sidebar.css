@@ -14,7 +14,7 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  /* relative behövs för absolut positionerad LanguageSwitcher */
+  /* relative behövs för absolut positionerad språk-/sign-out-wrapper */
   position: relative;
 }
 
@@ -27,7 +27,7 @@
 }
 
 .sidebar nav {
-  flex-grow: 1; /* tar upp allt utrymme mellan header och language switcher */
+  flex-grow: 1; /* tar upp allt utrymme mellan header och bottom-buttons */
 }
 
 .sidebar nav a {
@@ -66,25 +66,57 @@
   display: none;
 }
 
-/* LanguageSwitcher placering */
-.sidebar > button {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80%;
-  padding: 8px 16px;
-  font-size: 16px;
-  background-color: #00f9ff;
-  border: none;
-  border-radius: 20px;
+/* Wrapper för sign out och språkknapp längst ner i sidebar */
+.bottom-buttons {
+  display: flex;
+  justify-content: flex-start;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid #0ff;
+}
+
+/* Sign out knapp */
+.logout-button {
+  background: none;
+  border: 1px solid #0ff;
+  border-radius: 5px;
+  color: #0ff;
+  font-size: 1rem;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.logout-button:hover {
+  background-color: #222;
+  text-decoration: underline;
+}
+
+/* Language switcher knapp */
+.language-switcher {
+  background: none;
+  border: 1px solid #0ff;
+  border-radius: 5px;
+  color: #0ff;
+  font-size: 1rem;
+  padding: 6px 12px;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #000;
-  user-select: none;
-  justify-content: center;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.language-switcher:hover {
+  background-color: #222;
+}
+
+.flag {
+  font-size: 1.5rem;
+  line-height: 1;
 }
 
 /* Mobilvy */
