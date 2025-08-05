@@ -5,9 +5,20 @@ import { UserContext } from '../context/UserContext'
 
 export default function Sidebar({ isOpen, onClose }) {
   const { t } = useTranslation()
-  const { user, isAdmin } = useContext(UserContext) // Assumes isAdmin is exposed in context
+  const { user, isAdmin, setUser } = useContext(UserContext)
 
+  // Only show for signed in users
   const signedIn = !!user
+
+  const handleSignOut = async () => {
+    // If you want signout logic here, you can call supabase.auth.signOut and update context
+    if (window.confirm(t("Are you sure you want to sign out?"))) {
+      // You may want to trigger a sign out here if not handled elsewhere
+      // Example: await supabase.auth.signOut();
+      setUser(null)
+      window.location.href = '/login' // Or use your router to redirect
+    }
+  }
 
   return (
     <aside className={`sidebar${isOpen ? ' open' : ''}`}>
@@ -29,7 +40,9 @@ export default function Sidebar({ isOpen, onClose }) {
       </nav>
       <div className="bottom-buttons">
         {signedIn && (
-          <button className="logout-button">{t('Sign out')}</button>
+          <button className="logout-button" onClick={handleSignOut}>
+            {t('Sign out')}
+          </button>
         )}
         <button className="language-switcher">
           <span className="flag">🌐</span>
