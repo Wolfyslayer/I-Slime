@@ -1,71 +1,132 @@
-/* index.css */
+/* Reset och grund */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700&display=swap');
+@import './builds.css';
 
-/* Reset och bas */
 body {
-  font-family: Arial, sans-serif; /* Detta kan överrida theme.css om du vill */
-  background-color: #111; /* mörk bakgrund */
-  color: #fff;
-  overflow-x: hidden;
   margin: 0;
+  padding: 0;
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  color: #fff;
+  font-family: 'Roboto', sans-serif;
+  overflow-x: hidden; /* förhindra horisontell scroll */
 }
 
-/* Länkar */
-a {
-  color: inherit;
-  text-decoration: none;
+/* Rubriker - centrerade */
+h1, h2 {
+  font-family: 'Orbitron', sans-serif;
+  color: #00f9ff;
+  text-shadow: 0 0 10px #00f9ff;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 1rem;
 }
 
-/* Justeringar för main-content */
+/* Container för appens huvudlayout */
+.app-container {
+  display: flex;
+}
+
+/* Huvudinnehåll */
 .main-content {
-  /* Padding och margin hanteras i theme.css, här kan du lägga till mer specifikt om behövs */
-  transition: margin-left 0.3s ease;
+  flex: 1;
+  margin-left: 240px; /* ger plats för sidebar */
+  padding: 2rem 1rem;
+  padding-top: 60px; /* för att inte knappar i sidebar ska överlappa */
+  box-sizing: border-box;
+  transition: margin-left 0.3s ease, padding-top 0.3s ease;
+  text-align: left; /* innehållet vänsterställt */
 }
 
-/* Admin-panel */
-.admin-panel {
-  padding: 20px;
+/* Sektioner med bakgrund */
+.section {
+  margin: 2rem auto;
+  max-width: 1000px;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 1rem;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
 }
 
-/* Byggkort */
-.build-card {
-  background-color: #1a1a1a;
-  border: 1px solid #333;
-  padding: 16px;
-  margin-bottom: 12px;
-  border-radius: 6px;
-}
-
-/* Knappar - mer neutrala, enklare look */
+/* Globala knappar */
 button {
-  background-color: #444;
-  color: white;
+  background-color: #00f9ff;
   border: none;
-  padding: 8px 14px;
-  border-radius: 4px;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  color: #000;
+  font-weight: bold;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-family: 'Roboto', sans-serif;
+  display: inline-block;
+  text-align: center;
 }
 
 button:hover {
-  background-color: #555;
+  background-color: #00d4ff;
 }
 
-/* Inputs, selects och textarea */
-input,
-select,
-textarea {
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #555;
-  background-color: #222;
-  color: white;
-  margin-bottom: 12px;
+/* Inputs */
+input, select, textarea {
   width: 100%;
-  box-sizing: border-box;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: none;
+  border-radius: 6px;
+  background-color: #111;
+  color: #0ff;
+  font-size: 1rem;
+  outline: none;
+  font-family: 'Roboto', sans-serif;
 }
 
-/* Media Queries (kan ha extra regler) */
+input:focus, select:focus, textarea:focus {
+  border: 1px solid #0ff;
+}
+
+/* Auth containers (Register, Login osv) */
+.auth-container {
+  max-width: 400px;
+  margin: 60px auto;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 30px;
+  border-radius: 10px;
+  color: #fff;
+  box-shadow: 0 0 10px #0ff4;
+  font-family: 'Roboto', sans-serif;
+  text-align: center; /* auth-text centreras */
+}
+
+.auth-container h2 {
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+  color: #00f9ff;
+}
+
+/* Fel- och successmeddelanden */
+.auth-container .error {
+  color: #ff4d4d;
+  margin-top: 10px;
+}
+
+.auth-container .success {
+  color: #00ff99;
+  margin-top: 10px;
+}
+
+/* Media Queries */
 @media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+  }
+
   .main-content {
-    padding-top: 80px;
+    margin-left: 0;
+    padding: 1rem;
+    padding-top: 80px; /* lite mer padding på mobil */
+  }
+
+  h1, h2 {
+    font-size: 1.5rem;
   }
 }
