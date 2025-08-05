@@ -104,7 +104,9 @@ const resources = {
       "Stat 1": "Stat 1",
       "Stat 2": "Stat 2",
       "Attack Speed": "Attack Speed",
-      "Choose stat": "Choose stat",
+
+      // Här fixen för dropdown placeholder
+      "choose_stat": "Choose stat",
 
       // Build Display
       "By": "By",
@@ -155,13 +157,13 @@ const resources = {
       "Loading build...": "Loading build...",
 
       // Stats and Items
-      "Crit Hit": "Crit Hit",
-      "Combo": "Combo",
-      "Counter": "Counter",
-      "Skill Crit Hit": "Skill Crit Hit",
-      "Recover": "Recover",
-      "Dodge": "Dodge",
-      "Stun": "Stun",
+      "crit_hit": "Crit Hit",
+      "combo": "Combo",
+      "counter": "Counter",
+      "skill_crit_hit": "Skill Crit Hit",
+      "recover": "Recover",
+      "dodge": "Dodge",
+      "stun": "Stun",
 
       // Item Categories
       "weapon": "Weapon",
@@ -290,7 +292,9 @@ const resources = {
       "Stat 1": "Stat 1",
       "Stat 2": "Stat 2",
       "Attack Speed": "Attack Speed",
-      "Choose stat": "Välj stat",
+
+      // Här fixen för dropdown placeholder
+      "choose_stat": "Välj stat",
 
       // Build Display
       "By": "Av",
@@ -341,13 +345,13 @@ const resources = {
       "Loading build...": "Laddar bygge...",
 
       // Stats and Items
-      "Crit Hit": "Kritisk träff",
-      "Combo": "Kombination",
-      "Counter": "Motattack",
-      "Skill Crit Hit": "Färdighetskritiskt slag",
-      "Recover": "Återhämtning",
-      "Dodge": "Undvika",
-      "Stun": "Stun",
+      "crit_hit": "Kritisk träff",
+      "combo": "Kombination",
+      "counter": "Motattack",
+      "skill_crit_hit": "Färdighetskritiskt slag",
+      "recover": "Återhämtning",
+      "dodge": "Undvika",
+      "stun": "Stun",
 
       // Item Categories
       "weapon": "Weapon",
@@ -378,13 +382,13 @@ const resources = {
 }
 
 i18n
-  .use(LanguageDetector) // Detect user language
-  .use(initReactI18next) // Passes i18n down to react-i18next
+  .use(LanguageDetector)
+  .use(initReactI18next)
   .init({
     resources,
     fallbackLng: 'en',
     interpolation: {
-      escapeValue: false // React already escapes by default
+      escapeValue: false
     },
     detection: {
       order: ['localStorage', 'navigator', 'htmlTag', 'path', 'subdomain'],
@@ -393,4 +397,3 @@ i18n
   })
 
 export default i18n
-      
