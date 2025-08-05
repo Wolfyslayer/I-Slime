@@ -52,12 +52,12 @@ export default function MyBuilds() {
 
   const getClassName = (classId) => {
     const classObj = classes.find(c => c.id === classId)
-    return classObj ? classObj.name : t('Unknown')
+    return classObj ? t(classObj.name) : t('Unknown')
   }
 
   const getPathName = (pathId) => {
     const pathObj = paths.find(p => p.id === pathId)
-    return pathObj ? pathObj.name : t('Unknown')
+    return pathObj ? t(pathObj.name) : t('Unknown')
   }
 
   if (!user) return <p>{t('You must be logged in to view your builds.')}</p>

@@ -30,14 +30,14 @@ export default function Sidebar() {
       <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
         <h2>I-Slime</h2>
         <nav>
-          <NavLink to="/" end>All Builds</NavLink>
+          <NavLink to="/" end>{t('All Builds')}</NavLink>
           {user && (
             <>
-              <NavLink to="/create-build">Create Build</NavLink>
-              <NavLink to="/my-builds">My Builds</NavLink>
+              <NavLink to="/create-build">{t('Create Build')}</NavLink>
+              <NavLink to="/my-builds">{t('My Builds')}</NavLink>
               {isAdmin && (
                <NavLink to="/admin-panel">
-                  🛠️ Admin Panel
+                  🛠️ {t('Admin Panel')}
                </NavLink>
                )}
 
@@ -57,14 +57,14 @@ export default function Sidebar() {
                   fontFamily: 'inherit'
                 }}
               >
-                Sign out
+                {t('Sign out')}
               </button>
             </>
           )}
           {!user && (
             <>
-              <NavLink to="/login">Login</NavLink>
-              <NavLink to="/register">Sign Up</NavLink>
+              <NavLink to="/login">{t('Login')}</NavLink>
+              <NavLink to="/register">{t('Sign Up')}</NavLink>
             </>
           )}
         </nav>

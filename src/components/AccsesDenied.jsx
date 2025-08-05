@@ -1,8 +1,12 @@
 // src/components/AccessDenied.jsx
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import '../styles/Auth.css'
 
-export default function AccessDenied({ message = 'Du har inte behörighet att se denna sida.' }) {
+export default function AccessDenied({ message }) {
+  const { t } = useTranslation()
+  const defaultMessage = message || t('You do not have permission to view this page.')
+
   return (
     <div style={{
       padding: '2rem',
@@ -15,8 +19,8 @@ export default function AccessDenied({ message = 'Du har inte behörighet att se
       maxWidth: '500px',
       margin: '4rem auto'
     }}>
-      <h2>🚫 Åtkomst nekad</h2>
-      <p>{message}</p>
+      <h2>🚫 {t('Access denied')}</h2>
+      <p>{defaultMessage}</p>
     </div>
   )
 }

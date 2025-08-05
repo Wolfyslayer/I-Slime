@@ -1,3 +1,5 @@
+// data.js
+
 // Klassen (3 st)
 export const classes = [
   { id: 'archer', name: 'Archer' },
@@ -39,8 +41,20 @@ export const pets = Array.from({ length: 63 }, (_, i) => {
   };
 });
 
-// Items (exempel – lägg till fler kategorier/stat info om du vill)
-export const items = [
-  { id: 'item1', name: 'Item 1' },
-  { id: 'item2', name: 'Item 2' }
+// Item categories (för CreateBuild och EditBuild komponenterna)
+export const itemCategories = [
+  'weapon', 'gloves', 'armguards', 'boots', 'mask',
+  'chest', 'pants', 'shoulder', 'helmet', 'belt'
+];
+
+// Stat options för items
+export const statOptions = [
+  { value: '', label: 'Välj stat' },
+  { value: 'crit_hit', label: 'Crit Hit' },
+  { value: 'combo', label: 'Combo' },
+  { value: 'counter', label: 'Counter' },
+  { value: 'skill_crit_hit', label: 'Skill Crit Hit' },
+  { value: 'recover', label: 'Recover' },
+  { value: 'dodge', label: 'Dodge' },
+  { value: 'stun', label: 'Stun' },
 ];

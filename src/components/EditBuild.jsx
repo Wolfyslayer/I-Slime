@@ -1,255 +1,408 @@
-import React, { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabaseClient'
-import { classes, paths, skills, pets, items } from '../data/data'
+import { useBuild } from './BuildSystem/BuildContext'
+import { statOptions, itemCategories } from '../data/data'
 import { useTranslation } from 'react-i18next'
-import { useUser } from '../context/UserContext'
 
 export default function EditBuild() {
   const { id } = useParams()
-  const navigate = useNavigate()
   const { t } = useTranslation()
-  const { user } = useUser()
+  const {
+    user,
+    title, setTitle,
+    description, setDescription,
+    selectedClass, setSelectedClass,
+    selectedPath, setSelectedPath,
+    selectedSkills, setSelectedSkills,
+    selectedPets, setSelectedPets,
+    selectedItems, setSelectedItems,
+    resetBuild,
+    classes,
+    paths,
+    skills,
+    pets,
+  } = useBuild()
 
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [selectedClass, setSelectedClass] = useState('')
-  const [selectedPath, setSelectedPath] = useState('')
-  const [selectedSkills, setSelectedSkills] = useState([])
-  const [selectedPets, setSelectedPets] = useState([])
-  const [selectedItems, setSelectedItems] = useState([])
+  const [error, setError] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-
-  if (user === undefined) return null // Vänta tills user laddats
+  const [saving, setSaving] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
 
   useEffect(() => {
-    if (!id || !user?.id) return
-
-    let cancelled = false
-
     const fetchBuild = async () => {
-      console.log('[fetchBuild] Triggered')
       setLoading(true)
-
       const { data, error } = await supabase
         .from('builds')
         .select('*')
         .eq('id', id)
         .single()
 
-      if (cancelled) return
-
       if (error || !data) {
-        console.error('[fetchBuild error]', error?.message)
-        setError(error?.message || 'Build not found.')
+        setError(t('Build not found'))
         setLoading(false)
         return
       }
 
-      if (data.user_id !== user.id) {
-        setError(t('You can only edit your own builds.'))
-        setLoading(false)
-        return
-      }
-
-      setTitle(data.title)
-      setDescription(data.description)
+      setTitle(data.title || '')
+      setDescription(data.description || '')
       setSelectedClass(data.class_id || '')
       setSelectedPath(data.path_id || '')
-      setSelectedSkills(data.skills || [])
-      setSelectedPets(data.pets || [])
-      setSelectedItems(data.items || [])
+      setSelectedSkills(Array.isArray(data.skills) ? data.skills : [])
+      setSelectedPets(Array.isArray(data.pets) ? data.pets : [])
+
+      // Säkerställ att selectedItems alltid är ett objekt med alla kategorier
+      const safeItems = {}
+      itemCategories.forEach(cat => {
+        safeItems[cat] = {
+          stat1: data.items?.[cat]?.stat1 || '',
+          stat2: data.items?.[cat]?.stat2 || '',
+          atkSpd: !!data.items?.[cat]?.atkSpd,
+        }
+      })
+      setSelectedItems(safeItems)
       setLoading(false)
     }
 
     fetchBuild()
+  }, [id, setTitle, setDescription, setSelectedClass, setSelectedPath, setSelectedSkills, setSelectedPets, setSelectedItems])
 
-    return () => {
-      cancelled = true
-    }
-  }, [id, user?.id]) // ❗ t tas bort
-
+  // När klass ändras, uppdatera väg
   useEffect(() => {
     if (selectedClass) {
-      const availablePaths = paths.filter(p => p.classId === selectedClass)
-      const currentPathValid = availablePaths.some(p => p.id === selectedPath)
-      if (!currentPathValid) {
-        setSelectedPath(availablePaths[0]?.id || '')
-      }
+      const filteredPaths = paths.filter(p => p.classId === selectedClass)
+      setSelectedPath(filteredPaths.length > 0 ? filteredPaths[0].id : '')
     } else {
       setSelectedPath('')
     }
-  }, [selectedClass, selectedPath])
+  }, [selectedClass, paths, setSelectedPath])
 
-  const toggleSelect = (array, setArray, value) => {
+  const toggleSelect = (array, setArray, value, max = 5) => {
     if (array.includes(value)) {
       setArray(array.filter(v => v !== value))
-    } else {
+    } else if (array.length < max) {
       setArray([...array, value])
     }
   }
 
-  const handleUpdate = async (e) => {
-    e.preventDefault()
+  const handleStatChange = (category, statKey, value) => {
+    setSelectedItems(prev => ({
+      ...prev,
+      [category]: {
+        ...prev[category],
+        [statKey]: value
+      }
+    }))
+  }
 
-    if (!user) {
-      setError(t('You must be logged in to edit a build.'))
-      return
-    }
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setError(null)
+    setSuccessMessage('')
+    setSaving(true)
 
     if (!title.trim() || !selectedClass || !selectedPath) {
       setError(t('Title, class and path are required.'))
+      setSaving(false)
       return
     }
 
-    const { error } = await supabase
+    if (!user) {
+      setError(t('You must be logged in to create a build.'))
+      setSaving(false)
+      return
+    }
+
+    const updatedBuild = {
+      title: title.trim(),
+      description: description?.trim() || '',
+      class_id: selectedClass,
+      path_id: selectedPath,
+      skills: Array.isArray(selectedSkills) ? selectedSkills : [],
+      pets: Array.isArray(selectedPets) ? selectedPets : [],
+      items: selectedItems && typeof selectedItems === 'object' ? selectedItems : {}
+    }
+
+    const { error: updateError } = await supabase
       .from('builds')
-      .update({
-        title,
-        description,
-        class_id: selectedClass,
-        path_id: selectedPath,
-        skills: selectedSkills,
-        pets: selectedPets,
-        items: selectedItems,
-      })
+      .update(updatedBuild)
       .eq('id', id)
 
-    if (error) {
-      setError(error.message)
+    if (updateError) {
+      setError(t('Failed to update the build:') + ' ' + updateError.message)
     } else {
-      navigate(`/build-detail/${id}`)
+      setSuccessMessage(t('Changes saved!'))
     }
+
+    setSaving(false)
   }
 
-  if (loading) return <div className="loading">{t('Loading...')}</div>
-  if (error && !title) return <div className="error">{error}</div>
+  if (loading) {
+    return <div style={{ textAlign: 'center', padding: 40 }}>{t('Loading build...')}</div>
+  }
 
   return (
-    <div className="edit-build-container">
-      <h1>{t('Edit Build')}</h1>
+    <form onSubmit={handleSubmit} style={{ maxWidth: 700, margin: '0 auto', padding: 20 }}>
+      <h2>{t('Edit Build')}</h2>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
 
-      <form onSubmit={handleUpdate} className="build-form">
-        {error && <div className="error-message">{error}</div>}
+      <label>
+        {t('Title')}:
+        <input
+          type="text"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+          required
+          style={{ width: '100%', padding: 8, marginBottom: 10 }}
+        />
+      </label>
 
-        <div className="form-group">
-          <label htmlFor="title">{t('Title')}</label>
-          <input
-            id="title"
-            type="text"
-            value={title}
-            onChange={e => setTitle(e.target.value)}
-            required
-          />
-        </div>
+      <label>
+        {t('Description')}:
+        <textarea
+          value={description}
+          onChange={e => setDescription(e.target.value)}
+          style={{ width: '100%', padding: 8, marginBottom: 10 }}
+        />
+      </label>
 
-        <div className="form-group">
-          <label htmlFor="description">{t('Description')}</label>
-          <textarea
-            id="description"
-            value={description}
-            onChange={e => setDescription(e.target.value)}
-            rows={4}
-          />
-        </div>
+      <label>
+        {t('Class')}:
+        <select
+          value={selectedClass}
+          onChange={e => setSelectedClass(e.target.value)}
+          required
+          style={{ width: '100%', padding: 8, marginBottom: 10 }}
+        >
+          <option value="">{t('Choose class')}</option>
+          {classes.map(c => (
+            <option key={p.id} value={p.id}>{t(p.name)}</option>
+          ))}
+        </select>
+      </label>
 
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="class">{t('Class')}</label>
-            <select
-              id="class"
-              value={selectedClass}
-              onChange={e => setSelectedClass(e.target.value)}
-              required
+      <label>
+        {t('Path')}:
+        <select
+          value={selectedPath}
+          onChange={e => setSelectedPath(e.target.value)}
+          required
+          disabled={!selectedClass}
+          style={{ width: '100%', padding: 8, marginBottom: 10 }}
+        >
+          {paths
+            .filter(p => p.classId === selectedClass)
+            .map(p => (
+              <option key={p.id} value={p.id}>{p.name}</option>
+            ))}
+        </select>
+      </label>
+
+      {/* Valda skills */}
+      <div style={{ display: 'flex', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
+        {selectedSkills.map(skillId => {
+          const skill = skills.find(s => s.id === skillId)
+          return (
+            <img
+              key={skillId}
+              src={skill?.cardImage}
+              alt={`Skill ${skillId}`}
+              title={skill?.name}
+              style={{
+                width: 60,
+                height: 80,
+                border: '2px solid #4caf50',
+                borderRadius: 4,
+                objectFit: 'cover',
+              }}
+            />
+          )
+        })}
+      </div>
+
+      <fieldset
+        style={{
+          maxHeight: 180,
+          overflowY: 'auto',
+          border: '1px solid #ccc',
+          padding: 10,
+          marginBottom: 15,
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 10,
+        }}
+      >
+        <legend>{t('Skills')}</legend>
+        {skills.map(skill => {
+          const isSelected = selectedSkills.includes(skill.id)
+
+          return (
+            <div
+              key={skill.id}
+              onClick={() => toggleSelect(selectedSkills, setSelectedSkills, skill.id)}
+              style={{
+                position: 'relative',
+                width: 50,
+                height: 50,
+                cursor: 'pointer',
+                border: isSelected ? '3px solid #4caf50' : '2px solid #ccc',
+                borderRadius: 4,
+                overflow: 'hidden',
+              }}
+              title={`${skill.name}: ${skill.description}`}
             >
-              <option value="">{t('Select Class')}</option>
-              {classes.map(c => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
-          </div>
+              <img
+                src={skill.icon}
+                alt={skill.name}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  right: 0,
+                  background: 'rgba(0,0,0,0.6)',
+                  color: 'white',
+                  fontSize: 12,
+                  padding: '1px 3px',
+                  borderTopLeftRadius: 4,
+                }}
+              >
+                +
+              </div>
+            </div>
+          )
+        })}
+      </fieldset>
 
-          <div className="form-group">
-            <label htmlFor="path">{t('Path')}</label>
-            <select
-              id="path"
-              value={selectedPath}
-              onChange={e => setSelectedPath(e.target.value)}
-              required
-              disabled={!selectedClass}
+      {/* Valda pets */}
+      <div style={{ display: 'flex', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
+        {selectedPets.map(petId => {
+          const pet = pets.find(p => p.id === petId)
+          return (
+            <img
+              key={petId}
+              src={pet?.Icon}
+              alt={`Pet ${petId}`}
+              title={pet?.name}
+              style={{
+                width: 60,
+                height: 80,
+                border: '2px solid #4caf50',
+                borderRadius: 4,
+                objectFit: 'cover',
+              }}
+            />
+          )
+        })}
+      </div>
+
+      <fieldset
+        style={{
+          maxHeight: 180,
+          overflowY: 'auto',
+          border: '1px solid #ccc',
+          padding: 10,
+          marginBottom: 15,
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 10,
+        }}
+      >
+        <legend>{t('Pets')}</legend>
+        {pets.map(pet => {
+          const isSelected = selectedPets.includes(pet.id)
+
+          return (
+            <div
+              key={pet.id}
+              onClick={() => toggleSelect(selectedPets, setSelectedPets, pet.id)}
+              style={{
+                position: 'relative',
+                width: 50,
+                height: 50,
+                cursor: 'pointer',
+                border: isSelected ? '3px solid #4caf50' : '2px solid #ccc',
+                borderRadius: 4,
+                overflow: 'hidden',
+              }}
+              title={`${pet.name}: ${pet.description}`}
             >
-              <option value="">{t('Select Path')}</option>
-              {paths
-                .filter(p => p.classId === selectedClass)
-                .map(p => (
-                  <option key={p.id} value={p.id}>{p.name}</option>
+              <img
+                src={pet.icon}
+                alt={pet.name}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  right: 0,
+                  background: 'rgba(0,0,0,0.6)',
+                  color: 'white',
+                  fontSize: 12,
+                  padding: '1px 3px',
+                  borderTopLeftRadius: 4,
+                }}
+              >
+                +
+              </div>
+            </div>
+          )
+        })}
+      </fieldset>
+
+      {/* Items */}
+      <fieldset style={{ marginBottom: 15 }}>
+        <legend>{t('Items Stats')}</legend>
+        {itemCategories.map(category => (
+          <div key={category} style={{ marginBottom: 10 }}>
+            <h4>{t(category)}</h4>
+            <label>
+              {t('Stat 1')}:
+              <select
+                value={selectedItems[category]?.stat1 || ''}
+                onChange={e => handleStatChange(category, 'stat1', e.target.value)}
+                style={{ marginLeft: 8, marginRight: 12 }}
+              >
+                <option value="">{t('Choose stat')}</option>
+                {statOptions.map(stat => (
+                  <option key={stat} value={stat}>{t(stat)}</option>
                 ))}
-            </select>
-          </div>
-        </div>
+              </select>
+            </label>
 
-        <div className="form-group">
-          <label>{t('Skills')}</label>
-          <div className="selection-grid">
-            {skills.map(skill => (
-              <button
-                key={skill.id}
-                type="button"
-                className={`selection-btn ${selectedSkills.includes(skill.id) ? 'selected' : ''}`}
-                onClick={() => toggleSelect(selectedSkills, setSelectedSkills, skill.id)}
+            <label style={{ marginLeft: 20 }}>
+              {t('Stat 2')}:
+              <select
+                value={selectedItems[category]?.stat2 || ''}
+                onChange={e => handleStatChange(category, 'stat2', e.target.value)}
+                style={{ marginLeft: 8 }}
               >
-                {skill.name}
-              </button>
-            ))}
-          </div>
-        </div>
+                <option value="">{t('Choose stat')}</option>
+                {statOptions.map(stat => (
+                  <option key={stat} value={stat}>{t(stat)}</option>
+                ))}
+              </select>
+            </label>
 
-        <div className="form-group">
-          <label>{t('Pets')}</label>
-          <div className="selection-grid">
-            {pets.map(pet => (
-              <button
-                key={pet.id}
-                type="button"
-                className={`selection-btn ${selectedPets.includes(pet.id) ? 'selected' : ''}`}
-                onClick={() => toggleSelect(selectedPets, setSelectedPets, pet.id)}
-              >
-                {pet.name}
-              </button>
-            ))}
+            <label style={{ marginLeft: 20 }}>
+              {t('Attack Speed')}:
+              <input
+                type="checkbox"
+                checked={selectedItems[category]?.atkSpd || false}
+                onChange={e => handleStatChange(category, 'atkSpd', e.target.checked)}
+                style={{ marginLeft: 8 }}
+              />
+            </label>
           </div>
-        </div>
+        ))}
+      </fieldset>
 
-        <div className="form-group">
-          <label>{t('Items')}</label>
-          <div className="selection-grid">
-            {items.map(item => (
-              <button
-                key={item.id}
-                type="button"
-                className={`selection-btn ${selectedItems.includes(item.id) ? 'selected' : ''}`}
-                onClick={() => toggleSelect(selectedItems, setSelectedItems, item.id)}
-              >
-                {item.name}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="form-actions">
-          <button
-            type="button"
-            onClick={() => navigate(`/build-detail/${id}`)}
-            className="btn-secondary"
-          >
-            {t('Cancel')}
-          </button>
-          <button type="submit" className="btn-primary">
-            {t('Update Build')}
-          </button>
-        </div>
-      </form>
-    </div>
+      <button type="submit" disabled={saving} style={{ padding: '10px 20px', fontSize: 16 }}>
+        {saving ? t('Saving...') : t('Save Changes')}
+      </button>
+    </form>
   )
-} 
+}

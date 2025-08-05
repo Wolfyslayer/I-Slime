@@ -1,17 +1,49 @@
-import React, { createContext, useState, useContext } from 'react'
-import { classes, paths, skills, pets, items } from '../../data/data'
+// src/components/BuildSystem/BuildContext.jsx
 
-// BuildContext för att hantera form-state globalt
-export const BuildContext = createContext()
+import React, { createContext, useState, useContext, useEffect } from 'react'
+import { classes, paths, skills, pets, itemCategories } from '../../data/data'
+import { supabase } from '../../lib/supabaseClient'
+import { useTranslation } from 'react-i18next'
+
+const BuildContext = createContext()
+
+// Helper för att skapa initialt state för selectedItems
+const createInitialSelectedItems = () => {
+  const initial = {}
+  itemCategories.forEach(category => {
+    initial[category] = { stat1: '', stat2: '', atkSpd: false }
+  })
+  return initial
+}
 
 export function BuildProvider({ children }) {
+  const { t } = useTranslation()
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [selectedClass, setSelectedClass] = useState('')
   const [selectedPath, setSelectedPath] = useState('')
   const [selectedSkills, setSelectedSkills] = useState([])
   const [selectedPets, setSelectedPets] = useState([])
-  const [selectedItems, setSelectedItems] = useState([])
+  const [selectedItems, setSelectedItems] = useState(createInitialSelectedItems())
+  const [user, setUser] = useState(null)
+
+  // Korrekt sätt att hämta session i Supabase v2
+  useEffect(() => {
+    const getSession = async () => {
+      const { data } = await supabase.auth.getSession()
+      setUser(data?.session?.user ?? null)
+    }
+
+    getSession()
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => {
+      listener.subscription?.unsubscribe()
+    }
+  }, [])
 
   const resetBuild = () => {
     setTitle('')
@@ -20,17 +52,18 @@ export function BuildProvider({ children }) {
     setSelectedPath('')
     setSelectedSkills([])
     setSelectedPets([])
-    setSelectedItems([])
+    setSelectedItems(createInitialSelectedItems())
   }
 
   return (
     <BuildContext.Provider
       value={{
+        user,
         classes,
         paths,
         skills,
         pets,
-        items,
+        itemCategories,
         title,
         setTitle,
         description,
@@ -45,7 +78,7 @@ export function BuildProvider({ children }) {
         setSelectedPets,
         selectedItems,
         setSelectedItems,
-        resetBuild
+        resetBuild,
       }}
     >
       {children}
@@ -53,7 +86,6 @@ export function BuildProvider({ children }) {
   )
 }
 
-// Här lägger vi till useBuild-hooken som du kan importera och använda
 export function useBuild() {
   const context = useContext(BuildContext)
   if (!context) {

@@ -2,9 +2,11 @@
 import React, { useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import '../styles/Auth.css'
 
 export default function Login() {
+  const { t } = useTranslation()
   const [identifier, setIdentifier] = useState('') // email or username
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -28,7 +30,7 @@ export default function Login() {
         .single()
 
       if (profileError || !profile || !profile.email) {
-        setError('No user found with that username.')
+        setError(t('No user found with that username.'))
         return
       }
 
@@ -42,13 +44,13 @@ export default function Login() {
     })
 
     if (loginError || !signInData.user) {
-      setError(loginError?.message || 'Invalid email or password')
+      setError(loginError?.message || t('Invalid email or password'))
       return
     }
 
     // Steg 3: kontrollera om e-post är verifierad
     if (!signInData.user.email_confirmed_at && !signInData.user.confirmed_at) {
-      setError('Please verify your email before logging in.')
+      setError(t('Please verify your email before logging in.'))
       return
     }
 
@@ -64,11 +66,11 @@ export default function Login() {
       const banExpires = new Date(ban.expires_at)
       if (banExpires > now) {
         setBanInfo({
-          reason: ban.reason || 'No reason provided',
+          reason: ban.reason || t('No reason provided'),
           expires: banExpires.toLocaleString()
         })
         await supabase.auth.signOut()
-        setError('Your account is banned.')
+        setError(t('Your account is banned.'))
         return
       }
     }
@@ -79,37 +81,37 @@ export default function Login() {
 
   return (
     <div className="auth-container">
-      <h2>Login</h2>
+      <h2>{t('Login')}</h2>
       <form onSubmit={handleLogin}>
         <input
           type="text"
-          placeholder="Email or Username"
+          placeholder={t('Email or Username')}
           value={identifier}
           onChange={e => setIdentifier(e.target.value)}
           required
         />
         <input
           type="password"
-          placeholder="Password"
+          placeholder={t('Password')}
           value={password}
           onChange={e => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Login</button>
+        <button type="submit">{t('Login')}</button>
       </form>
 
       {error && <p className="error">{error}</p>}
 
       {banInfo && (
         <div className="ban-popup">
-          <h3>🚫 Account Banned</h3>
-          <p><strong>Reason:</strong> {banInfo.reason}</p>
-          <p><strong>Ban Expires:</strong> {banInfo.expires}</p>
+          <h3>🚫 {t('Account Banned')}</h3>
+          <p><strong>{t('Reason:')}:</strong> {banInfo.reason}</p>
+          <p><strong>{t('Ban Expires:')}:</strong> {banInfo.expires}</p>
         </div>
       )}
 
       <p style={{ marginTop: '1rem' }}>
-        Forgot your password? <a href="/forgot-password">Reset it here</a>
+        {t('Forgot your password?')} <a href="/forgot-password">{t('Reset it here')}</a>
       </p>
     </div>
   )

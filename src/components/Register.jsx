@@ -2,9 +2,11 @@
 import React, { useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import '../styles/Auth.css'
 
 export default function Register() {
+  const { t } = useTranslation()
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -32,12 +34,12 @@ export default function Register() {
 
     if (error) {
       if (error.message.toLowerCase().includes('already registered') || error.message.toLowerCase().includes('duplicate')) {
-        setError('This email is already registered. Please log in or reset your password.')
+        setError(t('This email is already registered. Please log in or reset your password.'))
       } else {
         setError(error.message)
       }
     } else {
-      setSuccess('Check your email to confirm your account.')
+      setSuccess(t('Check your email to confirm your account.'))
       setEmail('')
       setPassword('')
       setUsername('')
@@ -47,38 +49,38 @@ export default function Register() {
 
   return (
     <div className="auth-container">
-      <h2>Create Account</h2>
+      <h2>{t('Create Account')}</h2>
       <form onSubmit={handleRegister}>
         <input
           type="text"
-          placeholder="Username"
+          placeholder={t('Username')}
           value={username}
           onChange={e => setUsername(e.target.value)}
           required
         />
         <input
           type="email"
-          placeholder="Email address"
+          placeholder={t('Email address')}
           value={email}
           onChange={e => setEmail(e.target.value)}
           required
         />
         <input
           type="password"
-          placeholder="Password (min 6 chars)"
+          placeholder={t('Password (min 6 chars)')}
           value={password}
           onChange={e => setPassword(e.target.value)}
           required
           minLength={6}
         />
-        <button type="submit">Register</button>
+        <button type="submit">{t('Register')}</button>
       </form>
 
       {error && <p className="error">{error}</p>}
       {success && (
         <p className="success">
           {success} <br />
-          <a href="/login">Go to login</a>
+          <a href="/login">{t('Go to login')}</a>
         </p>
       )}
     </div>

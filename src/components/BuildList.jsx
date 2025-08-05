@@ -51,7 +51,7 @@ export default function BuildList() {
               <p className="build-description">{build.description}</p>
               <div className="build-meta">
                 <span className="build-author">
-                  {t('By')}: {build.profiles?.username || 'Anonymous'}
+                  {t('By')}: {build.profiles?.username || t('Anonymous')}
                 </span>
                 <span className="build-date">
                   {new Date(build.created_at).toLocaleDateString()}

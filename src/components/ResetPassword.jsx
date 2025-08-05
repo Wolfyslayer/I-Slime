@@ -2,9 +2,11 @@
 import React, { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabaseClient'
+import { useTranslation } from 'react-i18next'
 import '../styles/Auth.css'
 
 export default function ResetPassword() {
+  const { t } = useTranslation()
   const [searchParams] = useSearchParams()
   const accessToken = searchParams.get('access_token')
   const refreshToken = searchParams.get('refresh_token') || ''
@@ -17,7 +19,7 @@ export default function ResetPassword() {
 
   useEffect(() => {
     if (!accessToken) {
-      setError('Invalid or missing token')
+      setError(t('Invalid or missing token'))
     }
   }, [accessToken])
 
@@ -27,15 +29,15 @@ export default function ResetPassword() {
     setMessage('')
 
     if (!accessToken) {
-      setError('Missing reset token')
+      setError(t('Missing reset token'))
       return
     }
     if (password !== confirmPassword) {
-      setError('Passwords do not match')
+      setError(t('Passwords do not match'))
       return
     }
     if (password.length < 6) {
-      setError('Password must be at least 6 characters')
+      setError(t('Password must be at least 6 characters'))
       return
     }
 
@@ -57,7 +59,7 @@ export default function ResetPassword() {
       if (updateError) {
         setError(updateError.message)
       } else {
-        setMessage('Password has been reset. You can now log in.')
+        setMessage(t('Password has been reset. You can now log in.'))
       }
     } catch (err) {
       setError(err.message)
@@ -68,24 +70,24 @@ export default function ResetPassword() {
   if (!accessToken) {
     return (
       <div className="auth-container">
-        <h2>Password Reset</h2>
-        <p>Invalid or missing token</p>
+        <h2>{t('Password Reset')}</h2>
+        <p>{t('Invalid or missing token')}</p>
       </div>
     )
   }
 
   return (
     <div className="auth-container">
-      <h2>Reset Your Password</h2>
+      <h2>{t('Reset Your Password')}</h2>
       <form onSubmit={handleSubmit}>
-        <label>New Password</label>
+        <label>{t('New Password')}</label>
         <input
           type="password"
           value={password}
           onChange={e => setPassword(e.target.value)}
           required
         />
-        <label>Confirm New Password</label>
+        <label>{t('Confirm New Password')}</label>
         <input
           type="password"
           value={confirmPassword}
@@ -95,7 +97,7 @@ export default function ResetPassword() {
         {error && <p className="error">{error}</p>}
         {message && <p className="success">{message}</p>}
         <button type="submit" disabled={loading}>
-          {loading ? 'Resetting...' : 'Reset Password'}
+          {loading ? t('Resetting...') : t('Reset Password')}
         </button>
       </form>
     </div>

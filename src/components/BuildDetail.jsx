@@ -39,12 +39,12 @@ export default function BuildDetail() {
 
   const getClassName = (classId) => {
     const classObj = classes.find(c => c.id === classId)
-    return classObj ? classObj.name : t('Unknown')
+    return classObj ? t(classObj.name) : t('Unknown')
   }
 
   const getPathName = (pathId) => {
     const pathObj = paths.find(p => p.id === pathId)
-    return pathObj ? pathObj.name : t('Unknown')
+    return pathObj ? t(pathObj.name) : t('Unknown')
   }
 
   const canEdit = user && build && user.id === build.user_id

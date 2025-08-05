@@ -1,9 +1,11 @@
 // src/components/ForgotPassword.jsx
 import React, { useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
+import { useTranslation } from 'react-i18next'
 import '../styles/Auth.css'
 
 export default function ForgotPassword() {
+  const { t } = useTranslation()
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
@@ -18,21 +20,21 @@ export default function ForgotPassword() {
     })
 
     if (error) setError(error.message)
-    else setMessage('Check your email to reset your password.')
+    else setMessage(t('Check your email to reset your password.'))
   }
 
   return (
     <div className="auth-container">
-      <h2>Forgot Password</h2>
+      <h2>{t('Forgot Password')}</h2>
       <form onSubmit={handleReset}>
         <input
           type="email"
-          placeholder="Enter your email"
+          placeholder={t('Enter your email')}
           value={email}
           onChange={e => setEmail(e.target.value)}
           required
         />
-        <button type="submit">Send Reset Email</button>
+        <button type="submit">{t('Send Reset Email')}</button>
       </form>
       {error && <p className="error">{error}</p>}
       {message && <p className="success">{message}</p>}
