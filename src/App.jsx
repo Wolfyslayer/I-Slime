@@ -66,7 +66,7 @@ export default function App() {
             <>
               {/* Hamburger button fixed top left */}
               <button
-                className={`hamburger-btn${sidebarOpen ? ' open' : ''}`}
+                className={`hamburger${sidebarOpen ? ' open' : ''}`}
                 onClick={toggleSidebar}
                 aria-label="Toggle sidebar"
               >
