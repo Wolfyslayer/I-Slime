@@ -86,7 +86,14 @@ export default function App() {
               >
                 <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
 
-                <main className="main-content" style={{ padding: '20px', flexGrow: 1 }}>
+                <main
+                  className="main-content"
+                  style={{
+                    marginLeft: sidebarOpen ? 240 : 0,
+                    transition: 'margin-left 0.3s ease',
+                    paddingTop: '60px',
+                  }}
+                >
                   <Routes>
                     <Route path="/" element={<BuildList />} />
                     <Route path="/build-detail/:id" element={<BuildDetail />} />
