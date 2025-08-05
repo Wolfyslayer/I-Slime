@@ -68,67 +68,55 @@ export default function App() {
               <button
                 className={`hamburger${sidebarOpen ? ' open' : ''}`}
                 onClick={toggleSidebar}
-                aria-label={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
-                aria-expanded={sidebarOpen}
-                aria-controls="sidebar"
+                aria-label="Toggle sidebar"
               >
                 ☰
               </button>
-
               <div className={`app-container${sidebarOpen ? ' sidebar-open' : ''}`}>
-                {/* Lägg onClick på en wrapper som täcker hela sidan för att stänga sidebar */}
-                <div onClick={closeSidebar} className="content-wrapper">
-                  {/* Stoppa klick i sidebar från att bubbla upp */}
-                  <Sidebar
-                    id="sidebar"
-                    isOpen={sidebarOpen}
-                    onClose={closeSidebar}
-                    onClick={e => e.stopPropagation()}
-                  />
-                  <main className="main-content">
-                    <Routes>
-                      <Route path="/" element={<BuildList />} />
-                      <Route path="/build-detail/:id" element={<BuildDetail />} />
-                      <Route
-                        path="/create-build"
-                        element={
-                          <ProtectedRoute>
-                            <CreateBuild />
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/edit-build/:id"
-                        element={
-                          <ProtectedRoute>
-                            <EditBuild />
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/my-builds"
-                        element={
-                          <ProtectedRoute>
-                            <MyBuilds />
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/admin-panel"
-                        element={
-                          <AdminRoute>
-                            <AdminPanel />
-                          </AdminRoute>
-                        }
-                      />
-                      <Route path="/login" element={<Login />} />
-                      <Route path="/register" element={<Register />} />
-                      <Route path="/forgot-password" element={<ForgotPassword />} />
-                      <Route path="/reset-password" element={<ResetPassword />} />
-                      <Route path="/welcome" element={<Welcome />} />
-                    </Routes>
-                  </main>
-                </div>
+                <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
+                <main className="main-content" onClick={closeSidebar}>
+                  <Routes>
+                    <Route path="/" element={<BuildList />} />
+                    <Route path="/build-detail/:id" element={<BuildDetail />} />
+                    <Route
+                      path="/create-build"
+                      element={
+                        <ProtectedRoute>
+                          <CreateBuild />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/edit-build/:id"
+                      element={
+                        <ProtectedRoute>
+                          <EditBuild />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/my-builds"
+                      element={
+                        <ProtectedRoute>
+                          <MyBuilds />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/admin-panel"
+                      element={
+                        <AdminRoute>
+                          <AdminPanel />
+                        </AdminRoute>
+                      }
+                    />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
+                    <Route path="/welcome" element={<Welcome />} />
+                  </Routes>
+                </main>
               </div>
             </>
           </BuildProvider>
