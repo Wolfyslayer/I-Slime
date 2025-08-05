@@ -40,13 +40,28 @@
     transform: translateX(0);
   }
 
+  /* Fix: flex-direction kolumn på mobil */
   .app-container {
     flex-direction: column;
   }
 
+  /* Fix: main-content fullbredd på mobil */
   .main-content {
     margin-left: 0 !important;
     padding: 1rem !important;
+  }
+}
+
+/* Fix: På desktop ge main-content marginal till höger om sidebar */
+@media (min-width: 769px) {
+  .app-container {
+    display: flex;
+  }
+
+  .main-content {
+    margin-left: 240px; /* sidebar bredd */
+    transition: margin-left 0.3s ease;
+    padding: 2rem;
   }
 }
 
