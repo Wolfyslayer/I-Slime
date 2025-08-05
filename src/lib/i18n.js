@@ -16,7 +16,7 @@ const resources = {
       "Sign out": "Sign out",
       "Login": "Login",
       "Sign Up": "Sign Up",
-      
+
       // Authentication
       "Create Account": "Create Account",
       "Username": "Username",
@@ -42,7 +42,7 @@ const resources = {
       "You can now": "You can now",
       "log in": "log in",
       "to start using the app.": "to start using the app.",
-      
+
       // Error Messages
       "This email is already registered. Please log in or reset your password.": "This email is already registered. Please log in or reset your password.",
       "Check your email to confirm your account.": "Check your email to confirm your account.",
@@ -56,13 +56,13 @@ const resources = {
       "Passwords do not match": "Passwords do not match",
       "Password must be at least 6 characters": "Password must be at least 6 characters",
       "Password has been reset. You can now log in.": "Password has been reset. You can now log in.",
-      
+
       // Ban Information
       "Account Banned": "Account Banned",
       "Reason:": "Reason:",
       "Ban Expires:": "Ban Expires:",
       "No reason provided": "No reason provided",
-      
+
       // Build Management
       "Title": "Title",
       "Description": "Description",
@@ -85,7 +85,7 @@ const resources = {
       "Cancel": "Cancel",
       "Back to Builds": "Back to Builds",
       "Report Build": "Report Build",
-      
+
       // Build Form
       "Create new Build": "Create new Build",
       "Edit Build": "Edit Build",
@@ -104,7 +104,7 @@ const resources = {
       "Stat 2": "Stat 2",
       "Attack Speed": "Attack Speed",
       "Choose stat": "Choose stat",
-      
+
       // Build Display
       "By": "By",
       "Anonymous": "Anonymous",
@@ -122,7 +122,7 @@ const resources = {
       "Error deleting build": "Error deleting build",
       "Something went wrong reporting the build.": "Something went wrong reporting the build.",
       "Thank you for reporting this build.": "Thank you for reporting this build.",
-      
+
       // Admin Panel
       "Admin Panel - Report Management": "Admin Panel - Report Management",
       "No permission": "No permission",
@@ -142,17 +142,17 @@ const resources = {
       "User banned": "User banned",
       "Unexpected error occurred": "Unexpected error occurred",
       "No reason specified": "No reason specified",
-      
+
       // Access Control
       "Access denied": "Access denied",
       "You do not have permission to view this page.": "You do not have permission to view this page.",
       "You must be an administrator to access this page.": "You must be an administrator to access this page.",
-      
+
       // Loading States
       "Loading user data...": "Loading user data...",
       "Loading admin permissions...": "Loading admin permissions...",
       "Loading build...": "Loading build...",
-      
+
       // Stats and Items
       "Crit Hit": "Crit Hit",
       "Combo": "Combo",
@@ -161,7 +161,7 @@ const resources = {
       "Recover": "Recover",
       "Dodge": "Dodge",
       "Stun": "Stun",
-      
+
       // Item Categories
       "weapon": "Weapon",
       "gloves": "Gloves",
@@ -173,12 +173,12 @@ const resources = {
       "shoulder": "Shoulder",
       "helmet": "Helmet",
       "belt": "Belt",
-      
+
       // Classes
       "Archer": "Archer",
       "Swordsman": "Swordsman",
       "Mage": "Mage",
-      
+
       // Paths
       "Hunter": "Hunter",
       "Gun Wielder": "Gun Wielder",
@@ -201,7 +201,7 @@ const resources = {
       "Sign out": "Logga ut",
       "Login": "Logga in",
       "Sign Up": "Registrera",
-      
+
       // Authentication
       "Create Account": "Skapa konto",
       "Username": "Användarnamn",
@@ -227,7 +227,7 @@ const resources = {
       "You can now": "Du kan nu",
       "log in": "logga in",
       "to start using the app.": "för att börja använda appen.",
-      
+
       // Error Messages
       "This email is already registered. Please log in or reset your password.": "Denna e-post är redan registrerad. Vänligen logga in eller återställ ditt lösenord.",
       "Check your email to confirm your account.": "Kontrollera din e-post för att bekräfta ditt konto.",
@@ -241,13 +241,13 @@ const resources = {
       "Passwords do not match": "Lösenorden matchar inte",
       "Password must be at least 6 characters": "Lösenordet måste vara minst 6 tecken",
       "Password has been reset. You can now log in.": "Lösenordet har återställts. Du kan nu logga in.",
-      
+
       // Ban Information
       "Account Banned": "Konto bannlyst",
       "Reason:": "Anledning:",
       "Ban Expires:": "Bannlysning upphör:",
       "No reason provided": "Ingen anledning angiven",
-      
+
       // Build Management
       "Title": "Titel",
       "Description": "Beskrivning",
@@ -270,33 +270,33 @@ const resources = {
       "Cancel": "Avbryt",
       "Back to Builds": "Tillbaka till byggen",
       "Report Build": "Rapportera bygge",
-      
+
       // Build Form
       "Create new Build": "Skapa ny build",
       "Edit Build": "Redigera build",
       "Title, class and path are required.": "Titel, klass och väg är obligatoriska.",
-      "You must be logged in to create a build.": "Du måste vara inloggad för att skapa en build.",
-      "Failed to save the build:": "Misslyckades med att spara builden:",
+      "You must be logged in to create a build.": "Du måste vara inloggad för att skapa ett bygge.",
+      "Failed to save the build:": "Misslyckades med att spara bygget:",
       "Changes saved!": "Ändringar sparade!",
-      "Failed to update the build:": "Misslyckades med att uppdatera builden:",
+      "Failed to update the build:": "Misslyckades med att uppdatera bygget:",
       "You can only edit your own builds.": "Du kan bara redigera dina egna byggen.",
       "Selected Skills:": "Valda färdigheter:",
       "No selected skills": "Inga valda färdigheter",
       "Selected Pets:": "Valda husdjur:",
       "No selected pets": "Inga valda husdjur",
-      "Items Stats": "Föremålsstats",
+      "Items Stats": "Föremålsstatistik",
       "Stat 1": "Stat 1",
       "Stat 2": "Stat 2",
-      "Attack Speed": "Attackhastighet",
+      "Attack Speed": "Attack Speed",
       "Choose stat": "Välj stat",
-      
+
       // Build Display
       "By": "Av",
       "Anonymous": "Anonym",
       "Unknown": "Okänd",
       "Build Configuration": "Byggkonfiguration",
       "No description provided": "Ingen beskrivning angiven",
-      "Build not found": "Bygge hittades inte",
+      "Build not found": "Bygget hittades inte",
       "Loading...": "Laddar...",
       "Loading your builds...": "Laddar dina byggen...",
       "You must be logged in to view your builds.": "Du måste vara inloggad för att se dina byggen.",
@@ -305,97 +305,90 @@ const resources = {
       "No builds found.": "Inga byggen hittades.",
       "Are you sure you want to delete this build?": "Är du säker på att du vill ta bort detta bygge?",
       "Error deleting build": "Fel vid borttagning av bygge",
-      "Something went wrong reporting the build.": "Något gick fel när bygget rapporterades.",
+      "Something went wrong reporting the build.": "Något gick fel vid rapportering av bygget.",
       "Thank you for reporting this build.": "Tack för att du rapporterade detta bygge.",
-      
+
       // Admin Panel
-      "Admin Panel - Report Management": "Adminpanel - Rapporthantering",
+      "Admin Panel - Report Management": "Adminpanel - Hantering av rapporter",
       "No permission": "Ingen behörighet",
       "Loading reports...": "Laddar rapporter...",
       "No reports at the moment.": "Inga rapporter för tillfället.",
-      "Build Owner": "Byggeägare",
+      "Build Owner": "Byggägare",
       "Reported User": "Rapporterad användare",
       "Reported By": "Rapporterad av",
       "Reason": "Anledning",
       "Date": "Datum",
       "Delete Build": "Ta bort bygge",
-      "Ban User": "Bannlys användare",
+      "Ban User": "Banna användare",
       "Delete this build permanently?": "Ta bort detta bygge permanent?",
-      "Do you want to ban this user?": "Vill du bannlysa denna användare?",
+      "Do you want to ban this user?": "Vill du banna denna användare?",
       "Error fetching reports": "Fel vid hämtning av rapporter",
       "Error banning user": "Fel vid bannlysning av användare",
       "User banned": "Användare bannlyst",
       "Unexpected error occurred": "Ett oväntat fel inträffade",
       "No reason specified": "Ingen anledning angiven",
-      
+
       // Access Control
       "Access denied": "Åtkomst nekad",
       "You do not have permission to view this page.": "Du har inte behörighet att se denna sida.",
-      "You must be an administrator to access this page.": "Du måste vara administratör för att komma åt denna sida.",
-      
+      "You must be an administrator to access this page.": "Du måste vara administratör för att få tillgång till denna sida.",
+
       // Loading States
       "Loading user data...": "Laddar användardata...",
-      "Loading admin permissions...": "Laddar adminrättigheter...",
+      "Loading admin permissions...": "Laddar adminbehörigheter...",
       "Loading build...": "Laddar bygge...",
-      
+
       // Stats and Items
       "Crit Hit": "Kritisk träff",
-      "Combo": "Kombo",
-      "Counter": "Kontra",
-      "Skill Crit Hit": "Färdighet kritisk träff",
+      "Combo": "Kombination",
+      "Counter": "Motattack",
+      "Skill Crit Hit": "Färdighetskritiskt slag",
       "Recover": "Återhämtning",
       "Dodge": "Undvika",
-      "Stun": "Bedövning",
-      
+      "Stun": "Stun",
+
       // Item Categories
-      "weapon": "Vapen",
-      "gloves": "Handskar",
-      "armguards": "Armskydd",
-      "boots": "Stövlar",
+      "weapon": "Weapon",
+      "gloves": "Gloves",
+      "armguards": "Armguards",
+      "boots": "Boots",
       "mask": "Mask",
-      "chest": "Bröstpansar",
-      "pants": "Byxor",
-      "shoulder": "Axelskydd",
-      "helmet": "Hjälm",
-      "belt": "Bälte",
-      
+      "chest": "Chest",
+      "pants": "Pants",
+      "shoulder": "Shoulder",
+      "helmet": "Helmet",
+      "belt": "Belt",
+
       // Classes
-      "Archer": "Bågskytt",
-      "Swordsman": "Svärdsman",
-      "Mage": "Magiker",
-      
+      "Archer": "Archer",
+      "Swordsman": "Swordsman",
+      "Mage": "Mage",
+
       // Paths
-      "Hunter": "Jägare",
-      "Gun Wielder": "Vapenbärare",
-      "Knight": "Riddare",
-      "Warrior": "Krigare",
-      "Sage": "Vis man",
-      "Wizard": "Trollkarl"
+      "Hunter": "Hunter",
+      "Gun Wielder": "Gun Wielder",
+      "Knight": "Knight",
+      "Warrior": "Warrior",
+      "Sage": "Sage",
+      "Wizard": "Wizard"
     }
   }
 }
 
 i18n
-  .use(LanguageDetector)
-  .use(initReactI18next)
+  .use(LanguageDetector) // Detect user language
+  .use(initReactI18next) // Passes i18n down to react-i18next
   .init({
     resources,
     fallbackLng: 'en',
-    lng: undefined, // Let the detector determine the language
-    
-    detection: {
-      order: ['localStorage', 'navigator', 'htmlTag'],
-      lookupLocalStorage: 'i18nextLng',
-      caches: ['localStorage'],
-    },
-    
     interpolation: {
-      escapeValue: false,
+      escapeValue: false // React already escapes by default
     },
-    
-    react: {
-      useSuspense: false
+    detection: {
+      order: ['localStorage', 'navigator', 'htmlTag', 'path', 'subdomain'],
+      caches: ['localStorage']
     }
   })
 
 export default i18n
+      
