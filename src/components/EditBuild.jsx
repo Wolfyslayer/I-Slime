@@ -1,3 +1,4 @@
+// src/components/EditBuild.jsx
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabaseClient'
@@ -55,8 +56,8 @@ export default function EditBuild() {
       const safeItems = {}
       itemCategories.forEach(cat => {
         safeItems[cat] = {
-          stat1: data.items?.[cat]?.stat1 || '',
-          stat2: data.items?.[cat]?.stat2 || '',
+          stat1: data.items?.[cat]?.stat1 || 'choose_stat',
+          stat2: data.items?.[cat]?.stat2 || 'choose_stat',
           atkSpd: !!data.items?.[cat]?.atkSpd,
         }
       })
@@ -113,6 +114,16 @@ export default function EditBuild() {
       return
     }
 
+    // Ta bort placeholder-värden ('choose_stat') innan sparande
+    const cleanedItems = {}
+    Object.entries(selectedItems).forEach(([category, stats]) => {
+      cleanedItems[category] = {
+        stat1: stats.stat1 === 'choose_stat' ? '' : stats.stat1,
+        stat2: stats.stat2 === 'choose_stat' ? '' : stats.stat2,
+        atkSpd: stats.atkSpd,
+      }
+    })
+
     const updatedBuild = {
       title: title.trim(),
       description: description?.trim() || '',
@@ -120,7 +131,7 @@ export default function EditBuild() {
       path_id: selectedPath,
       skills: Array.isArray(selectedSkills) ? selectedSkills : [],
       pets: Array.isArray(selectedPets) ? selectedPets : [],
-      items: selectedItems && typeof selectedItems === 'object' ? selectedItems : {}
+      items: cleanedItems
     }
 
     const { error: updateError } = await supabase
@@ -278,7 +289,6 @@ export default function EditBuild() {
 
       {/* Valda pets */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
-        {/* fix från pet?.Icon */}
         {selectedPets.map(petId => {
           const pet = pets.find(p => p.id === petId)
           return (
@@ -299,62 +309,6 @@ export default function EditBuild() {
         })}
       </div>
 
-      <fieldset
-        style={{
-          maxHeight: 180,
-          overflowY: 'auto',
-          border: '1px solid #ccc',
-          padding: 10,
-          marginBottom: 15,
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: 10,
-        }}
-      >
-        <legend>{t('Pets')}</legend>
-        {pets.map(pet => {
-          const isSelected = selectedPets.includes(pet.id)
-
-          return (
-            <div
-              key={pet.id}
-              onClick={() => toggleSelect(selectedPets, setSelectedPets, pet.id)}
-              style={{
-                position: 'relative',
-                width: 50,
-                height: 50,
-                cursor: 'pointer',
-                border: isSelected ? '3px solid #4caf50' : '2px solid #ccc',
-                borderRadius: 4,
-                overflow: 'hidden',
-              }}
-              title={`${pet.name}: ${pet.description}`}
-            >
-              <img
-                src={pet.icon}
-                alt={pet.name}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
-              <div
-                style={{
-                  position: 'absolute',
-                  bottom: 0,
-                  right: 0,
-                  background: 'rgba(0,0,0,0.6)',
-                  color: 'white',
-                  fontSize: 12,
-                  padding: '1px 3px',
-                  borderTopLeftRadius: 4,
-                }}
-              >
-                +
-              </div>
-            </div>
-          )
-        })}
-      </fieldset>
-
-      {/* Items */}
       <fieldset style={{ marginBottom: 15 }}>
         <legend>{t('Items Stats')}</legend>
         {itemCategories.map(category => (
@@ -363,28 +317,40 @@ export default function EditBuild() {
             <label>
               {t('Stat 1')}:
               <select
-                value={selectedItems[category]?.stat1 || ''}
+                value={selectedItems[category]?.stat1 || 'choose_stat'}
                 onChange={e => handleStatChange(category, 'stat1', e.target.value)}
                 style={{ marginLeft: 8, marginRight: 12 }}
               >
-                <option value="">{t('Choose stat')}</option>
-                {statOptions.map(stat => (
-                  <option key={stat.value || stat} value={stat.value || stat}>{t(stat.label || stat)}</option>
-                ))}
+                <option value="choose_stat" disabled hidden>
+                  {t('Choose stat')}
+                </option>
+                {statOptions
+                  .filter(stat => stat.value !== 'choose_stat')
+                  .map(stat => (
+                    <option key={stat.value} value={stat.value}>
+                      {t(stat.value)}
+                    </option>
+                  ))}
               </select>
             </label>
 
             <label style={{ marginLeft: 20 }}>
               {t('Stat 2')}:
               <select
-                value={selectedItems[category]?.stat2 || ''}
+                value={selectedItems[category]?.stat2 || 'choose_stat'}
                 onChange={e => handleStatChange(category, 'stat2', e.target.value)}
                 style={{ marginLeft: 8 }}
               >
-                <option value="">{t('Choose stat')}</option>
-                {statOptions.map(stat => (
-                  <option key={stat.value || stat} value={stat.value || stat}>{t(stat.label || stat)}</option>
-                ))}
+                <option value="choose_stat" disabled hidden>
+                  {t('Choose stat')}
+                </option>
+                {statOptions
+                  .filter(stat => stat.value !== 'choose_stat')
+                  .map(stat => (
+                    <option key={stat.value} value={stat.value}>
+                      {t(stat.value)}
+                    </option>
+                  ))}
               </select>
             </label>
 
@@ -406,4 +372,4 @@ export default function EditBuild() {
       </button>
     </form>
   )
-}
+        }
