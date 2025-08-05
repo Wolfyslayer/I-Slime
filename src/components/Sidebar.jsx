@@ -1,32 +1,27 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
 import { supabase } from '../lib/supabaseClient'
 import { useTranslation } from 'react-i18next'
 import './Sidebar.css'
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, onClose }) {
   const { user, loading, isAdmin } = useUser()
   const location = useLocation()
   const navigate = useNavigate()
   const { i18n, t } = useTranslation()
 
-  // State för om sidebar är öppen (för mobil)
-  const [isOpen, setIsOpen] = useState(false)
-
-  const toggleSidebar = () => setIsOpen(!isOpen)
-
-  // Stäng sidebar vid navigering
+  // Stäng sidebar när path ändras
   useEffect(() => {
-    setIsOpen(false)
-  }, [location.pathname])
+    onClose()
+  }, [location.pathname, onClose])
 
   if (loading) return null
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
     navigate('/login')
-    setIsOpen(false)
+    onClose() // Stäng menyn vid logout
   }
 
   const toggleLanguage = () => {
@@ -38,62 +33,50 @@ export default function Sidebar() {
   const langLabel = i18n.language === 'sv' ? 'SV' : 'EN'
 
   return (
-    <>
-      {/* Hamburgerknapp */}
+    <aside className={`sidebar ${isOpen ? 'open' : ''}`} aria-hidden={!isOpen}>
+      {/* Valfri knapp för att stänga sidebar på mobil */}
       <button
-        className="hamburger"
-        onClick={toggleSidebar}
-        aria-label={isOpen ? 'Close menu' : 'Open menu'}
-        aria-expanded={isOpen}
+        className="close-sidebar"
+        onClick={onClose}
+        aria-label={t('Close menu')}
       >
-        ☰
+        ✕
       </button>
 
-      {/* Sidebar */}
-      <aside className={`sidebar ${isOpen ? 'open' : ''}`} aria-hidden={!isOpen && window.innerWidth <= 768}>
-        <h2>I-Slime</h2>
-        <nav>
-          <NavLink to="/" end onClick={() => setIsOpen(false)}>
-            {t('All Builds')}
-          </NavLink>
-          {user ? (
-            <>
-              <NavLink to="/create-build" onClick={() => setIsOpen(false)}>
-                {t('Create Build')}
+      <h2>I-Slime</h2>
+      <nav>
+        <NavLink to="/" end onClick={onClose}>
+          {t('All Builds')}
+        </NavLink>
+        {user ? (
+          <>
+            <NavLink to="/create-build" onClick={onClose}>{t('Create Build')}</NavLink>
+            <NavLink to="/my-builds" onClick={onClose}>{t('My Builds')}</NavLink>
+            {isAdmin && (
+              <NavLink to="/admin-panel" onClick={onClose}>
+                🛠️ {t('Admin Panel')}
               </NavLink>
-              <NavLink to="/my-builds" onClick={() => setIsOpen(false)}>
-                {t('My Builds')}
-              </NavLink>
-              {isAdmin && (
-                <NavLink to="/admin-panel" onClick={() => setIsOpen(false)}>
-                  🛠️ {t('Admin Panel')}
-                </NavLink>
-              )}
-            </>
-          ) : (
-            <>
-              <NavLink to="/login" onClick={() => setIsOpen(false)}>
-                {t('Login')}
-              </NavLink>
-              <NavLink to="/register" onClick={() => setIsOpen(false)}>
-                {t('Sign Up')}
-              </NavLink>
-            </>
-          )}
-        </nav>
-
-        {user && (
-          <div className="bottom-buttons">
-            <button onClick={handleLogout} className="logout-button" aria-label={t('Sign out')}>
-              {t('Sign out')}
-            </button>
-
-            <button className="language-switcher" onClick={toggleLanguage} aria-label="Change language">
-              <span className="flag">{flag}</span> {langLabel}
-            </button>
-          </div>
+            )}
+          </>
+        ) : (
+          <>
+            <NavLink to="/login" onClick={onClose}>{t('Login')}</NavLink>
+            <NavLink to="/register" onClick={onClose}>{t('Sign Up')}</NavLink>
+          </>
         )}
-      </aside>
-    </>
+      </nav>
+
+      {user && (
+        <div className="bottom-buttons">
+          <button onClick={handleLogout} className="logout-button" aria-label={t('Sign out')}>
+            {t('Sign out')}
+          </button>
+
+          <button className="language-switcher" onClick={toggleLanguage} aria-label="Change language">
+            <span className="flag">{flag}</span> {langLabel}
+          </button>
+        </div>
+      )}
+    </aside>
   )
 }
