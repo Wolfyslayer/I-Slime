@@ -1,16 +1,19 @@
 .sidebar {
-  position: fixed;      /* Overlay entire left side */
+  position: fixed;
   top: 0;
   left: 0;
   height: 100vh;
-  width: 270px;         /* Adjust for mobile, or use 80vw for smaller screens */
-  background: #0ff;     /* Your neon blue or gradient */
+  width: 270px;
+  background-color: rgba(0, 0, 0, 0.95); /* Mörk genomskinlig bakgrund */
+  box-shadow: 3px 0 10px rgba(0, 255, 255, 0.5); /* Neon-effekt */
   z-index: 1000;
-  box-shadow: 2px 0 10px #0008;
   display: flex;
   flex-direction: column;
   padding: 1.2rem 1rem 0 1rem;
   transition: transform 0.3s ease;
+  color: #0ff; /* Textfärg */
+  font-family: 'Roboto', sans-serif;
+  overflow-y: auto;
 }
 
 .sidebar:not(.open) {
@@ -18,8 +21,21 @@
 }
 
 .close-sidebar {
+  display: none;
   align-self: flex-end;
   margin-bottom: 1rem;
+  background: transparent;
+  border: none;
+  color: #0ff;
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 2100;
+}
+
+@media (max-width: 768px) {
+  .close-sidebar {
+    display: block;
+  }
 }
 
 nav {
@@ -29,12 +45,31 @@ nav {
   gap: 1.2rem;
 }
 
+.sidebar nav a {
+  color: #0ff;
+  text-decoration: none;
+  font-size: 1.1rem;
+  padding: 6px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.sidebar nav a:hover {
+  background-color: rgba(0, 255, 255, 0.1);
+}
+
+.sidebar nav a.active {
+  background-color: rgba(0, 255, 255, 0.2);
+  font-weight: bold;
+}
+
 .bottom-buttons {
   display: flex;
   flex-direction: row;
   gap: 0.6rem;
   justify-content: flex-end;
   padding-bottom: 1.2rem;
+  margin-top: auto;
 }
 
 .logout-button,
@@ -49,6 +84,22 @@ nav {
   cursor: pointer;
   min-width: 80px;
   box-shadow: 0 0 6px #0ff4;
+  transition: background-color 0.2s ease;
+}
+
+.logout-button:hover,
+.language-switcher:hover {
+  background-color: #00e0e0;
+}
+
+.language-switcher .flag {
+  margin-right: 6px;
+}
+
+.sidebar h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #0ff;
 }
 
 @media (max-width: 500px) {
@@ -58,11 +109,13 @@ nav {
     max-width: 95vw;
     padding: 1rem 0.5rem 0 0.5rem;
   }
+
   .bottom-buttons {
     gap: 0.4rem;
     padding-bottom: 0.7rem;
     font-size: 0.75rem;
   }
+
   .logout-button, .language-switcher {
     min-width: 60px;
     padding: 5px 7px;
