@@ -193,5 +193,6 @@ export default function BuildDetail() {
           </button>
         )}
       </div>
-    <UserContext'
-      
+    </div>
+  )
+}
