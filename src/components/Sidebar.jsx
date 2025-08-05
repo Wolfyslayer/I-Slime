@@ -3,14 +3,14 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
 import { supabase } from '../lib/supabaseClient'
 import { useTranslation } from 'react-i18next'
-import LanguageSwitcher from './LanguageSwitcher'
 import './Sidebar.css'
 
 export default function Sidebar() {
   const { user, loading, isAdmin } = useUser()
   const location = useLocation()
   const navigate = useNavigate()
-  const { t } = useTranslation()
+  const { i18n, t } = useTranslation()
+
   const [isOpen, setIsOpen] = useState(false)
 
   const toggleSidebar = () => setIsOpen(!isOpen)
@@ -26,41 +26,28 @@ export default function Sidebar() {
     navigate('/login')
   }
 
+  const toggleLanguage = () => {
+    const newLang = i18n.language === 'sv' ? 'en' : 'sv'
+    i18n.changeLanguage(newLang)
+  }
+
+  const flag = i18n.language === 'sv' ? '🇸🇪' : '🇬🇧'
+  const langLabel = i18n.language === 'sv' ? 'SV' : 'EN'
+
   return (
     <>
-      <button className="hamburger" onClick={toggleSidebar}>☰</button>
-      <aside className={`sidebar ${isOpen ? 'open' : ''}`} style={{ position: 'relative' }}>
+      <button className="hamburger" onClick={toggleSidebar} aria-label="Toggle menu">☰</button>
+      <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
         <h2>I-Slime</h2>
         <nav>
           <NavLink to="/" end>{t('All Builds')}</NavLink>
-
-          {user && (
+          {user ? (
             <>
               <NavLink to="/create-build">{t('Create Build')}</NavLink>
               <NavLink to="/my-builds">{t('My Builds')}</NavLink>
               {isAdmin && <NavLink to="/admin-panel">🛠️ {t('Admin Panel')}</NavLink>}
-
-              <button
-                onClick={handleLogout}
-                className="logout-button"
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  padding: 0,
-                  marginTop: '1rem',
-                  color: '#00f9ff',
-                  cursor: 'pointer',
-                  fontSize: '1rem',
-                  textAlign: 'left',
-                  fontFamily: 'inherit',
-                }}
-              >
-                {t('Sign out')}
-              </button>
             </>
-          )}
-
-          {!user && (
+          ) : (
             <>
               <NavLink to="/login">{t('Login')}</NavLink>
               <NavLink to="/register">{t('Sign Up')}</NavLink>
@@ -68,8 +55,26 @@ export default function Sidebar() {
           )}
         </nav>
 
-        {/* LanguageSwitcher längst ner */}
-        <LanguageSwitcher />
+        {/* Under nav: sign out och language switcher bredvid varandra */}
+        {user && (
+          <div className="bottom-buttons">
+            <button
+              onClick={handleLogout}
+              className="logout-button"
+              aria-label={t('Sign out')}
+            >
+              {t('Sign out')}
+            </button>
+
+            <button
+              className="language-switcher"
+              onClick={toggleLanguage}
+              aria-label="Change language"
+            >
+              <span className="flag">{flag}</span> {langLabel}
+            </button>
+          </div>
+        )}
       </aside>
     </>
   )
