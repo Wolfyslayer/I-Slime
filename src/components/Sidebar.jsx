@@ -25,6 +25,7 @@ export default function Sidebar() {
   const handleLogout = async () => {
     await supabase.auth.signOut()
     navigate('/login')
+    setIsOpen(false) // Stäng menyn vid logout
   }
 
   const toggleLanguage = () => {
@@ -44,19 +45,23 @@ export default function Sidebar() {
       <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
         <h2>I-Slime</h2>
         <nav>
-          <NavLink to="/" end>
+          <NavLink to="/" end onClick={() => setIsOpen(false)}>
             {t('All Builds')}
           </NavLink>
           {user ? (
             <>
-              <NavLink to="/create-build">{t('Create Build')}</NavLink>
-              <NavLink to="/my-builds">{t('My Builds')}</NavLink>
-              {isAdmin && <NavLink to="/admin-panel">🛠️ {t('Admin Panel')}</NavLink>}
+              <NavLink to="/create-build" onClick={() => setIsOpen(false)}>{t('Create Build')}</NavLink>
+              <NavLink to="/my-builds" onClick={() => setIsOpen(false)}>{t('My Builds')}</NavLink>
+              {isAdmin && (
+                <NavLink to="/admin-panel" onClick={() => setIsOpen(false)}>
+                  🛠️ {t('Admin Panel')}
+                </NavLink>
+              )}
             </>
           ) : (
             <>
-              <NavLink to="/login">{t('Login')}</NavLink>
-              <NavLink to="/register">{t('Sign Up')}</NavLink>
+              <NavLink to="/login" onClick={() => setIsOpen(false)}>{t('Login')}</NavLink>
+              <NavLink to="/register" onClick={() => setIsOpen(false)}>{t('Sign Up')}</NavLink>
             </>
           )}
         </nav>
