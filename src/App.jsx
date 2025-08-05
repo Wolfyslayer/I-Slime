@@ -21,6 +21,8 @@ import { BuildProvider } from './components/BuildSystem/BuildContext'
 
 import './lib/i18n'
 import './components/Sidebar.css'
+import './index.css'
+import './styles/theme.css'
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -72,7 +74,7 @@ export default function App() {
               </button>
               <div className={`app-container${sidebarOpen ? ' sidebar-open' : ''}`}>
                 <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
-                <main className="main-content">
+                <main className="main-content" onClick={closeSidebar}>
                   <Routes>
                     <Route path="/" element={<BuildList />} />
                     <Route path="/build-detail/:id" element={<BuildDetail />} />
