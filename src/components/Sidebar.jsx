@@ -1,22 +1,18 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { UserContext } from '../context/UserContext'
+import { useUser } from '../context/UserContext'
 
 export default function Sidebar({ isOpen, onClose }) {
   const { t } = useTranslation()
-  const { user, isAdmin, setUser } = useContext(UserContext)
+  const { user, isAdmin, setUser } = useUser()
 
-  // Only show for signed in users
   const signedIn = !!user
 
   const handleSignOut = async () => {
-    // If you want signout logic here, you can call supabase.auth.signOut and update context
     if (window.confirm(t("Are you sure you want to sign out?"))) {
-      // You may want to trigger a sign out here if not handled elsewhere
-      // Example: await supabase.auth.signOut();
       setUser(null)
-      window.location.href = '/login' // Or use your router to redirect
+      window.location.href = '/login'
     }
   }
 
