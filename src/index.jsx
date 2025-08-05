@@ -6,7 +6,7 @@ import { UserProvider } from './context/UserContext'
 import { AuthProvider } from './lib/AuthProvider'
 import './lib/i18n';
 
-import './theme.css';
+import './styles/theme.css';
 import './index.css';
 
 
