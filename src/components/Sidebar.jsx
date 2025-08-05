@@ -25,7 +25,6 @@ export default function Sidebar({ isOpen, onClose }) {
 
   return (
     <div className={`sidebar${isOpen ? ' open' : ''}`}>
-      <button className="close-sidebar" onClick={onClose}>×</button>
 
       <h2>{t('I-Slime') || 'Menu'}</h2>
 
