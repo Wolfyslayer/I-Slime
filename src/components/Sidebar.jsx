@@ -62,5 +62,15 @@ export default function Sidebar() {
 
           {!user && (
             <>
-              <NavLink to="/login">{t('Login')}</NavLin
-                                                 
+              <NavLink to="/login">{t('Login')}</NavLink>
+              <NavLink to="/register">{t('Sign Up')}</NavLink>
+            </>
+          )}
+        </nav>
+
+        {/* LanguageSwitcher längst ner */}
+        <LanguageSwitcher />
+      </aside>
+    </>
+  )
+}
