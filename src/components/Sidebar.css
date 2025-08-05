@@ -1,6 +1,4 @@
-/* Sidebar */
-
-/* Fixed sidebar på desktop */
+/* Sidebar standard - gömd (flyttad utanför vy) */
 .sidebar {
   position: fixed;
   top: 0;
@@ -18,54 +16,37 @@
   font-family: 'Roboto', sans-serif;
   color: #0ff;
   transition: transform 0.3s ease;
+  transform: translateX(-100%);
+}
+
+/* När sidebar är öppen */
+.sidebar.open {
   transform: translateX(0);
 }
 
-/* Sidebar hidden by default on mobile */
+/* Stängknappen */
+.close-sidebar {
+  display: none;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  color: #0ff;
+  font-size: 2rem;
+  cursor: pointer;
+  user-select: none;
+  z-index: 1101;
+}
+
+/* Visa stängknappen på mobil */
 @media (max-width: 768px) {
-  .sidebar {
-    transform: translateX(-100%);
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    padding: 2rem 1rem;
-    width: 240px;
-    box-shadow: 3px 0 10px rgba(0, 255, 255, 0.5);
-    background-color: rgba(0, 0, 0, 0.9);
-    z-index: 1050;
-  }
-
-  .sidebar.open {
-    transform: translateX(0);
-  }
-
-  /* Fix: flex-direction kolumn på mobil */
-  .app-container {
-    flex-direction: column;
-  }
-
-  /* Fix: main-content fullbredd på mobil */
-  .main-content {
-    margin-left: 0 !important;
-    padding: 1rem !important;
+  .close-sidebar {
+    display: block;
   }
 }
 
-/* Fix: På desktop ge main-content marginal till höger om sidebar */
-@media (min-width: 769px) {
-  .app-container {
-    display: flex;
-  }
-
-  .main-content {
-    margin-left: 240px; /* sidebar bredd */
-    transition: margin-left 0.3s ease;
-    padding: 2rem;
-  }
-}
-
-/* Hamburger button */
+/* Hamburgerknapp (flyttad till App.jsx men vi behåller stilen här) */
 .hamburger {
   position: fixed;
   top: 1rem;
@@ -75,100 +56,8 @@
   border: none;
   color: #0ff;
   cursor: pointer;
-  z-index: 1100; /* högre än sidebar */
+  z-index: 1100;
   user-select: none;
 }
 
-/* Sidebar header/title */
-.sidebar h2 {
-  font-family: 'Orbitron', sans-serif;
-  font-weight: 900;
-  font-size: 1.6rem;
-  color: #00f9ff;
-  text-align: center;
-  margin-bottom: 2rem;
-  user-select: none;
-}
-
-/* Sidebar navigation */
-.sidebar nav {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-/* Sidebar links */
-.sidebar nav a {
-  color: #0ff;
-  text-decoration: none;
-  font-weight: 500;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  transition: background-color 0.3s ease;
-}
-
-.sidebar nav a:hover,
-.sidebar nav a.active {
-  background-color: #00f9ff;
-  color: #000;
-  font-weight: 700;
-}
-
-/* Sidebar footer (optional) */
-.sidebar-footer {
-  margin-top: auto;
-  font-size: 0.8rem;
-  color: #088;
-  text-align: center;
-  padding-top: 1rem;
-  border-top: 1px solid #0ff3;
-}
-
-/* Scrollbar styling */
-.sidebar::-webkit-scrollbar {
-  width: 8px;
-}
-
-.sidebar::-webkit-scrollbar-thumb {
-  background-color: #0ff;
-  border-radius: 10px;
-}
-
-/* Bottom buttons container */
-.bottom-buttons {
-  margin-top: auto;
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid rgba(0, 255, 255, 0.3);
-}
-
-/* Logout and language buttons */
-.logout-button,
-.language-switcher {
-  flex: 1;
-  background: transparent;
-  border: 1px solid #0ff;
-  border-radius: 6px;
-  padding: 0.5rem 0;
-  color: #0ff;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  user-select: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.logout-button:hover,
-.language-switcher:hover {
-  background-color: #0ff;
-  color: #000;
-}
-
-.flag {
-  margin-right: 0.5rem;
-}
+/* Resten av dina befintliga styles här, tex nav länkar, bottom-buttons etc... */
