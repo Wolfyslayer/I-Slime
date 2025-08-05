@@ -83,7 +83,7 @@
   flex-direction: row;
   gap: 0.6rem;
   justify-content: center;
-  padding-bottom: 1.2rem;
+  padding-bottom: 0.8rem; /* Minskat från 1.2rem för att flytta upp */
   margin-top: auto;
   flex-wrap: wrap;
 }
@@ -93,13 +93,13 @@
   background-color: #00f9ff;
   color: #000;
   border: none;
-  border-radius: 4px;
-  padding: 10px 12px;
-  font-size: 0.8rem;
+  border-radius: 6px; /* Lite rundare */
+  padding: 14px 18px; /* Större klickyta */
+  font-size: 1rem; /* Lite större text */
   font-weight: bold;
   cursor: pointer;
-  min-width: 80px;
-  box-shadow: 0 0 6px #0ff4;
+  min-width: 90px; /* Lite bredare */
+  box-shadow: 0 0 8px #0ff4;
   transition: background-color 0.2s ease-in-out;
 }
 
@@ -137,14 +137,14 @@
 
   .bottom-buttons {
     gap: 0.4rem;
-    padding-bottom: 0.7rem;
-    font-size: 0.75rem;
+    padding-bottom: 0.5rem; /* Minskat ytterligare på mobilen */
+    font-size: 0.85rem; /* Lite större än tidigare */
   }
 
   .logout-button,
   .language-switcher {
-    min-width: 60px;
-    padding: 5px 7px;
-    font-size: 0.7rem;
+    min-width: 70px;
+    padding: 10px 12px; /* Lite större än tidigare */
+    font-size: 0.85rem;
   }
 }
