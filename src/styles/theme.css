@@ -14,13 +14,14 @@ html, body {
   overflow-x: hidden;
   max-width: 100vw;
   height: 100%;
+  overflow-y: auto; /* scroll vertikalt bara vid behov */
 }
 
 body {
   background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
   color: #fff;
   font-family: 'Roboto', sans-serif;
-  overflow-y: auto;
+  min-height: 100vh; /* säkerställer minst viewport höjd */
 }
 
 /* =======================
@@ -43,6 +44,7 @@ h1, h2 {
   min-height: 100vh;
   width: 100%;
   overflow-x: hidden;
+  overflow-y: hidden; /* förhindra att containern skapar vertikal scroll */
 }
 
 .main-content {
@@ -54,6 +56,8 @@ h1, h2 {
   transition: margin-left 0.3s ease, padding-top 0.3s ease;
   text-align: left;
   overflow-x: hidden;
+  overflow-y: auto;      /* scrollar bara om innehåll är långt */
+  max-height: 100vh;     /* maxhöjd 100% viewport */
   width: 100%;
   max-width: 100%;
 }
