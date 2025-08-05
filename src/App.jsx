@@ -1,5 +1,3 @@
-// src/App.jsx
-
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { UserProvider } from './context/UserContext'
@@ -24,7 +22,6 @@ import { BuildProvider } from './components/BuildSystem/BuildContext'
 import './lib/i18n'
 import './components/Sidebar.css'
 
-// Error boundary med översättning
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props)
@@ -48,7 +45,6 @@ class ErrorBoundary extends React.Component {
         </div>
       )
     }
-
     return this.props.children
   }
 }
@@ -64,9 +60,17 @@ export default function App() {
       <Router>
         <UserProvider>
           <BuildProvider>
-            <div className="app-container">
+            <div
+              className="app-container"
+              style={{
+                display: 'flex', // Flex på desktop, flex-direction ändras via CSS media query för mobil
+                flexDirection: 'row',
+                minHeight: '100vh',
+                backgroundColor: '#111', // valfri bakgrund för kontrast
+              }}
+            >
               <Sidebar />
-              <main className="main-content" style={{ padding: '20px' }}>
+              <main className="main-content" style={{ padding: '20px', flexGrow: 1 }}>
                 <Routes>
                   <Route path="/" element={<BuildList />} />
                   <Route path="/build-detail/:id" element={<BuildDetail />} />
