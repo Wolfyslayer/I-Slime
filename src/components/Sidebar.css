@@ -3,9 +3,10 @@
   top: 0;
   left: 0;
   height: 100dvh; /* bättre på mobil än 100vh */
+  max-height: 100dvh; /* se till att maxhöjd inte överskrids */
   width: 270px;
   max-width: 100vw;
-  background-color: rgba(0, 0, 0, 0.7); /* Samma som auth-container */
+  background-color: rgba(0, 0, 0, 0.7);
   box-shadow: 3px 0 10px #0ff4;
   z-index: 1000;
   display: flex;
@@ -14,8 +15,19 @@
   transition: transform 0.3s ease;
   color: #0ff;
   font-family: 'Roboto', sans-serif;
-  overflow-y: auto;
+  overflow-y: hidden; /* ändrat från auto till hidden */
   overflow-x: hidden;
+}
+
+/* Om du vill scrolla innehållet utan att scrolla hela sidebar, lägg scroll på nav */
+.sidebar nav {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-y: auto; /* scrollar bara nav om innehållet blir för stort */
+  overflow-x: hidden;
+  padding-right: 0.5rem; /* för scrollbar-fri yta */
 }
 
 /* När den är stängd */
@@ -50,14 +62,6 @@
 }
 
 /* Nav Links */
-.sidebar nav {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  overflow-x: hidden;
-}
-
 .sidebar nav a {
   color: #0ff;
   text-decoration: none;
@@ -86,6 +90,9 @@
   padding-bottom: 0.8rem; /* Minskat från 1.2rem för att flytta upp */
   margin-top: auto;
   flex-wrap: wrap;
+  /* Fixar så att knapparna inte skapar extra höjd */
+  max-height: 60px;
+  align-items: center;
 }
 
 .logout-button,
@@ -93,14 +100,15 @@
   background-color: #00f9ff;
   color: #000;
   border: none;
-  border-radius: 6px; /* Lite rundare */
-  padding: 14px 18px; /* Större klickyta */
-  font-size: 1rem; /* Lite större text */
+  border-radius: 6px;
+  padding: 14px 18px;
+  font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
-  min-width: 90px; /* Lite bredare */
+  min-width: 90px;
   box-shadow: 0 0 8px #0ff4;
   transition: background-color 0.2s ease-in-out;
+  white-space: nowrap;
 }
 
 .logout-button:hover,
@@ -137,14 +145,15 @@
 
   .bottom-buttons {
     gap: 0.4rem;
-    padding-bottom: 0.5rem; /* Minskat ytterligare på mobilen */
-    font-size: 0.85rem; /* Lite större än tidigare */
+    padding-bottom: 0.5rem;
+    font-size: 0.85rem;
+    max-height: 50px;
   }
 
   .logout-button,
   .language-switcher {
     min-width: 70px;
-    padding: 10px 12px; /* Lite större än tidigare */
+    padding: 10px 12px;
     font-size: 0.85rem;
   }
 }
