@@ -99,61 +99,59 @@ export default function BuildDetail() {
           </div>
         </div>
 
-        {/* Valda skills som bilder med border */}
-        {build.skills && build.skills.length > 0 && (
-          <div className="build-section">
-            <h3>{t('Skills')}</h3>
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              {build.skills.map(skillId => {
-                const skill = skills.find(s => s.id === skillId)
-                if (!skill) return null
-                return (
-                  <img
-                    key={skillId}
-                    src={skill.cardImage}
-                    alt={skill.name}
-                    title={skill.name}
-                    style={{
-                      width: 60,
-                      height: 80,
-                      border: '2px solid #4caf50',
-                      borderRadius: 4,
-                      objectFit: 'cover',
-                    }}
-                  />
-                )
-              })}
-            </div>
+        {/* Skills med preview i samma stil som CreateBuild/EditBuild */}
+        <div className="build-section">
+          <h3>{t('Skills')}</h3>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', minHeight: 60 }}>
+            {(!build.skills || build.skills.length === 0) && <em>{t('No selected skills')}</em>}
+            {build.skills && build.skills.map(skillId => {
+              const skill = skills.find(s => s.id === skillId)
+              if (!skill) return null
+              return (
+                <img
+                  key={skillId}
+                  src={skill.icon || skill.cardImage}
+                  alt={skill.name}
+                  title={skill.name}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    border: '2px solid #4caf50',
+                    borderRadius: 4,
+                    objectFit: 'cover',
+                  }}
+                />
+              )
+            })}
           </div>
-        )}
+        </div>
 
-        {/* Valda pets som bilder med border */}
-        {build.pets && build.pets.length > 0 && (
-          <div className="build-section">
-            <h3>{t('Pets')}</h3>
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              {build.pets.map(petId => {
-                const pet = pets.find(p => p.id === petId)
-                if (!pet) return null
-                return (
-                  <img
-                    key={petId}
-                    src={pet.icon}
-                    alt={pet.name}
-                    title={pet.name}
-                    style={{
-                      width: 60,
-                      height: 80,
-                      border: '2px solid #4caf50',
-                      borderRadius: 4,
-                      objectFit: 'cover',
-                    }}
-                  />
-                )
-              })}
-            </div>
+        {/* Pets med preview i samma stil som CreateBuild/EditBuild */}
+        <div className="build-section">
+          <h3>{t('Pets')}</h3>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', minHeight: 60 }}>
+            {(!build.pets || build.pets.length === 0) && <em>{t('No selected pets')}</em>}
+            {build.pets && build.pets.map(petId => {
+              const pet = pets.find(p => p.id === petId)
+              if (!pet) return null
+              return (
+                <img
+                  key={petId}
+                  src={pet.icon}
+                  alt={pet.name}
+                  title={pet.name}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    border: '2px solid #4caf50',
+                    borderRadius: 4,
+                    objectFit: 'cover',
+                  }}
+                />
+              )
+            })}
           </div>
-        )}
+        </div>
 
         {/* Items som lista med stats */}
         {build.items && typeof build.items === 'object' && (
@@ -195,6 +193,5 @@ export default function BuildDetail() {
           </button>
         )}
       </div>
-    </div>
-  )
-}
+    <UserContext'
+      
