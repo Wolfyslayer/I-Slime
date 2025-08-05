@@ -1,113 +1,40 @@
-margin-topottom-buttonsottom-buttons* ===== SIDEBAR ===== */
 .sidebar {
-  position: fixed;
+  position: fixed;      /* Overlay entire left side */
   top: 0;
   left: 0;
-  width: 240px;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.95);
-  padding: 2rem 1rem;
+  width: 270px;         /* Adjust for mobile, or use 80vw for smaller screens */
+  background: #0ff;     /* Your neon blue or gradient */
+  z-index: 1000;
+  box-shadow: 2px 0 10px #0008;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  box-shadow: 3px 0 10px rgba(0, 255, 255, 0.5);
-  color: #0ff;
-  font-family: 'Roboto', sans-serif;
-  transform: translateX(-100%);
+  padding: 1.2rem 1rem 0 1rem;
   transition: transform 0.3s ease;
-  z-index: 2000;
-  overflow-y: auto;
 }
 
-/* When sidebar is open */
-.sidebar.open {
-  transform: translateX(0);
+.sidebar:not(.open) {
+  transform: translateX(-100%);
 }
 
-/* Overlay for sidebar on mobile */
-@media (max-width: 768px) {
-  .sidebar {
-    width: 80vw;
-    max-width: 320px;
-    height: 100vh;
-    left: 0;
-    top: 0;
-    z-index: 3000;
-  }
-}
-
-/* ===== CLOSE BUTTON ===== */
 .close-sidebar {
-  display: none;
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: transparent;
-  border: none;
-  color: #0ff;
-  font-size: 2rem;
-  cursor: pointer;
-  z-index: 2100;
+  align-self: flex-end;
+  margin-bottom: 1rem;
 }
 
-/* Show close button on mobile */
-@media (max-width: 768px) {
-  .close-sidebar {
-    display: block;
-  }
-}
-
-/* ===== HAMBURGER BUTTON ===== */
-.hamburger-btn, .hamburger {
-  position: fixed;
-  top: 1rem;
-  left: 1rem;
-  font-size: 2rem;
-  background: transparent;
-  border: none;
-  color: #0ff;
-  cursor: pointer;
-  z-index: 4000;
-  user-select: none;
-}
-
-.hamburger-btn.open {
-  color: #00f9ff;
-}
-
-/* ===== NAVIGATION ===== */
-.sidebar nav {
+nav {
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.2rem;
 }
 
-.sidebar nav a {
-  color: #0ff;
-  text-decoration: none;
-  font-size: 1.1rem;
-  padding: 6px 8px;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
-}
-
-.sidebar nav a:hover {
-  background-color: rgba(0, 255, 255, 0.1);
-}
-
-.sidebar nav a.active {
-  background-color: rgba(0, 255, 255, 0.2);
-  font-weight: bold;
-}
-
-/* ===== BOTTOM-BUTTONS (logout + language) ===== */
 .bottom-buttons {
-  margin-top: auto;
   display: flex;
-  flex-direction: row;      /* Buttons side by side */
-  gap: 0.6rem;              /* Space between buttons */
-  justify-content: flex-end;/* Align to right edge, change to 'center' if you want center */
-  padding-bottom: 1.2rem;   /* Space from bottom */
+  flex-direction: row;
+  gap: 0.6rem;
+  justify-content: flex-end;
+  padding-bottom: 1.2rem;
 }
 
 .logout-button,
@@ -116,38 +43,29 @@ margin-topottom-buttonsottom-buttons* ===== SIDEBAR ===== */
   color: #000;
   border: none;
   border-radius: 4px;
-  padding: 6px 9px;         /* Smaller buttons */
-  font-size: 0.8rem;        /* Smaller text */
+  padding: 6px 9px;
+  font-size: 0.8rem;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-  min-width: 80px;          /* Ensures touchable size, adjust if needed */
-}witcherut-button:hover,
-.language-switcher:hover {
-  background-color: #00e0e0;
+  min-width: 80px;
+  box-shadow: 0 0 6px #0ff4;
 }
 
-/* Flag + language text */
-.language-switcher .flag {
-  margin-right: 6px;
-}
-
-/* ===== OTHER ===== */
-.sidebar h2 {
-  margin: 0;
-  font-size: 1.5rem;
-  color: #0ff;
-}
-
-/* Optional overlay for mobile when sidebar is open */
-@media (max-width: 768px) {
-  .sidebar.open::after {
-    content: '';
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background: rgba(0,0,0,0.5);
-    z-index: 2999;
-    pointer-events: none;
+@media (max-width: 500px) {
+  .sidebar {
+    width: 80vw;
+    min-width: 200px;
+    max-width: 95vw;
+    padding: 1rem 0.5rem 0 0.5rem;
+  }
+  .bottom-buttons {
+    gap: 0.4rem;
+    padding-bottom: 0.7rem;
+    font-size: 0.75rem;
+  }
+  .logout-button, .language-switcher {
+    min-width: 60px;
+    padding: 5px 7px;
+    font-size: 0.7rem;
   }
 }
