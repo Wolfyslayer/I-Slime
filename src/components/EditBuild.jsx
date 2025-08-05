@@ -177,7 +177,7 @@ export default function EditBuild() {
         >
           <option value="">{t('Choose class')}</option>
           {classes.map(c => (
-            <option key={p.id} value={p.id}>{t(p.name)}</option>
+            <option key={c.id} value={c.id}>{t(c.name)}</option>
           ))}
         </select>
       </label>
@@ -200,7 +200,7 @@ export default function EditBuild() {
       </label>
 
       {/* Valda skills */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
+      <div const={{ display: 'flex', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
         {selectedSkills.map(skillId => {
           const skill = skills.find(s => s.id === skillId)
           return (
