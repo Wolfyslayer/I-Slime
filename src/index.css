@@ -2,12 +2,19 @@
 html, body {
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
+  overflow-x: hidden;        /* Ingen horisontell scroll */
+  overflow-y: auto;          /* Vertikal scroll vid behov */
   max-width: 100vw;
   height: 100%;
   font-family: Arial, sans-serif;
   background-color: transparent;
   color: inherit;
+  box-sizing: border-box;
+}
+
+/* Gör så alla element räknar box-sizing korrekt */
+*, *::before, *::after {
+  box-sizing: inherit;
 }
 
 a {
@@ -18,11 +25,13 @@ a {
 /* ===== Main Content Area ===== */
 .main-content {
   padding: 20px;
-  padding-top: 0; /* theme.css will override padding-top on desktop */
+  padding-top: 0; /* theme.css kommer skriva över på desktop */
   text-align: left;
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
+  overflow-y: auto;          /* Scrolla bara om innehåll är långt */
+  max-height: 100vh;         /* Maxhöjd 100% av viewport */
   box-sizing: border-box;
 }
 
