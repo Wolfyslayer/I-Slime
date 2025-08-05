@@ -22,7 +22,6 @@ import AdminRoute from './routes/AdminRoute'
 import { BuildProvider } from './components/BuildSystem/BuildContext'
 
 import './lib/i18n'
-import './styles/theme.css'
 import './components/Sidebar.css'
 
 // Error boundary med översättning
