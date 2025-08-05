@@ -9,6 +9,7 @@ export function UserProvider({ children }) {
   const [loading, setLoading] = useState(true)
   const [isAdmin, setIsAdmin] = useState(false)
 
+  // Funktion som kollar om user är admin i DB
   const checkIfAdmin = async (userId) => {
     try {
       const { data, error } = await supabase
@@ -29,6 +30,7 @@ export function UserProvider({ children }) {
   }
 
   useEffect(() => {
+    // Initiera auth vid mount
     const initAuth = async () => {
       setLoading(true)
       try {
@@ -47,9 +49,12 @@ export function UserProvider({ children }) {
           setIsAdmin(false)
         } else {
           setUser(currentUser)
-          const adminStatus = currentUser ? await checkIfAdmin(currentUser.id) : false
-          setIsAdmin(adminStatus)
-          console.log('[UserContext] Set user and admin status:', currentUser, adminStatus)
+          // Kör admin-check separat, påverkar inte loading
+          if (currentUser) {
+            checkIfAdmin(currentUser.id).then(setIsAdmin).catch(() => setIsAdmin(false))
+          } else {
+            setIsAdmin(false)
+          }
         }
       } catch (error) {
         console.error('[UserContext] initAuth error:', error)
@@ -62,31 +67,31 @@ export function UserProvider({ children }) {
 
     initAuth()
 
-    const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    // Lyssna på auth state changes
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setLoading(true)
-      try {
-        const currentUser = session?.user ?? null
-        const verified = currentUser?.email_confirmed_at || currentUser?.confirmed_at
 
-        console.log('[UserContext] Auth state change:', session)
+      const currentUser = session?.user ?? null
+      const verified = currentUser?.email_confirmed_at || currentUser?.confirmed_at
 
-        if (currentUser && !verified) {
-          console.log('[UserContext] User not verified on auth change, signing out...')
-          await supabase.auth.signOut()
-          setUser(null)
-          setIsAdmin(false)
-        } else {
-          setUser(currentUser)
-          const adminStatus = currentUser ? await checkIfAdmin(currentUser.id) : false
-          setIsAdmin(adminStatus)
-          console.log('[UserContext] Updated user and admin status:', currentUser, adminStatus)
-        }
-      } catch (error) {
-        console.error('[UserContext] Auth state change error:', error)
+      console.log('[UserContext] Auth state change:', session)
+
+      if (currentUser && !verified) {
+        console.log('[UserContext] User not verified on auth change, signing out...')
+        supabase.auth.signOut()
         setUser(null)
         setIsAdmin(false)
-      } finally {
         setLoading(false)
+      } else {
+        setUser(currentUser)
+        setLoading(false)
+
+        if (currentUser) {
+          // Kör admin-check separat så det inte blockerar loading
+          checkIfAdmin(currentUser.id).then(setIsAdmin).catch(() => setIsAdmin(false))
+        } else {
+          setIsAdmin(false)
+        }
       }
     })
 
@@ -97,7 +102,7 @@ export function UserProvider({ children }) {
 
   return (
     <UserContext.Provider value={{ user, setUser, loading, isAdmin, setIsAdmin }}>
-      {loading ? <div style={{padding:'1rem'}}>Loading user data...</div> : children}
+      {loading ? <div style={{ padding: '1rem' }}>Loading user data...</div> : children}
     </UserContext.Provider>
   )
 }
