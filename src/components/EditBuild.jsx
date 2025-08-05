@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabaseClient'
 import { useBuild } from './BuildSystem/BuildContext'
 import { itemCategories, statOptions } from '../data/data'
 import { useTranslation } from 'react-i18next'
-import '../styles/build.css'
+import '../styles/builds.css'
 
 export default function EditBuild() {
   const { id } = useParams()
