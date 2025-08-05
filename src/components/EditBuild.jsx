@@ -136,108 +136,6 @@ export default function EditBuild() {
 
     setSaving(false)
   }
-        .select('*')
-        .eq('id', id)
-        .single()
-
-      if (error || !data) {
-        setError(t('Build not found'))
-        setLoading(false)
-        return
-      }
-
-      setTitle(data.title || '')
-      setDescription(data.description || '')
-      setSelectedClass(data.class_id || '')
-      setSelectedPath(data.path_id || '')
-      setSelectedSkills(Array.isArray(data.skills) ? data.skills : [])
-      setSelectedPets(Array.isArray(data.pets) ? data.pets : [])
-
-      // Säkerställ att selectedItems alltid är ett objekt med alla kategorier
-      const safeItems = {}
-      itemCategories.forEach(cat => {
-        safeItems[cat] = {
-          stat1: data.items?.[cat]?.stat1 || '',
-          stat2: data.items?.[cat]?.stat2 || '',
-          atkSpd: !!data.items?.[cat]?.atkSpd,
-        }
-      })
-      setSelectedItems(safeItems)
-      setLoading(false)
-    }
-
-    fetchBuild()
-  }, [id, setTitle, setDescription, setSelectedClass, setSelectedPath, setSelectedSkills, setSelectedPets, setSelectedItems])
-
-  // När klass ändras, uppdatera väg
-  useEffect(() => {
-    if (selectedClass) {
-      const filteredPaths = paths.filter(p => p.classId === selectedClass)
-      setSelectedPath(filteredPaths.length > 0 ? filteredPaths[0].id : '')
-    } else {
-      setSelectedPath('')
-    }
-  }, [selectedClass, paths, setSelectedPath])
-
-  const toggleSelect = (array, setArray, value, max = 5) => {
-    if (array.includes(value)) {
-      setArray(array.filter(v => v !== value))
-    } else if (array.length < max) {
-      setArray([...array, value])
-    }
-  }
-
-  const handleStatChange = (category, statKey, value) => {
-    setSelectedItems(prev => ({
-      ...prev,
-      [category]: {
-        ...prev[category],
-        [statKey]: value
-      }
-    }))
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError(null)
-    setSuccessMessage('')
-    setSaving(true)
-
-    if (!title.trim() || !selectedClass || !selectedPath) {
-      setError(t('Title, class and path are required.'))
-      setSaving(false)
-      return
-    }
-
-    if (!user) {
-      setError(t('You must be logged in to create a build.'))
-      setSaving(false)
-      return
-    }
-
-    const updatedBuild = {
-      title: title.trim(),
-      description: description?.trim() || '',
-      class_id: selectedClass,
-      path_id: selectedPath,
-      skills: Array.isArray(selectedSkills) ? selectedSkills : [],
-      pets: Array.isArray(selectedPets) ? selectedPets : [],
-      items: selectedItems && typeof selectedItems === 'object' ? selectedItems : {}
-    }
-
-    const { error: updateError } = await supabase
-      .from('builds')
-      .update(updatedBuild)
-      .eq('id', id)
-
-    if (updateError) {
-      setError(t('Failed to update the build:') + ' ' + updateError.message)
-    } else {
-      setSuccessMessage(t('Changes saved!'))
-    }
-
-    setSaving(false)
-  }
 
   if (loading) {
     return <div style={{ textAlign: 'center', padding: 40 }}>{t('Loading build...')}</div>
@@ -296,13 +194,13 @@ export default function EditBuild() {
           {paths
             .filter(p => p.classId === selectedClass)
             .map(p => (
-              <option key={p.id} value={p.id}>{p.name}</option>
+              <option key={p.id} value={p.id}>{t(p.name)}</option>
             ))}
         </select>
       </label>
 
       {/* Valda skills */}
-      <div const={{ display: 'flex', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
         {selectedSkills.map(skillId => {
           const skill = skills.find(s => s.id === skillId)
           return (
@@ -385,7 +283,7 @@ export default function EditBuild() {
           return (
             <img
               key={petId}
-              src={pet?.Icon}
+              src={pet?.icon}  {/* fix från pet?.Icon */}
               alt={`Pet ${petId}`}
               title={pet?.name}
               style={{
@@ -470,7 +368,7 @@ export default function EditBuild() {
               >
                 <option value="">{t('Choose stat')}</option>
                 {statOptions.map(stat => (
-                  <option key={stat} value={stat}>{t(stat)}</option>
+                  <option key={stat.value || stat} value={stat.value || stat}>{t(stat.label || stat)}</option>
                 ))}
               </select>
             </label>
@@ -484,7 +382,7 @@ export default function EditBuild() {
               >
                 <option value="">{t('Choose stat')}</option>
                 {statOptions.map(stat => (
-                  <option key={stat} value={stat}>{t(stat)}</option>
+                  <option key={stat.value || stat} value={stat.value || stat}>{t(stat.label || stat)}</option>
                 ))}
               </select>
             </label>
@@ -507,4 +405,4 @@ export default function EditBuild() {
       </button>
     </form>
   )
-}
+        }
