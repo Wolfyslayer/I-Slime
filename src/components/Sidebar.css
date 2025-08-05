@@ -4,14 +4,14 @@
   left: 0;
   height: 100vh;
   width: 270px;
-  background-color: rgba(0, 0, 0, 0.95); /* Mörk genomskinlig bakgrund */
-  box-shadow: 3px 0 10px rgba(0, 255, 255, 0.5); /* Neon-effekt */
+  background-color: rgba(0, 0, 0, 0.7); /* Samma som auth-container */
+  box-shadow: 3px 0 10px #0ff4;
   z-index: 1000;
   display: flex;
   flex-direction: column;
   padding: 1.2rem 1rem 0 1rem;
   transition: transform 0.3s ease;
-  color: #0ff; /* Textfärg */
+  color: #0ff;
   font-family: 'Roboto', sans-serif;
   overflow-y: auto;
 }
@@ -38,20 +38,30 @@
   }
 }
 
-nav {
+.sidebar h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #00f9ff;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Nav Links */
+.sidebar nav {
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+  gap: 1rem;
 }
 
 .sidebar nav a {
   color: #0ff;
   text-decoration: none;
   font-size: 1.1rem;
-  padding: 6px 8px;
+  padding: 8px 10px;
   border-radius: 4px;
-  transition: background-color 0.2s ease;
+  background-color: #111;
+  transition: background-color 0.2s ease-in-out;
 }
 
 .sidebar nav a:hover {
@@ -63,6 +73,7 @@ nav {
   font-weight: bold;
 }
 
+/* Bottom buttons */
 .bottom-buttons {
   display: flex;
   flex-direction: row;
@@ -74,34 +85,43 @@ nav {
 
 .logout-button,
 .language-switcher {
-  background-color: #0ff;
+  background-color: #00f9ff;
   color: #000;
   border: none;
   border-radius: 4px;
-  padding: 6px 9px;
+  padding: 10px 12px;
   font-size: 0.8rem;
   font-weight: bold;
   cursor: pointer;
   min-width: 80px;
   box-shadow: 0 0 6px #0ff4;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease-in-out;
 }
 
 .logout-button:hover,
 .language-switcher:hover {
-  background-color: #00e0e0;
+  background-color: #0ff;
 }
 
 .language-switcher .flag {
   margin-right: 6px;
 }
 
-.sidebar h2 {
-  margin: 0;
-  font-size: 1.5rem;
+/* Hamburger button */
+.hamburger {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  font-size: 2rem;
+  background: transparent;
+  border: none;
   color: #0ff;
+  cursor: pointer;
+  z-index: 3000;
+  user-select: none;
 }
 
+/* Mobile adjustments */
 @media (max-width: 500px) {
   .sidebar {
     width: 80vw;
