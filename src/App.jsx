@@ -4,7 +4,6 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { UserProvider } from './context/UserContext';
 import { useTranslation } from 'react-i18next'; 
-import LanguageSwitcher from './components/LanguageSwitcher';
 import Sidebar from './components/Sidebar';
 import BuildList from './components/BuildList';
 import BuildDetail from './components/BuildDetail';
