@@ -30,20 +30,45 @@
   padding-right: 0.5rem; /* för scrollbar-fri yta */
 }
 
-/* När den är stängd */
 .sidebar:not(.open) {
   transform: translateX(-100%);
 }
 
+/* ==== Uppdaterad knappstil för både hamburger och close ==== */
+.hamburger,
 .close-sidebar {
-  display: none;
-  align-self: flex-end;
-  margin-bottom: 1rem;
   background: transparent;
   border: none;
   color: #0ff;
-  font-size: 2rem;
   cursor: pointer;
+  font-size: 2rem;       /* samma storlek som hamburger */
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+/* Hover-effekt */
+.hamburger:hover,
+.close-sidebar:hover {
+  background-color: rgba(0, 255, 255, 0.1);
+}
+
+/* Positionering */
+.hamburger {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 1.5rem));
+  left: calc(env(safe-area-inset-left, 1.5rem));
+  z-index: 3000;
+}
+
+.close-sidebar {
+  display: none; /* som du har idag */
+  align-self: flex-end;
+  margin-bottom: 1rem;
   z-index: 2100;
 }
 
@@ -90,7 +115,6 @@
   padding-bottom: 0.8rem; /* Minskat från 1.2rem för att flytta upp */
   margin-top: auto;
   flex-wrap: wrap;
-  /* Fixar så att knapparna inte skapar extra höjd */
   max-height: 60px;
   align-items: center;
 }
@@ -119,26 +143,6 @@
 .language-switcher .flag {
   margin-right: 6px;
 }
-
-.hamburger {
-  position: fixed;
-  top: calc(env(safe-area-inset-top, 1.5rem));
-  left: calc(env(safe-area-inset-left, 1.5rem));
-  font-size: 2rem;
-  background: transparent;
-  border: none;
-  color: #0ff;
-  cursor: pointer;
-  z-index: 3000;
-  user-select: none;
-  padding: 0.5rem;
-  border-radius: 8px;
-}
-
-.hamburger:hover {
-  background-color: rgba(0, 255, 255, 0.1);
-}
-
 
 /* Mobile adjustments */
 @media (max-width: 500px) {
