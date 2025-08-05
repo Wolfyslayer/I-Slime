@@ -1,11 +1,8 @@
-/* =======================
-   Fonts & Imports
-========================== */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700&display=swap');
 @import './builds.css';
 
 /* =======================
-   Global Reset
+   Global Reset & Body
 ========================== */
 body {
   margin: 0;
@@ -13,7 +10,7 @@ body {
   background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
   color: #fff;
   font-family: 'Roboto', sans-serif;
-  overflow-x: hidden; /* förhindra horisontell scroll */
+  overflow-x: hidden;
 }
 
 /* =======================
@@ -33,16 +30,31 @@ h1, h2 {
 ========================== */
 .app-container {
   display: flex;
+  min-height: 100vh;
 }
 
+/* Main content default: sidebar closed */
 .main-content {
   flex: 1;
-  margin-left: 240px; /* lämnar plats för sidebar */
+  margin-left: 0;
   padding: 2rem 1rem;
-  padding-top: 60px; /* för att inte sidebar-knappar ska överlappa */
+  padding-top: 60px;
   box-sizing: border-box;
   transition: margin-left 0.3s ease, padding-top 0.3s ease;
   text-align: left;
+}
+
+/* When sidebar is open, shift main-content */
+.app-container.sidebar-open .main-content {
+  margin-left: 240px;
+}
+
+/* Responsive: sidebar overlays, main-content not shifted */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0 !important;
+    padding-top: 70px;
+  }
 }
 
 /* =======================
@@ -114,40 +126,4 @@ textarea:focus {
   color: #fff;
   box-shadow: 0 0 10px #0ff4;
   font-family: 'Roboto', sans-serif;
-  text-align: center;
-}
-
-.auth-container h2 {
-  margin-bottom: 20px;
-  font-size: 1.8rem;
-  color: #00f9ff;
-}
-
-.auth-container .error {
-  color: #ff4d4d;
-  margin-top: 10px;
-}
-
-.auth-container .success {
-  color: #00ff99;
-  margin-top: 10px;
-}
-
-/* =======================
-   Media Queries (Responsive)
-========================== */
-@media (max-width: 768px) {
-  .app-container {
-    flex-direction: column;
-  }
-
-  .main-content {
-    margin-left: 0;
-    padding: 1rem;
-    padding-top: 80px; /* lite extra för mobilen */
-  }
-
-  h1, h2 {
-    font-size: 1.5rem;
-  }
 }
