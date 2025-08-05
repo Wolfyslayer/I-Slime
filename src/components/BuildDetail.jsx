@@ -28,7 +28,7 @@ export default function BuildDetail() {
         `)
         .eq('id', id)
         .single()
-      
+
       if (error) {
         setError(error.message)
       } else {
@@ -158,14 +158,25 @@ export default function BuildDetail() {
         {build.items && typeof build.items === 'object' && (
           <div className="build-section">
             <h3>{t('Items')}</h3>
-            {Object.entries(build.items).map(([category, stats]) => (
-              <div key={category} style={{ marginBottom: 10 }}>
-                <strong>{t(category)}</strong>:&nbsp;
-                {stats.stat1 && <span>{t(stats.stat1)}</span>}
-                {stats.stat2 && <span>, {t(stats.stat2)}</span>}
-                {stats.atkSpd && <span>, {t('Attack Speed')}</span>}
-              </div>
-            ))}
+            {Object.entries(build.items).map(([category, stats]) => {
+              const stat1Label = statOptions.find(opt => opt.value === stats.stat1)?.label
+              const stat2Label = statOptions.find(opt => opt.value === stats.stat2)?.label
+              const atkSpdLabel = stats.atkSpd ? t('Attack Speed') : null
+
+              const statStrings = [stat1Label, stat2Label, atkSpdLabel].filter(Boolean)
+
+              return (
+                <div key={category} style={{ marginBottom: 10 }}>
+                  <strong>{t(category)}</strong>:&nbsp;
+                  {statStrings.map((s, i) => (
+                    <span key={i}>
+                      {i > 0 ? ', ' : ''}
+                      {t(s)}
+                    </span>
+                  ))}
+                </div>
+              )
+            })}
           </div>
         )}
       </div>
@@ -176,8 +187,8 @@ export default function BuildDetail() {
         </button>
 
         {canEdit && (
-          <button 
-            onClick={() => navigate(`/edit-build/${id}`)} 
+          <button
+            onClick={() => navigate(`/edit-build/${id}`)}
             className="btn-primary"
             style={{ marginRight: 10 }}
           >
@@ -186,7 +197,7 @@ export default function BuildDetail() {
         )}
 
         {user && build && user.id !== build.user_id && (
-          <button 
+          <button
             onClick={handleReport}
             className="btn-danger"
           >
