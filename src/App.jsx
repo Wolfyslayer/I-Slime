@@ -66,11 +66,23 @@ export default function App() {
         <UserProvider>
           <BuildProvider>
             <>
-              {/* Hamburgerknapp utanför sidebar */}
+              {/* Hamburgerknapp fixed uppe i vänster hörn */}
               <button
                 className="hamburger"
                 onClick={toggleSidebar}
                 aria-label="Toggle menu"
+                style={{
+                  position: 'fixed',
+                  top: '1rem',
+                  left: '1rem',
+                  fontSize: '2rem',
+                  zIndex: 3000,
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#0ff',
+                  cursor: 'pointer',
+                  userSelect: 'none',
+                }}
               >
                 ☰
               </button>
@@ -92,6 +104,7 @@ export default function App() {
                     marginLeft: sidebarOpen ? 240 : 0,
                     transition: 'margin-left 0.3s ease',
                     paddingTop: '60px',
+                    flexGrow: 1,
                   }}
                 >
                   <Routes>
