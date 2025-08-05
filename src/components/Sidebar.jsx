@@ -1,87 +1,77 @@
-import React, { useState, useEffect } from 'react'
+// src/components/Sidebar.jsx
+import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
-import { supabase } from '../lib/supabaseClient'
-import { Menu, X, Home, Plus, User, LogIn, LogOut, Shield, List } from 'lucide-react'
-import './Sidebar.css'
+import { LogOut } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import '../components/Sidebar.css'
 
-export default function Sidebar() {
-  const { user, logout } = useUser()
-  const [isAdmin, setIsAdmin] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
+export default function Sidebar({ isOpen, onClose }) {
+  const { user, isAdmin, setUser } = useUser()
+  const { t, i18n } = useTranslation()
   const location = useLocation()
 
-  // Stäng meny automatiskt vid sidbyte
-  useEffect(() => {
-    setMenuOpen(false)
-  }, [location.pathname])
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut()
+    if (!error) setUser(null)
+  }
 
-  // Kolla om användaren är admin
-  useEffect(() => {
-    async function checkAdmin() {
-      if (user) {
-        const { data, error } = await supabase
-          .from('admin_users')
-          .select('id')
-          .eq('id', user.id)
-          .single()
+  const changeLanguage = () => {
+    i18n.changeLanguage(i18n.language === 'en' ? 'sv' : 'en')
+  }
 
-        setIsAdmin(!!data && !error)
-      } else {
-        setIsAdmin(false)
-      }
-    }
-    checkAdmin()
-  }, [user])
+  const isActive = (path) => location.pathname === path
 
   return (
-    <div className="sidebar">
-      <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
-        {menuOpen ? <X size={24} /> : <Menu size={24} />}
-      </button>
+    <div className={`sidebar${isOpen ? ' open' : ''}`}>
+      <button className="close-sidebar" onClick={onClose}>×</button>
 
-      <nav className={`menu ${menuOpen ? 'open' : ''}`}>
-        <Link to="/" className="menu-item">
-          <Home size={20} /> Home
-        </Link>
+      <h2>{t('navigation_title') || 'Menu'}</h2>
 
-        <Link to="/builds" className="menu-item">
-          <List size={20} /> All Builds
+      <nav>
+        <Link to="/" className={isActive('/') ? 'active' : ''}>
+          {t('all_builds') || 'All Builds'}
         </Link>
 
         {user && (
           <>
-            <Link to="/create-build" className="menu-item">
-              <Plus size={20} /> Create Build
+            <Link to="/create-build" className={isActive('/create-build') ? 'active' : ''}>
+              {t('create_build') || 'Create Build'}
             </Link>
-
-            <Link to="/my-builds" className="menu-item">
-              <User size={20} /> My Builds
+            <Link to="/my-builds" className={isActive('/my-builds') ? 'active' : ''}>
+              {t('my_builds') || 'My Builds'}
             </Link>
           </>
         )}
 
         {isAdmin && (
-          <Link to="/admin" className="menu-item">
-            <Shield size={20} /> Admin
+          <Link to="/admin-panel" className={isActive('/admin-panel') ? 'active' : ''}>
+            {t('admin_panel') || 'Admin Panel'}
           </Link>
         )}
 
-        {!user ? (
+        {!user && (
           <>
-            <Link to="/login" className="menu-item">
-              <LogIn size={20} /> Login
+            <Link to="/login" className={isActive('/login') ? 'active' : ''}>
+              {t('login') || 'Login'}
             </Link>
-            <Link to="/register" className="menu-item">
-              <User size={20} /> Register
+            <Link to="/register" className={isActive('/register') ? 'active' : ''}>
+              {t('register') || 'Register'}
             </Link>
           </>
-        ) : (
-          <button onClick={logout} className="menu-item logout-btn">
-            <LogOut size={20} /> Logout
-          </button>
         )}
       </nav>
+
+      <div className="bottom-buttons">
+        {user && (
+          <button onClick={handleLogout} className="logout-button">
+            <LogOut size={14} /> {t('logout') || 'Logout'}
+          </button>
+        )}
+        <button onClick={changeLanguage} className="language-switcher">
+          🌐 {i18n.language === 'en' ? 'SV' : 'EN'}
+        </button>
+      </div>
     </div>
   )
 }
