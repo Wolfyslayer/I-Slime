@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { UserProvider } from './context/UserContext'
 import { useTranslation } from 'react-i18next'
@@ -55,65 +55,82 @@ function ErrorBoundaryWithTranslation(props) {
 }
 
 export default function App() {
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen)
+  const closeSidebar = () => setSidebarOpen(false)
+
   return (
     <ErrorBoundaryWithTranslation>
       <Router>
         <UserProvider>
           <BuildProvider>
-            <div
-              className="app-container"
-              style={{
-                display: 'flex', // Flex på desktop, flex-direction ändras via CSS media query för mobil
-                flexDirection: 'row',
-                minHeight: '100vh',
-                backgroundColor: '#111', // valfri bakgrund för kontrast
-              }}
-            >
-              <Sidebar />
-              <main className="main-content" style={{ padding: '20px', flexGrow: 1 }}>
-                <Routes>
-                  <Route path="/" element={<BuildList />} />
-                  <Route path="/build-detail/:id" element={<BuildDetail />} />
-                  <Route
-                    path="/create-build"
-                    element={
-                      <ProtectedRoute>
-                        <CreateBuild />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/edit-build/:id"
-                    element={
-                      <ProtectedRoute>
-                        <EditBuild />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/my-builds"
-                    element={
-                      <ProtectedRoute>
-                        <MyBuilds />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/admin-panel"
-                    element={
-                      <AdminRoute>
-                        <AdminPanel />
-                      </AdminRoute>
-                    }
-                  />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
-                  <Route path="/forgot-password" element={<ForgotPassword />} />
-                  <Route path="/reset-password" element={<ResetPassword />} />
-                  <Route path="/welcome" element={<Welcome />} />
-                </Routes>
-              </main>
-            </div>
+            <>
+              {/* Hamburgerknapp utanför sidebar */}
+              <button
+                className="hamburger"
+                onClick={toggleSidebar}
+                aria-label="Toggle menu"
+              >
+                ☰
+              </button>
+
+              <div
+                className="app-container"
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  minHeight: '100vh',
+                  backgroundColor: '#111',
+                }}
+              >
+                <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
+
+                <main className="main-content" style={{ padding: '20px', flexGrow: 1 }}>
+                  <Routes>
+                    <Route path="/" element={<BuildList />} />
+                    <Route path="/build-detail/:id" element={<BuildDetail />} />
+                    <Route
+                      path="/create-build"
+                      element={
+                        <ProtectedRoute>
+                          <CreateBuild />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/edit-build/:id"
+                      element={
+                        <ProtectedRoute>
+                          <EditBuild />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/my-builds"
+                      element={
+                        <ProtectedRoute>
+                          <MyBuilds />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/admin-panel"
+                      element={
+                        <AdminRoute>
+                          <AdminPanel />
+                        </AdminRoute>
+                      }
+                    />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
+                    <Route path="/welcome" element={<Welcome />} />
+                  </Routes>
+                </main>
+              </div>
+            </>
           </BuildProvider>
         </UserProvider>
       </Router>
