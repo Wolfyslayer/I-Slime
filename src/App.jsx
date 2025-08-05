@@ -3,7 +3,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { UserProvider } from './context/UserContext';
-import { useTranslation } from 'react-i18next'; 
+import { useTranslation } from 'react-i18next';
+
 import Sidebar from './components/Sidebar';
 import BuildList from './components/BuildList';
 import BuildDetail from './components/BuildDetail';
@@ -19,12 +20,12 @@ import ProtectedRoute from './routes/ProtectedRoute';
 import Welcome from './components/Welcome';
 import AdminRoute from './routes/AdminRoute';
 import { BuildProvider } from './components/BuildSystem/BuildContext';
-import './lib/i18n';
 
+import './lib/i18n';
 import './styles/theme.css';
 import './components/Sidebar.css';
 
-// Din ursprungliga ErrorBoundary - oförändrad
+// Error boundary med översättning
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -53,20 +54,18 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-// Ny funktionell wrapper-komponent som använder hooken och skickar 't' vidare
+// Wrapper för att använda useTranslation i en klasskomponent
 function ErrorBoundaryWithTranslation(props) {
   const { t } = useTranslation();
   return <ErrorBoundary t={t} {...props} />;
 }
 
-// Funktionell App-komponent som använder wrappern
 export default function App() {
   return (
     <ErrorBoundaryWithTranslation>
       <Router>
         <UserProvider>
           <BuildProvider>
-            <LanguageSwitcher />
             <div className="app-container">
               <Sidebar />
               <main className="main-content" style={{ padding: '20px' }}>
