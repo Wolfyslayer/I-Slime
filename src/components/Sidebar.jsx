@@ -11,11 +11,12 @@ export default function Sidebar() {
   const navigate = useNavigate()
   const { i18n, t } = useTranslation()
 
+  // State för om sidebar är öppen (för mobil)
   const [isOpen, setIsOpen] = useState(false)
 
   const toggleSidebar = () => setIsOpen(!isOpen)
 
-  // Close sidebar when path changes
+  // Stäng sidebar vid navigering
   useEffect(() => {
     setIsOpen(false)
   }, [location.pathname])
@@ -25,7 +26,7 @@ export default function Sidebar() {
   const handleLogout = async () => {
     await supabase.auth.signOut()
     navigate('/login')
-    setIsOpen(false) // Stäng menyn vid logout
+    setIsOpen(false)
   }
 
   const toggleLanguage = () => {
@@ -38,11 +39,18 @@ export default function Sidebar() {
 
   return (
     <>
-      <button className="hamburger" onClick={toggleSidebar} aria-label="Toggle menu">
+      {/* Hamburgerknapp */}
+      <button
+        className="hamburger"
+        onClick={toggleSidebar}
+        aria-label={isOpen ? 'Close menu' : 'Open menu'}
+        aria-expanded={isOpen}
+      >
         ☰
       </button>
 
-      <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
+      {/* Sidebar */}
+      <aside className={`sidebar ${isOpen ? 'open' : ''}`} aria-hidden={!isOpen && window.innerWidth <= 768}>
         <h2>I-Slime</h2>
         <nav>
           <NavLink to="/" end onClick={() => setIsOpen(false)}>
@@ -50,8 +58,12 @@ export default function Sidebar() {
           </NavLink>
           {user ? (
             <>
-              <NavLink to="/create-build" onClick={() => setIsOpen(false)}>{t('Create Build')}</NavLink>
-              <NavLink to="/my-builds" onClick={() => setIsOpen(false)}>{t('My Builds')}</NavLink>
+              <NavLink to="/create-build" onClick={() => setIsOpen(false)}>
+                {t('Create Build')}
+              </NavLink>
+              <NavLink to="/my-builds" onClick={() => setIsOpen(false)}>
+                {t('My Builds')}
+              </NavLink>
               {isAdmin && (
                 <NavLink to="/admin-panel" onClick={() => setIsOpen(false)}>
                   🛠️ {t('Admin Panel')}
@@ -60,8 +72,12 @@ export default function Sidebar() {
             </>
           ) : (
             <>
-              <NavLink to="/login" onClick={() => setIsOpen(false)}>{t('Login')}</NavLink>
-              <NavLink to="/register" onClick={() => setIsOpen(false)}>{t('Sign Up')}</NavLink>
+              <NavLink to="/login" onClick={() => setIsOpen(false)}>
+                {t('Login')}
+              </NavLink>
+              <NavLink to="/register" onClick={() => setIsOpen(false)}>
+                {t('Sign Up')}
+              </NavLink>
             </>
           )}
         </nav>
