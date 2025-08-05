@@ -1,10 +1,9 @@
-// src/components/Sidebar.jsx
-
 import React, { useEffect, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
 import { supabase } from '../lib/supabaseClient'
 import { LogOut, Menu } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import './Sidebar.css'
 
 export default function Sidebar() {
@@ -12,6 +11,7 @@ export default function Sidebar() {
   const [isAdmin, setIsAdmin] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
+  const { t } = useTranslation()
 
   useEffect(() => {
     const fetchAdminStatus = async () => {
@@ -40,15 +40,17 @@ export default function Sidebar() {
     setIsAdmin(false)
   }
 
+  const onClose = () => setMenuOpen(false)
+
   return (
-    <aside className={`sidebar${isOpen ? ' open' : ''}`}>
+    <aside className={`sidebar${menuOpen ? ' open' : ''}`}>
       <button className="close-sidebar" onClick={onClose} aria-label={t('Sign out')}>
         &times;
       </button>
       <h2>{t('Build Planner')}</h2>
       <nav>
         <NavLink to="/" onClick={onClose} end>{t('All Builds')}</NavLink>
-        {signedIn && (
+        {user && (
           <>
             <NavLink to="/my-builds" onClick={onClose}>{t('My Builds')}</NavLink>
             <NavLink to="/create-build" onClick={onClose}>{t('Create Build')}</NavLink>
@@ -59,8 +61,8 @@ export default function Sidebar() {
         )}
       </nav>
       <div className="bottom-buttons">
-        {signedIn && (
-          <button className="logout-button" onClick={handleSignOut}>
+        {user && (
+          <button className="logout-button" onClick={handleLogout}>
             {t('Sign out')}
           </button>
         )}
