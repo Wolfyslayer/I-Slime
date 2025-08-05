@@ -16,6 +16,7 @@ const resources = {
       "Sign out": "Sign out",
       "Login": "Login",
       "Sign Up": "Sign Up",
+      "Change language": "Change language",
 
       // Authentication
       "Create Account": "Create Account",
@@ -201,6 +202,7 @@ const resources = {
       "Sign out": "Logga ut",
       "Login": "Logga in",
       "Sign Up": "Registrera",
+      "Change language": "Byt språk",
 
       // Authentication
       "Create Account": "Skapa konto",
